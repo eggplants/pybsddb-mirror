@@ -1221,6 +1221,8 @@ newDBTxnObject(DBEnvObject* myenv, DBTxnObject *parent, DB_TXN *txn, int flags)
     self->flag_prepare = 0;
     self->parent_txn = NULL;
     self->env = NULL;
+    /* We initialize just in case "txn_begin" fails */
+    self->txn = NULL;
 
     if (parent && ((PyObject *)parent!=Py_None)) {
         parent_txn = parent->txn;
@@ -1234,6 +1236,7 @@ newDBTxnObject(DBEnvObject* myenv, DBTxnObject *parent, DB_TXN *txn, int flags)
         MYDB_END_ALLOW_THREADS;
 
         if (makeDBError(err)) {
+            /* Free object half initialized */
             Py_DECREF(self);
             return NULL;
         }
@@ -1267,7 +1270,7 @@ DBTxn_dealloc(DBTxnObject* self)
     if (self->txn) {
         int flag_prepare = self->flag_prepare;
 
-        dummy=DBTxn_abort_discard_internal(self,0);
+        dummy=DBTxn_abort_discard_internal(self, 0);
         /*
         ** Raising exceptions while doing
         ** garbage collection is a fatal error.
@@ -1290,7 +1293,12 @@ DBTxn_dealloc(DBTxnObject* self)
     if (self->env) {
         Py_DECREF(self->env);
     } else {
-        Py_DECREF(self->parent_txn);
+        /*
+        ** We can have "self->env==NULL" and "self->parent_txn==NULL"
+        ** if something happens when creating the transaction object
+        ** and we abort the object while half done.
+        */
+        Py_XDECREF(self->parent_txn);
     }
     PyObject_Del(self);
 }
@@ -1305,6 +1313,7 @@ newDBLockObject(DBEnvObject* myenv, u_int32_t locker, DBT* obj,
     if (self == NULL)
         return NULL;
     self->in_weakreflist = NULL;
+    self->lock_initialized = 0;  /* Just in case the call fails */
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = myenv->db_env->lock_get(myenv->db_env, locker, flags, obj, lock_mode,
@@ -1313,6 +1322,8 @@ newDBLockObject(DBEnvObject* myenv, u_int32_t locker, DBT* obj,
     if (makeDBError(err)) {
         Py_DECREF(self);
         self = NULL;
+    } else {
+        self->lock_initialized = 1;
     }
 
     return self;
@@ -1326,6 +1337,7 @@ DBLock_dealloc(DBLockObject* self)
         PyObject_ClearWeakRefs((PyObject *) self);
     }
     /* TODO: is this lock held? should we release it? */
+    /* CAUTION: The lock can be not initialized if the creation has failed */
 
     PyObject_Del(self);
 }
@@ -1346,6 +1358,7 @@ newDBSequenceObject(DBObject* mydb,  int flags)
     self->txn = NULL;
 
     self->in_weakreflist = NULL;
+    self->sequence = NULL;  /* Just in case the call fails */
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = db_sequence_create(&self->sequence, self->mydb->db, flags);

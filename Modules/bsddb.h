@@ -109,7 +109,7 @@
 #error "eek! DBVER can't handle minor versions > 9"
 #endif
 
-#define PY_BSDDB_VERSION "4.8.3devel7"
+#define PY_BSDDB_VERSION "4.8.3devel8"
 
 /* Python object definitions */
 
@@ -212,6 +212,7 @@ typedef struct DBLogCursorObject {
 typedef struct {
     PyObject_HEAD
     DB_LOCK         lock;
+    int             lock_initialized;  /* Signal if we actually have a lock */
     PyObject        *in_weakreflist; /* List of weak references */
 } DBLockObject;
 

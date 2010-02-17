@@ -73,6 +73,10 @@ class DBEnv_general(DBEnv) :
                     self.assertEqual((i, j), v)
 
     if db.version() >= (4, 2) :
+        def test_invalid_txn(self) :
+            # This environment doesn't support transactions
+            self.assertRaises(db.DBInvalidArgError, self.env.txn_begin)
+
         def test_mp_mmapsize(self) :
             for i in [16, 32, 64] :
                 i *= 1024*1024
@@ -278,7 +282,7 @@ class DBEnv_log(DBEnv) :
         self.assertEqual("log.0000000001", log_file[-14:])
 
     if db.version() >= (4, 4) :
-        # The version with transactions is done in other test object
+        # The version with transactions is checked in other test object
         def test_log_printf(self) :
             msg = "This is a test..."
             self.env.log_printf(msg)
@@ -301,8 +305,23 @@ class DBEnv_log_txn(DBEnv) :
         self.env.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
                 db.DB_INIT_LOG | db.DB_INIT_TXN)
 
+    if db.version() >= (4, 5) :
+        def test_tx_max(self) :
+            txns=[]
+            def tx() :
+                for i in range(self.env.get_tx_max()) :
+                    txns.append(self.env.txn_begin())
+
+            tx()
+            self.assertRaises(MemoryError, tx)
+
+            # Abort the transactions before garbage collection,
+            # to avoid "warnings".
+            for i in txns :
+                i.abort()
+
     if db.version() >= (4, 4) :
-        # The version without transactions is done in other test object
+        # The version without transactions is checked in other test object
         def test_log_printf(self) :
             msg = "This is a test..."
             txn = self.env.txn_begin()
@@ -325,6 +344,7 @@ class DBEnv_log_txn(DBEnv) :
             txn.commit()  # Do not store the new message
             logc.last()  # Skip the commit
             self.assertTrue(msg in (logc.prev()[1]))
+
 
 class DBEnv_memp(DBEnv):
     def setUp(self):
