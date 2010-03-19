@@ -168,3 +168,5 @@
 
 * 20100318: Implement "__iter__()" in DB, maybe thru a DBCursor.
 
+* 20100319: Cursors in dbtables should be iterable.
+
