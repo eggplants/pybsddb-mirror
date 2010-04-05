@@ -255,12 +255,12 @@ if sys.version_info[0] >= 3 :
 
         def set_re_pad(self, c) :
             if isinstance(c, str) :  # We can use a numeric value byte too
-               c = bytes(c, charset)
+                c = bytes(c, charset)
             return self._db.set_re_pad(c)
 
         def get_re_source(self) :
-           source = self._db.get_re_source()
-           return source.decode(charset)
+            source = self._db.get_re_source()
+            return source.decode(charset)
 
         def put(self, key, data, txn=None, flags=0, dlen=-1, doff=-1) :
             if isinstance(key, str) :
@@ -528,7 +528,8 @@ def get_new_database_path() :
 
 # This path can be overriden via "set_test_path_prefix()".
 import os, os.path
-get_new_path.prefix=os.path.join(os.sep,"tmp","z-Berkeley_DB")
+get_new_path.prefix=os.path.join(os.environ.get("TMPDIR",
+    os.path.join(os.sep,"tmp")), "z-Berkeley_DB")
 get_new_path.num=0
 
 def get_test_path_prefix() :
