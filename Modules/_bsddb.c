@@ -4764,6 +4764,7 @@ DBEnv_memp_stat(DBEnvObject* self, PyObject* args, PyObject *kwargs)
 #define MAKE_ENTRY(name)  _addIntToDict(d, #name, gsp->st_##name)
 
     MAKE_ENTRY(gbytes);
+    MAKE_ENTRY(bytes);
     MAKE_ENTRY(ncache);
 #if (DBVER >= 46)
     MAKE_ENTRY(max_ncache);
