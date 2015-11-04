@@ -1804,10 +1804,19 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
         return NULL;
     }
 
-    if (startobj && make_key_dbt(self, startobj, &start, NULL)) {
+    if (startobj) {
+        if (!make_key_dbt(self, startobj, &start, NULL)) {
+            return NULL;
+        }
         start_p = &start;
     }
-    if (stopobj && make_key_dbt(self, stopobj, &stop, NULL)) {
+
+    if (stopobj) {
+        if (!make_key_dbt(self, stopobj, &stop, NULL)) {
+            if (startobj)
+                FREE_DBT(start);
+            return NULL;
+        }
         stop_p = &stop;
     }
 
