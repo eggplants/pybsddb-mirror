@@ -356,6 +356,13 @@ if sys.version_info[0] >= 3 :
                 key = bytes(key, charset)
             return self._db.delete(key, txn=txn)
 
+        def compact(self, **kwargs) :
+            if isinstance(kwargs.get('start'), str) :
+                kwargs['start'] = bytes(kwargs['start'], charset)
+            if isinstance(kwargs.get('stop'), str) :
+                kwargs['stop'] = bytes(kwargs['stop'], charset)
+            return self._db.compact(**kwargs)
+
         def keys(self) :
             k = list(self._db.keys())
             if len(k) and isinstance(k[0], bytes) :

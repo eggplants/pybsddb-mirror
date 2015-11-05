@@ -1,8 +1,5 @@
-6.1.2:
-  * Solve a parameter verification issue with the "DB.compact()"
-    method call.
-
 6.1.1:
+  * Compatibility with Python 3.5.
   * Code cleanup after dropping Python 2.4/2.5 support.
   * PGP key changed.
   * Support for DB_FORCESYNCENV flag in "DB_ENV.close()".
