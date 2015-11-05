@@ -8,7 +8,7 @@
 # that aren't pickleable (module imports are okay, they're removed automatically).
 
 """
-Copyright (c) 2008-2014, Jesus Cea Avion <jcea@jcea.es>
+Copyright (c) 2008-2015, Jesus Cea Avion <jcea@jcea.es>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -60,14 +60,14 @@ extlinks = {
 project = 'PyBSDDB'
 # I can't use tildes because my ZOPE configuration.
 # Something to fix in the future.
-copyright = '2008-2014 Jesus Cea Avion'
+copyright = '2008-2015 Jesus Cea Avion'
 
 # The default replacements for |version| and |release|.
 #
 # The short X.Y version.
-version = '6.1.0'
+version = '6.1.1'
 # The full version, including alpha/beta/rc tags.
-release = '6.1.0'
+release = '6.1.1'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
