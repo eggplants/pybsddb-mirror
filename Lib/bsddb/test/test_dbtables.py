@@ -18,7 +18,6 @@
 #
 #   --  Gregory P. Smith <greg@krypto.org>
 #
-# $Id$
 
 import os, re, sys
 
