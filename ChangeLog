@@ -17,7 +17,7 @@
   * Drop support for Berkeley DB 4.3, 4.4, 4.5, 4.6. If you need
     compatibility with those versions, you can keep using old
     releases of these bindings.
-  * From now, on our support reference is Red Had Enterprise Linux 6.
+  * From now on, our support reference is Red Had Enterprise Linux 6.
   * Drop modules attributes "cvsid".
   * Drop (hidden) $Id$ keyword in the documentation.
 
