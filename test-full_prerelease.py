@@ -75,17 +75,17 @@ def do_matrix_check() :
       params = ["/usr/local/bin/python"+py] + params
       print "EXECUTING:", " ".join(params)
       ret=subprocess.call(params)
-      if ret :
-        print
-        print ">>> Testsuite skipped"
-        print
-      else :
+      if not ret :
         params = ["/usr/local/bin/python"+py] + extra_params + ["test.py","-p"]
         print "EXECUTING:", " ".join(params)
         ret = subprocess.call(params)
-        if ret :
-            sys.exit(1)
+      if ret :
+        print
+        print ">>> WE HAVE A PROBLEM!"
+        print
+        sys.exit(1)
 
 if __name__=="__main__" :
   print info
   do_matrix_check()
+
