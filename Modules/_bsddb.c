@@ -6014,15 +6014,15 @@ static PyObject*
 DBEnv_txn_recover(DBEnvObject* self)
 {
     int flags = DB_FIRST;
-    int err, i;
+    int err;
     PyObject *list, *tuple, *gid;
     DBTxnObject *txn;
 #define PREPLIST_LEN 16
     DB_PREPLIST preplist[PREPLIST_LEN];
 #if (DBVER < 48) || (DBVER >= 52)
-    long retp;
+    long retp, i;
 #else
-    u_int32_t retp;
+    u_int32_t retp, i;
 #endif
 
     CHECK_ENV_NOT_CLOSED(self);
