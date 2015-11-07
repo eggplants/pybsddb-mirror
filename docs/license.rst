@@ -51,7 +51,7 @@ License of individual files
 ---------------------------
 
 The history of this project is long and complicated, and so are
-their copyrights and licenses. I (Jesus Cea) write this document
+their copyrights and licenses. I (Jesus Cea) wrote this document
 in orden to clarify the situation.
 
 This code was integrated once in Python 2.x, so I guess somebody
