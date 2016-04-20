@@ -1,5 +1,5 @@
 =============================================
- Python Bindings for Berkeley DB 4.7 thru 6.1
+ Python Bindings for Berkeley DB 4.7 thru 6.2
 =============================================
 
 Introduction
@@ -21,7 +21,7 @@ The Python wrappers allow you to store Python string objects of any
 length, keyed either by strings or integers depending on the database
 access method. With the use of another module in the package standard
 shelve-like functionality is provided allowing you to store any
-picklable Python object! 
+picklable Python object!
 
 Berkeley DB is very powerful and versatile, but it is complex to
 use correctly. :Oracle:`Oracle documentation <toc.htm>` is very
