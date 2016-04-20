@@ -3,7 +3,7 @@ RHEL6 has Python 2.6 and BDB 4.7. Supported until July 31, 2017 (RHEL 6.7).
 RHEL7 has Python 2.7 and BDB 4.7 included for compatibility only, not used by the system.
 Ubuntu 12.04: Python 2.7, BDB 4.8 (legacy), BDB 5.1 used by the system. Supported until 2017.
 
-6.1.2:
+6.2.0:
   * Declare Python 3.5 support for PyPI.
 
 6.1.1:

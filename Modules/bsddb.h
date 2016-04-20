@@ -104,7 +104,7 @@
 #error "eek! DBVER can't handle minor versions > 9"
 #endif
 
-#define PY_BSDDB_VERSION "6.1.1"
+#define PY_BSDDB_VERSION "6.2.0"
 
 /* Python object definitions */
 

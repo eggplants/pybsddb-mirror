@@ -57,7 +57,7 @@ def do_matrix_check() :
   python_versions=('2.6', '2.7', '3.2', '3.3', '3.4', '3.5')
   berkeleydb_versions=('4.7', '4.8',
                        '5.0', '5.1', '5.2', '5.3',
-                       '6.0', '6.1')
+                       '6.0', '6.1', '6.2')
 
   warning_level=("-Wdefault", "-Werror")[1]
 

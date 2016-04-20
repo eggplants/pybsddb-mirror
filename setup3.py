@@ -152,7 +152,7 @@ if os.name == 'posix':
         lflags_arg = LFLAGS + LIBS
 
     # Supported Berkeley DB versions, in order of preference.
-    db_ver_list = ((6, 1), (6, 0),
+    db_ver_list = ((6, 2), (6, 1), (6, 0),
             (5, 3), (5, 2), (5, 1), (5, 0),
             (4, 8), (4, 7))
     db_ver = None
@@ -408,7 +408,7 @@ elif os.name == 'nt':
              ("bsddb3/test", glob.glob("test/*.py"))
              ]
 
-if (db_ver in ((6, 0), (6, 1))) and \
+if (db_ver in ((6, 0), (6, 1), (6, 2))) and \
   ("YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION" not in os.environ) :
     print (
         "\n"
