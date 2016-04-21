@@ -56,8 +56,8 @@ os.environ['YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION'] = ''
 def do_matrix_check() :
   python_versions=('2.6', '2.7', '3.3', '3.4', '3.5')
   berkeleydb_versions=('4.7', '4.8',
-                       '5.0', '5.1', '5.2', '5.3',
-                       '6.0', '6.1', '6.2')
+                       '5.1', '5.3',
+                       '6.1', '6.2')
 
   warning_level=("-Wdefault", "-Werror")[1]
 

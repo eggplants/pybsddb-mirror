@@ -9,6 +9,9 @@ Ubuntu 12.04: Python 2.7, BDB 4.8 (legacy), BDB 5.1 used by the system. Supporte
   * Drop support for Python 3.2. If you need
     compatibility with that version, you can keep using
     old releases of these bindings.
+  * Drop support for Berkeley DB 5.0, 5.2 and 6.0. If you need
+    compatibility with those versions, you can keep using old
+    releases of these bindings.
 
 6.1.1:
   * Compatibility with Python 3.5.

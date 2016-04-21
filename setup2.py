@@ -152,8 +152,8 @@ if os.name == 'posix':
         lflags_arg = LFLAGS + LIBS
 
     # Supported Berkeley DB versions, in order of preference.
-    db_ver_list = ((6, 2), (6, 1), (6, 0),
-            (5, 3), (5, 2), (5, 1), (5, 0),
+    db_ver_list = ((6, 2), (6, 1),
+            (5, 3), (5, 1),
             (4, 8), (4, 7))
     db_ver = None
 

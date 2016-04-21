@@ -124,7 +124,7 @@ struct DBCursorObject;    /* Forward declaration */
 struct DBLogCursorObject; /* Forward declaration */
 struct DBTxnObject;       /* Forward declaration */
 struct DBSequenceObject;  /* Forward declaration */
-#if (DBVER >= 52)
+#if (DBVER >= 53)
 struct DBSiteObject;      /* Forward declaration */
 #endif
 
@@ -138,7 +138,7 @@ typedef struct {
     struct DBObject *children_dbs;
     struct DBTxnObject *children_txns;
     struct DBLogCursorObject *children_logcursors;
-#if (DBVER >= 52)
+#if (DBVER >= 53)
     struct DBSiteObject *children_sites;
 #endif
     PyObject        *private_obj;
@@ -207,7 +207,7 @@ typedef struct DBLogCursorObject {
     PyObject        *in_weakreflist; /* List of weak references */
 } DBLogCursorObject;
 
-#if (DBVER >= 52)
+#if (DBVER >= 53)
 typedef struct DBSiteObject {
     PyObject_HEAD
     DB_SITE         *site;
