@@ -103,7 +103,7 @@ for line in _srcFile.readlines():
         VERSION = m.group(1)
         continue
 
-# We close first, to avoid a "ResourceWarning" under Python 3.2
+# We close first, to avoid a "ResourceWarning"
 _srcFile.close()
 del _srcFile
 del _ver_re
@@ -516,7 +516,6 @@ pybsddb_doc/>`__ --
                     'Programming Language :: Python :: 2.6',
                     'Programming Language :: Python :: 2.7',
                     'Programming Language :: Python :: 3',
-                    'Programming Language :: Python :: 3.2',
                     'Programming Language :: Python :: 3.3',
                     'Programming Language :: Python :: 3.4',
                     'Programming Language :: Python :: 3.5',
