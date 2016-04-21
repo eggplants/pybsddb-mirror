@@ -41,7 +41,7 @@ on Win32.
 
 This wrapper should be compatible with Berkeley DB releases going back
 to 4.7 up to and including DB 6.1.  It should also be compatible
-with Python versions 2.6, 2.7, and Python 3.2 to 3.4.
+with Python versions 2.6, 2.7, and Python 3.3 to 3.5.
 
 
 Installation
@@ -63,7 +63,7 @@ fairly simple to get things ready to go.
    sources and rebuild it.
 
 1. First, make sure that you have a Berkeley DB version >= 4.7 and
-   no later than 6.1 and that it is built and installed.  Setup.py will
+   no later than 6.2 and that it is built and installed.  Setup.py will
    detect a db3 or Berkeley DB directory under either /usr/local or /usr
    in that order; this will catch installations from RPMs and most hand
    installations under Unix.  If setup.py can't find your libdb then you
