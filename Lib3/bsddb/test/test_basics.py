@@ -844,8 +844,8 @@ class BasicTransactionTestCase(BasicTestCase):
         self.assertEqual(txn.get_name(), "")
         txn.set_name("XXYY")
         self.assertEqual(txn.get_name(), "XXYY")
-        txn.set_name("")
-        self.assertEqual(txn.get_name(), "")
+        txn.set_name("ABC")
+        self.assertEqual(txn.get_name(), "ABC")
         txn.abort()
 
     #----------------------------------------
