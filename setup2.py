@@ -474,17 +474,17 @@ If you need to support ancient versiones of Python and/or Berkeley DB , you can
 use old releases of this bindings.
 
 
-`Homepage <http://www.jcea.es/programacion/
+`Homepage <https://www.jcea.es/programacion/
 pybsddb.htm>`__ --
-`Documentation <http://www.jcea.es/programacion/
+`Documentation <https://www.jcea.es/programacion/
 pybsddb_doc/>`__ --
 `Mailing List <https://mailman.jcea.es/listinfo/pybsddb>`__ --
-`Donation <http://www.jcea.es/programacion/pybsddb_doc/donate.html>`__
+`Donation <https://www.jcea.es/programacion/pybsddb_doc/donate.html>`__
 """,
 
       author = 'Jesus Cea, Robin Dunn, Gregory P. Smith, Andrew Kuchling, Barry Warsaw',
       author_email = 'pybsddb@jcea.es',
-      url = 'http://www.jcea.es/programacion/pybsddb.htm',
+      url = 'https://www.jcea.es/programacion/pybsddb.htm',
       license = "3-clause BSD License",
 
       packages = ['bsddb3', 'bsddb3/tests'],
