@@ -202,6 +202,7 @@ if os.name == 'posix':
             lib_dirs = compiler.library_dirs + [
                 '/lib64', '/usr/lib64',
                 '/lib', '/usr/lib',
+                '/usr/lib/x86_64-linux-gnu/',
             ]
             inc_dirs = compiler.include_dirs + ['/usr/include']
 
