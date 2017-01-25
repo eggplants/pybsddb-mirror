@@ -458,6 +458,22 @@ version_suffix = ""
 if sys.version_info[0] > 2 :
     version_suffix = "3"
 
+
+# Delete pkgsrc stale info
+# This is something that eventually should be not necesary.
+# XXX - jcea@jcea.es - 20170125
+try:
+    import _sysconfigdata
+except ImportError:
+    pass
+else:
+    for k, v in list(_sysconfigdata.build_time_vars.items()):
+        if not isinstance(v, str):
+            continue
+        j = ' '.join([i for i in v.split() if not i.endswith('/db4')])
+        _sysconfigdata.build_time_vars[k] = j
+
+
 # do the actual build, install, whatever...
 setup(name = 'bsddb3',
       version = VERSION,
