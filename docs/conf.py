@@ -8,7 +8,7 @@
 # that aren't pickleable (module imports are okay, they're removed automatically).
 
 """
-Copyright (c) 2008-2016, Jesus Cea Avion <jcea@jcea.es>
+Copyright (c) 2008-2017, Jesus Cea Avion <jcea@jcea.es>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
