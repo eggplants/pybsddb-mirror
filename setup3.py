@@ -462,16 +462,18 @@ if sys.version_info[0] > 2 :
 # Delete pkgsrc stale info
 # This is something that eventually should be not necesary.
 # XXX - jcea@jcea.es - 20170125
-try:
-    import _sysconfigdata
-except ImportError:
-    pass
-else:
-    for k, v in list(_sysconfigdata.build_time_vars.items()):
-        if not isinstance(v, str):
-            continue
-        j = ' '.join([i for i in v.split() if not i.endswith('/db4')])
-        _sysconfigdata.build_time_vars[k] = j
+from distutils import sysconfig
+def get_config_vars(*args):
+    if sysconfig._config_vars is None:
+        get_config_vars.original()
+        for k, v in list(sysconfig._config_vars.items()):
+            if not isinstance(v, str):
+                continue
+            j = ' '.join([i for i in v.split() if not i.endswith('/db4')])
+            sysconfig._config_vars[k] = j
+    return get_config_vars.original(*args)
+get_config_vars.original = sysconfig.get_config_vars
+sysconfig.get_config_vars = get_config_vars
 
 
 # do the actual build, install, whatever...
