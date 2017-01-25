@@ -168,7 +168,8 @@ if os.name == 'posix':
         bitness = ""
         import platform
         if (platform.architecture()[0] == "64bit") and \
-           (platform.platform(True, True).startswith("Solaris-")) :
+           (platform.platform(True, True).startswith("Solaris-")) and \
+           (not platform.uname()[3].startswith('joyent_')):
                bitness = "/64"
 
         for major, minor in db_ver_list :
@@ -177,6 +178,7 @@ if os.name == 'posix':
                 db_inc_paths.extend([
                     '/usr/include/db%d%s' %(major, bitness),
                     '/usr/local/include/db%d%s' %(major, bitness),
+                    '/opt/local/include/db%d%s' %(major, bitness),
                     '/opt/sfw/include/db%d%s' %(major, bitness),
                     '/sw/include/db%d%s' %(major, bitness),
                     ])
@@ -254,7 +256,11 @@ if os.name == 'posix':
                 # XXX should we -ever- look for a dbX name?  Do any
                 # systems really not name their library by version and
                 # symlink to more general names?
-                for dblib in (('db-%d.%d' % db_ver), ('db%d' % db_ver[0])):
+                for dblib in (
+                        ('db%d-%d.%d' % (db_ver[0], db_ver[0], db_ver[1])),
+                        ('db-%d.%d' % db_ver),
+                        ('db%d' % db_ver[0])
+                        ):
                     dblib_file = compiler.find_library_file(
                                     db_dirs_to_check + lib_dirs, dblib )
                     if dblib_file:

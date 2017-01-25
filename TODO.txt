@@ -1,3 +1,6 @@
+* 20161120: Document how to install with alternative Berkeley DB paths
+  using PIP.
+
 * 20160422: The "changelog" should merge with the sphynx documentation.
 
 * 20160421: Merge "README.txt" with the sphynx documentation.
