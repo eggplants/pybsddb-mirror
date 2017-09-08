@@ -459,21 +459,23 @@ if sys.version_info[0] > 2 :
     version_suffix = "3"
 
 
+# #############################
+
 # Delete pkgsrc stale info
 # This is something that eventually should be not necesary.
 # XXX - jcea@jcea.es - 20170125
 from distutils import sysconfig
-def get_config_vars(*args):
-    if sysconfig._config_vars is None:
-        get_config_vars.original()
-        for k, v in list(sysconfig._config_vars.items()):
-            if not isinstance(v, str):
-                continue
-            j = ' '.join([i for i in v.split() if not i.endswith('/db4')])
-            sysconfig._config_vars[k] = j
-    return get_config_vars.original(*args)
-get_config_vars.original = sysconfig.get_config_vars
-sysconfig.get_config_vars = get_config_vars
+
+# The same dictionary is always returned, so we abuse it
+# and modify it in place.
+config_vars = sysconfig.get_config_vars()
+for k, v in list(config_vars.items()):
+    if isinstance(v, str) and ('/db4' in v):
+        j = ' '.join([i for i in v.split() if not i.endswith('/db4')])
+        config_vars[k] = j
+del config_vars
+
+# #############################
 
 
 # do the actual build, install, whatever...
