@@ -181,6 +181,7 @@ if os.name == 'posix':
                     '/opt/local/include/db%d%s' %(major, bitness),
                     '/opt/sfw/include/db%d%s' %(major, bitness),
                     '/sw/include/db%d%s' %(major, bitness),
+                    '/usr/local/opt/berkeley-db@%s/include' % (major),
                     ])
 
             db_inc_paths.append('/usr/include/db%d%d%s' % \
@@ -206,7 +207,9 @@ if os.name == 'posix':
                 '/lib', '/usr/lib',
                 '/usr/lib/x86_64-linux-gnu/',
             ]
-            inc_dirs = compiler.include_dirs + ['/usr/include']
+            inc_dirs = compiler.include_dirs + [
+                '/usr/include', '/usr/local/opt/berkeley-db/include',
+            ]
 
             # See whether there is a Oracle or Sleepycat header in the standard
             # search path.
