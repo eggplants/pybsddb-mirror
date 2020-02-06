@@ -66,8 +66,10 @@ import sys, os
 
 from weakref import ref
 
-import collections
-MutableMapping = collections.MutableMapping
+if (sys.version_info[0] >= 3):
+    from collections.abc import MutableMapping
+else:
+    from collections import MutableMapping
 
 class _iter_mixin(MutableMapping):
     def _make_iter_cursor(self):

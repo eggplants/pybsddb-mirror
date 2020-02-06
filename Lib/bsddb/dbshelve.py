@@ -48,8 +48,10 @@ HIGHEST_PROTOCOL = cPickle.HIGHEST_PROTOCOL
 def _dumps(object, protocol):
     return cPickle.dumps(object, protocol=protocol)
 
-import collections
-MutableMapping = collections.MutableMapping
+if (sys.version_info[0] >= 3):
+    from collections.abc import MutableMapping
+else:
+    from collections import MutableMapping
 
 #------------------------------------------------------------------------
 

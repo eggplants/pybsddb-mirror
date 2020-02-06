@@ -8,6 +8,8 @@ Ubuntu 18.04: Python 2.7, Python 3.6. BDB 5.3. Supported until 2023.
 6.2.7:
   * Update copyright notices.
   * https links.
+  * Fix deprecation warning and Python 3.9 compatibility.
+    Notified by Arthur Gautier.
   * Python 3.8 and 3.9 are explicitly supported.
 
 6.2.6:
