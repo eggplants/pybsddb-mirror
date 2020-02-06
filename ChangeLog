@@ -8,6 +8,7 @@ Ubuntu 18.04: Python 2.7, Python 3.6. BDB 5.3. Supported until 2023.
 6.2.7:
   * Update copyright notices.
   * https links.
+  * Python 3.8 and 3.9 are explicitly supported.
 
 6.2.6:
   * Correctly detect Berkeley DB when installed via Homebrew on Mac OS X.
