@@ -5,6 +5,9 @@ Ubuntu 12.04: Python 2.7, BDB 4.8 (legacy), BDB 5.1 used by the system. Supporte
 Ubuntu 16.04: Python 2.7, Python 3.5. BDB 5.3. Supported until 2021.
 Ubuntu 18.04: Python 2.7, Python 3.6. BDB 5.3. Supported until 2023.
 
+TODO: Implement PEP 384 (Stable API)
+
+
 6.2.7:
   * Update copyright notices.
   * https links.
