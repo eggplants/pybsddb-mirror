@@ -17,7 +17,6 @@ maintainer.
 .. I can't use tildes because my ZOPE configuration.
 .. Something to fix in the future.
 
-`Jesus Cea Avion <http://www.jcea.es/programacion/pybsddb.htm>`__ is the
-maintainer of this code since February 2008, and ported it to Python
-3.x.
-
+`Jesus Cea Avion <https://www.jcea.es/programacion/pybsddb.htm>`__
+is the maintainer of this code since February 2008, and ported it
+to Python 3.x.

@@ -56,7 +56,7 @@
  * Use the pybsddb@jcea.es mailing list for all questions.
  * Things can change faster than the header of this file is updated.
  *
- * http://www.jcea.es/programacion/pybsddb.htm
+ * https://www.jcea.es/programacion/pybsddb.htm
  *
  * This module contains 8 types:
  *

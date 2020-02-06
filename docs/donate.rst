@@ -24,8 +24,8 @@ transfering to the right account (this document could have been modified
 for a third party). You can verify it in two diffent ways:
 
 1. Reading this document in the project original website:
-   `http://www.jcea.es/programacion/pybsddb_doc/donate.html
-   <http://www.jcea.es/programacion/pybsddb_doc/donate.html>`__. Make
+   `https://www.jcea.es/programacion/pybsddb_doc/donate.html
+   <https://www.jcea.es/programacion/pybsddb_doc/donate.html>`__. Make
    sure you are seeing the right webpage.
 
 2. Verifying the PGP digital signature of the following document:

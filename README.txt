@@ -4,7 +4,7 @@ IS STILL VALUABLE, SO USE YOUR BRAIN :-)
 
 README.txt
 bsddb3 v6.1.x
-http://www.jcea.es/programacion/pybsddb.htm
+https://www.jcea.es/programacion/pybsddb.htm
 2009-06-30
 --------------------------------
 
