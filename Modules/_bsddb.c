@@ -85,6 +85,12 @@
 /* --------------------------------------------------------------------- */
 
 #include <stddef.h>   /* for offsetof() */
+
+/*
+ * https://python.readthedocs.io/en/stable/c-api/arg.html#strings-and-buffers
+ */
+#define PY_SSIZE_T_CLEAN
+
 #include <Python.h>
 
 #define COMPILING_BSDDB_C
@@ -333,11 +339,13 @@ static int _DB_get_type(DBObject* self)
    strings.  Returns 1 on success, 0 on an error. */
 static int make_dbt(PyObject* obj, DBT* dbt)
 {
+    Py_ssize_t size=0;
+
     CLEAR_DBT(*dbt);
     if (obj == Py_None) {
         /* no need to do anything, the structure has already been zeroed */
     }
-    else if (!PyArg_Parse(obj, "s#", &dbt->data, &dbt->size)) {
+    else if (!PyArg_Parse(obj, "s#", &dbt->data, &size)) {
         PyErr_SetString(PyExc_TypeError,
 #if (PY_VERSION_HEX < 0x03000000)
                         "Data values must be of type string or None.");
@@ -346,6 +354,7 @@ static int make_dbt(PyObject* obj, DBT* dbt)
 #endif
         return 0;
     }
+    dbt->size = size;
     return 1;
 }
 
@@ -7958,7 +7967,7 @@ DBTxn_prepare(DBTxnObject* self, PyObject* args)
 {
     int err;
     char* gid=NULL;
-    int   gid_size=0;
+    Py_ssize_t gid_size=0;
 
     if (!PyArg_ParseTuple(args, "s#:prepare", &gid, &gid_size))
         return NULL;
