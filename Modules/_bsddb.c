@@ -1433,7 +1433,7 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
         else
             args = BuildValue_SS(priKey->data, priKey->size, priData->data, priData->size);
         if (args != NULL) {
-                result = PyEval_CallObject(callback, args);
+                result = PyObject_CallObject(callback, args);
         }
         if (args == NULL || result == NULL) {
             PyErr_Print();
@@ -2648,7 +2648,7 @@ _db_compareCallback(DB* db,
 
 	args = BuildValue_SS(leftKey->data, leftKey->size, rightKey->data, rightKey->size);
 	if (args != NULL) {
-		result = PyEval_CallObject(self->btCompareCallback, args);
+		result = PyObject_CallObject(self->btCompareCallback, args);
 	}
 	if (args == NULL || result == NULL) {
 	    /* we're in a callback within the DB code, we can't raise */
@@ -2691,7 +2691,7 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
      * err if not.
      */
     tuple = Py_BuildValue("(ss)", "", "");
-    result = PyEval_CallObject(comparator, tuple);
+    result = PyObject_CallObject(comparator, tuple);
     Py_DECREF(tuple);
     if (result == NULL)
         return NULL;
@@ -2770,7 +2770,7 @@ _db_dupCompareCallback(DB* db,
 
 	args = BuildValue_SS(leftKey->data, leftKey->size, rightKey->data, rightKey->size);
 	if (args != NULL) {
-		result = PyEval_CallObject(self->dupCompareCallback, args);
+		result = PyObject_CallObject(self->dupCompareCallback, args);
 	}
 	if (args == NULL || result == NULL) {
 	    /* we're in a callback within the DB code, we can't raise */
@@ -2813,7 +2813,7 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
      * err if not.
      */
     tuple = Py_BuildValue("(ss)", "", "");
-    result = PyEval_CallObject(comparator, tuple);
+    result = PyObject_CallObject(comparator, tuple);
     Py_DECREF(tuple);
     if (result == NULL)
         return NULL;
@@ -7084,7 +7084,7 @@ _dbenv_event_notifyCallback(DB_ENV* db_env, u_int32_t event, void *event_info)
             args = Py_BuildValue("(OiO)", dbenv, event, Py_None);
         }
         if (args) {
-            result = PyEval_CallObject(callback, args);
+            result = PyObject_CallObject(callback, args);
         }
         if ((!args) || (!result)) {
             PyErr_Print();
@@ -7218,7 +7218,7 @@ _DBEnv_rep_transportCallback(DB_ENV* db_env, const DBT* control, const DBT* rec,
             a, b,
             lsn->file, lsn->offset, envid, flags);
     if (args) {
-        result = PyEval_CallObject(rep_transport, args);
+        result = PyObject_CallObject(rep_transport, args);
     }
 
     if ((!args) || (!result)) {

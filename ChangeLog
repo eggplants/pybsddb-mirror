@@ -10,7 +10,8 @@ Ubuntu 18.04: Python 2.7, Python 3.6. BDB 5.3. Supported until 2023.
   * https links.
   * Fix Python 3 deprecation warning.
     Notified by Arthur Gautier.
-  * Fix Python 3.8 deprecation warning.
+  * Fix compilation Python 3.8 deprecation warnings.
+  * Fix compilation Python 3.9 deprecation warnings.
   * Python 3.8 and 3.9 are explicitly supported.
 
 6.2.6:
