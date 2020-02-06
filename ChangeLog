@@ -2,6 +2,11 @@ As seen in https://superuser.com/questions/997154/python-and-berkeley-db-version
 RHEL6 has Python 2.6 and BDB 4.7. Supported until July 31, 2017 (RHEL 6.7).
 RHEL7 has Python 2.7 and BDB 5.3. Includes legacy BDB 4.7 for compatibility, not used by the system.
 Ubuntu 12.04: Python 2.7, BDB 4.8 (legacy), BDB 5.1 used by the system. Supported until 2017.
+Ubuntu 16.04: Python 2.7, Python 3.5. BDB 5.3. Supported until 2021.
+Ubuntu 18.04: Python 2.7, Python 3.6. BDB 5.3. Supported until 2023.
+
+6.2.7:
+  * Update copyright notices.
 
 6.2.6:
   * Correctly detect Berkeley DB when installed via Homebrew on Mac OS X.
