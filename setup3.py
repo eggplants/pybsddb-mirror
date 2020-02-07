@@ -499,7 +499,7 @@ the website for more details on the types and methods provided. The goal is to
 mirror most of the real Berkeley DB API so fall back to the Oracle Berkeley DB
 documentation as appropriate.
 
-If you need to support ancient versiones of Python and/or Berkeley DB , you can
+If you need to support ancient versions of Python and/or Berkeley DB , you can
 use old releases of this bindings.
 
 
