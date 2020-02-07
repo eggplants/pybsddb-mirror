@@ -505,6 +505,8 @@ use old releases of this bindings.
 
 `Homepage <https://www.jcea.es/programacion/
 pybsddb.htm>`__ --
+`Releases (changelog) <https://www.jcea.es/programacion/
+pybsddb.htm#Releases>`__ --
 `Documentation <https://www.jcea.es/programacion/
 pybsddb_doc/>`__ --
 `Mailing List <https://mailman.jcea.es/listinfo/pybsddb>`__ --
