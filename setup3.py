@@ -512,6 +512,7 @@ pybsddb_doc/>`__ --
 `Mailing List <https://mailman.jcea.es/listinfo/pybsddb>`__ --
 `Donation <https://www.jcea.es/programacion/pybsddb_doc/donate.html>`__
 """,
+      long_description_content_type = 'text/x-rst',
 
       author = 'Jesus Cea, Robin Dunn, Gregory P. Smith, Andrew Kuchling, Barry Warsaw',
       author_email = 'pybsddb@jcea.es',
