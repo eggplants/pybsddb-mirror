@@ -40,46 +40,6 @@ import re
 import sys
 import glob
 
-if (sys.version_info[0] < 3) and (sys.version_info >= (2, 6)) :
-    # Silence deprecation warnings during "setup"
-    import warnings
-    warnings.filterwarnings('ignore',
-            message='in 3.x, bsddb has been removed; ' \
-                    'please use the pybsddb project instead',
-            category=DeprecationWarning)
-    warnings.filterwarnings('ignore',
-            message='in 3.x, the bsddb module has been removed; ' \
-                    'please use the pybsddb project instead',
-            category=DeprecationWarning)
-
-    if sys.version_info[:2] == (2, 7) :
-        with warnings.catch_warnings() :
-            # Python 2.7.0
-            warnings.filterwarnings('ignore',
-                message='The CObject type is marked Pending Deprecation ' \
-                        'in Python 2.7.  Please use capsule objects instead.',
-                category=PendingDeprecationWarning)
-
-            # Python 2.7.1
-            warnings.filterwarnings('ignore',
-                message='CObject type is not supported in 3.x. ' \
-                        'Please use capsule objects instead.',
-                category=DeprecationWarning)
-
-            try :  # 'bsddb' library could be not available
-                import bsddb  # Import the 2.7 version, that uses CObject
-            except ImportError :
-                pass
-
-    # setuptools warnings
-    warnings.filterwarnings('ignore',
-            message='tuple parameter unpacking has been removed in 3.x',
-            category=SyntaxWarning)
-    warnings.filterwarnings('ignore',
-            message='the dl module has been removed in Python 3.0; ' \
-                    'use the ctypes module instead',
-            category=DeprecationWarning)
-
 
 try :
   from setuptools import setup, Extension
@@ -348,8 +308,8 @@ if os.name == 'posix':
         if not match:
             continue
         fullverstr = match.group(1)
-        ver = fullverstr[0] + fullverstr[2]   # 31 == 3.1, 32 == 3.2, etc.
-        db_ver = (int(fullverstr[0]), int(fullverstr[2]))
+        ver = fullverstr.split('.')
+        db_ver = (int(ver[0]), int(ver[1]))
     if (db_ver2 is not None) and (db_ver != db_ver2) :
         raise AssertionError("Detected Berkeley DB version is inconsistent")
     if db_ver not in db_ver_list:
@@ -389,8 +349,8 @@ elif os.name == 'nt':
         if not match:
             continue
         fullverstr = match.group(1)
-        ver = fullverstr[0] + fullverstr[2]   # 31 == 3.1, 32 == 3.2, etc.
-        db_ver = (int(fullverstr[0]), int(fullverstr[2]))
+        ver = fullverstr.split('.')
+        db_ver = (int(ver[0]), int(ver[1]))
     if db_ver not in db_ver_list:
         raise AssertionError("pybsddb untested with this Berkeley DB "
                 "version %d.%d" %db_ver)
@@ -416,7 +376,7 @@ elif os.name == 'nt':
              ("bsddb3/test", glob.glob("test/*.py"))
              ]
 
-if (db_ver in ((6, 0), (6, 1), (6, 2))) and \
+if (db_ver in ((6, 2), (18, 1))) and \
   ("YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION" not in os.environ) :
     print (
         "\n"
@@ -454,10 +414,6 @@ if (db_ver in ((6, 0), (6, 1), (6, 2))) and \
         "******* COMPILATION ABORTED *******\n"
         )
     sys.exit(1)
-
-version_suffix = ""
-if sys.version_info[0] > 2 :
-    version_suffix = "3"
 
 
 # #############################
@@ -518,8 +474,8 @@ pybsddb_doc/>`__ --
       license = "3-clause BSD License",
 
       packages = ['bsddb3', 'bsddb3/tests'],
-      package_dir = {'bsddb3': 'Lib%s/bsddb' %version_suffix,
-                     'bsddb3/tests': 'Lib%s/bsddb/test' %version_suffix},
+      package_dir = {'bsddb3': 'lib/bsddb',
+                     'bsddb3/tests': 'lib/bsddb/test'},
       ext_modules = [Extension('bsddb3._pybsddb',
                                sources = ['Modules/_bsddb.c'],
                                depends = ['Modules/bsddb.h'],
@@ -543,12 +499,7 @@ pybsddb_doc/>`__ --
                     'Topic :: Database',
                     'Topic :: Software Development',
                     'Topic :: System :: Clustering',
-                    'Programming Language :: Python :: 2',
-                    'Programming Language :: Python :: 2.6',
-                    'Programming Language :: Python :: 2.7',
                     'Programming Language :: Python :: 3',
-                    'Programming Language :: Python :: 3.3',
-                    'Programming Language :: Python :: 3.4',
                     'Programming Language :: Python :: 3.5',
                     'Programming Language :: Python :: 3.6',
                     'Programming Language :: Python :: 3.7',
