@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Copyright (c) 2008-2020, Jesus Cea Avion <jcea@jcea.es>

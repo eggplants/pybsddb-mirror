@@ -8,6 +8,11 @@ Pkgsrc 19.4.0 has BDB 4.8, 5,3 and 6.2.
 
 TODO: Implement PEP 384 (Stable API)
 
+18.1.0-pre:
+  * Drop support for Berkeley DB 4.7, 5.1 and 6.1.
+  * Drop support for Python 2.6, 2.7, 3.3 and 3.4.
+  * If you try to install this package on Python 2,
+    an appropriate error is raised and directions are provided.
 
 6.2.7:
   * Update copyright notices.

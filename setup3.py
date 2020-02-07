@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Copyright (c) 2008-2020, Jesus Cea Avion <jcea@jcea.es>
@@ -152,9 +152,7 @@ if os.name == 'posix':
         lflags_arg = LFLAGS + LIBS
 
     # Supported Berkeley DB versions, in order of preference.
-    db_ver_list = ((6, 2), (6, 1),
-            (5, 3), (5, 1),
-            (4, 8), (4, 7))
+    db_ver_list = ((18, 1), (6, 2), (5, 3), (4, 8))
     db_ver = None
 
     # If we were not told where it is, go looking for it.

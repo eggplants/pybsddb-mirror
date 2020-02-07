@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+
 """
 Copyright (c) 2008-2020, Jesus Cea Avion <jcea@jcea.es>
 All rights reserved.
@@ -35,9 +36,22 @@ THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF
 SUCH DAMAGE.
 """
 
-import sys
-if sys.version_info[0] == 2 :
-  import setup2
-else :  # >= Python 3.0
-  import setup3
 
+from __future__ import print_function
+import sys
+
+
+if sys.version_info[0] == 2:
+    print()
+    print('******* COMPILATION ABORTED *******')
+    print()
+    print("Since release 18, this project doesn't support Python 2.7 anymore.")
+    print()
+    print('You can try to install a release supporting Python 2.7')
+    print('running the following command: (with the quotes)')
+    print()
+    print('    pip install "bsddb3<7"')
+    print()
+    sys.exit(1)
+
+import setup3
