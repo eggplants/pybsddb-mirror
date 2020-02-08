@@ -49,10 +49,10 @@ are met:
 extensions = ["sphinx.ext.extlinks"]
 extlinks = {
         "oracleapic":
-            ("https://docs.oracle.com/cd/E17076_05/html/api_reference/C/%s",
+            ("https://docs.oracle.com/database/bdb181/html/api_reference/C/%s",
             None),
         "oracle":
-            ("https://docs.oracle.com/cd/E17076_05/html/%s",
+            ("https://docs.oracle.com/database/bdb181/html/%s",
             None),
         }
 
