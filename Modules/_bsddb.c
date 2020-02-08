@@ -9657,6 +9657,9 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 #endif
 
     ADD_INT(d, DB_REP_CONF_INMEM);
+
+#if (DBVER >= 181)
+    ADD_INT(d, DB_REPMGR_CONF_DISABLE_SSL);
 #endif
 
 #if (DBVER >= 62)

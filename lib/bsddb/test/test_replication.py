@@ -104,6 +104,13 @@ class DBReplication(unittest.TestCase) :
         test_support.rmtree(self.homeDirMaster)
 
 class DBReplicationManager(DBReplication) :
+    def setUp(self):
+        super().setUp()
+
+        if db.version() >= (18, 1):
+            self.dbenvMaster.rep_set_config(DB_REPMGR_CONF_DISABLE_SSL, 1)
+            self.dbenvClient.rep_set_config(DB_REPMGR_CONF_DISABLE_SSL, 1)
+
     def test01_basic_replication(self) :
         master_port = test_support.find_unused_port()
         client_port = test_support.find_unused_port()
@@ -280,7 +287,8 @@ class DBReplicationManager(DBReplication) :
 
 class DBBaseReplication(DBReplication) :
     def setUp(self) :
-        DBReplication.setUp(self)
+        super().setUp()
+
         def confirmed_master(a,b,c) :
             if (b == db.DB_EVENT_REP_MASTER) or (b == db.DB_EVENT_REP_ELECTED) :
                 self.confirmed_master = True
@@ -525,7 +533,7 @@ class DBBaseReplication(DBReplication) :
 def test_suite():
     suite = unittest.TestSuite()
     dbenv = db.DBEnv()
-    try :
+    try:
         dbenv.repmgr_get_ack_policy()
         ReplicationManager_available=True
     except Exception:

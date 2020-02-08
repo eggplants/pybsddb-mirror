@@ -16,6 +16,21 @@ TODO: Implement PEP 384 (Stable API)
     an appropriate error is raised and directions are provided.
   * Remove dead code for unsupported Python releases.
   * Remove dead code for unsupported Berkeley DB releases.
+  * Support for DB_REPMGR_CONF_DISABLE_SSL flag in
+    "DB_ENV.rep_set_config()".
+  * *WARNING:* In Berkeley DB 18.1 and up, Replication Manager uses SSL by
+    default.
+
+    This configuration is currently unsupported.
+
+    If you use Berkeley DB 18.1 and up and Replication Manager, you *MUST*
+    configure the DB environment to not use SSL. You must do
+
+        DB_ENV.rep_set_config(db.DB_REPMGR_CONF_DISABLE_SSL, 1)
+
+    in your code.
+
+    This limitation will be overcomed in a future release of this project.
 
 6.2.7:
   * Update copyright notices.
