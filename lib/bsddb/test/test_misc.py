@@ -62,10 +62,7 @@ class MiscTestCase(unittest.TestCase):
         # check for crash fixed when db_home is used before open()
         self.assertTrue(env.db_home is None)
         env.open(self.homeDir, db.DB_CREATE)
-        if sys.version_info[0] < 3 :
-            self.assertEqual(self.homeDir, env.db_home)
-        else :
-            self.assertEqual(bytes(self.homeDir, "ascii"), env.db_home)
+        self.assertEqual(bytes(self.homeDir, "ascii"), env.db_home)
 
     def test03_repr_closed_db(self):
         db = hashopen(self.filename)

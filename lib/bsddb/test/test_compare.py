@@ -101,10 +101,6 @@ class AbstractBtreeKeyCompareTestCase(unittest.TestCase) :
     env = None
     db = None
 
-    if sys.version_info < (2, 7) :
-        def assertLess(self, a, b, msg=None) :
-            return self.assertTrue(a<b, msg=msg)
-
     def setUp(self) :
         self.filename = self.__class__.__name__ + '.db'
         self.homeDir = get_new_environment_path()
@@ -233,8 +229,6 @@ class BtreeExceptionsTestCase(AbstractBtreeKeyCompareTestCase) :
             errorOut = temp.getvalue()
             if not successRe.search(errorOut) :
                 self.fail("unexpected stderr output:\n"+errorOut)
-        if sys.version_info < (3, 0) :  # XXX: How to do this in Py3k ???
-            sys.exc_info()[2] = sys.last_traceback = None
 
     def _test_compare_function_exception(self) :
         self.startTest()
@@ -285,10 +279,6 @@ class BtreeExceptionsTestCase(AbstractBtreeKeyCompareTestCase) :
 class AbstractDuplicateCompareTestCase(unittest.TestCase) :
     env = None
     db = None
-
-    if sys.version_info < (2, 7) :
-        def assertLess(self, a, b, msg=None) :
-            return self.assertTrue(a<b, msg=msg)
 
     def setUp(self) :
         self.filename = self.__class__.__name__ + '.db'
@@ -415,8 +405,6 @@ class DuplicateExceptionsTestCase(AbstractDuplicateCompareTestCase) :
             errorOut = temp.getvalue()
             if not successRe.search(errorOut) :
                 self.fail("unexpected stderr output:\n"+errorOut)
-        if sys.version_info < (3, 0) :  # XXX: How to do this in Py3k ???
-            sys.exc_info()[2] = sys.last_traceback = None
 
     def _test_compare_function_exception(self) :
         self.startTest()

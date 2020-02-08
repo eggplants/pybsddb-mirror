@@ -38,11 +38,6 @@
 # it just simply imports everything from _db.
 
 import sys
-absolute_import = (sys.version_info[0] >= 3)
 
-if not absolute_import :
-    from _pybsddb import *
-    from _pybsddb import __version__
-else :
-    from ._pybsddb import *
-    from ._pybsddb import __version__
+from ._pybsddb import *
+from ._pybsddb import __version__

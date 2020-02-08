@@ -93,7 +93,7 @@ class BasicTestCase(unittest.TestCase):
                 self.env.open(self.homeDir, self.envflags | db.DB_CREATE)
                 self.filename = "test"
             # Yes, a bare except is intended, since we're re-raising the exc.
-            except:
+            except Exception:
                 test_support.rmtree(self.homeDir)
                 raise
         else:
@@ -705,10 +705,6 @@ class BasicHashWithEnvTestCase(BasicWithEnvTestCase):
 #----------------------------------------------------------------------
 
 class BasicTransactionTestCase(BasicTestCase):
-    if sys.version_info < (2, 7) :
-        def assertIn(self, a, b, msg=None) :
-            return self.assertTrue(a in b, msg=msg)
-
     dbopenflags = db.DB_THREAD | db.DB_AUTO_COMMIT
     useEnv = 1
     envflags = (db.DB_THREAD | db.DB_INIT_MPOOL | db.DB_INIT_LOCK |
@@ -1116,18 +1112,6 @@ class DBPrivateObject(PrivateObject) :
     def setUp(self) :
         self.obj = db.DB()
 
-class CrashAndBurn(unittest.TestCase) :
-    #def test01_OpenCrash(self) :
-    #    # See http://bugs.python.org/issue3307
-    #    self.assertRaises(db.DBInvalidArgError, db.DB, None, 65535)
-
-    if db.version() < (4, 8) :
-        def test02_DBEnv_dealloc(self):
-            # http://bugs.python.org/issue3885
-            import gc
-            self.assertRaises(db.DBInvalidArgError, db.DBEnv, ~db.DB_RPCCLIENT)
-            gc.collect()
-
 
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
@@ -1154,7 +1138,6 @@ def test_suite():
     suite.addTest(unittest.makeSuite(HashMultiDBTestCase))
     suite.addTest(unittest.makeSuite(DBEnvPrivateObject))
     suite.addTest(unittest.makeSuite(DBPrivateObject))
-    suite.addTest(unittest.makeSuite(CrashAndBurn))
 
     return suite
 

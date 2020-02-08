@@ -40,13 +40,9 @@ instead.  It mirrors the Oracle Berkeley DB C API.
 """
 
 import sys
-absolute_import = (sys.version_info[0] >= 3)
 
 try:
-    if absolute_import :
-        from . import _pybsddb
-    else :
-        import _pybsddb
+    from . import _pybsddb
     from bsddb3.dbutils import DeadlockWrap as _DeadlockWrap
 except ImportError:
     # Remove ourselves from sys.modules
@@ -66,10 +62,7 @@ import sys, os
 
 from weakref import ref
 
-if (sys.version_info[0] >= 3):
-    from collections.abc import MutableMapping
-else:
-    from collections import MutableMapping
+from collections.abc import MutableMapping
 
 class _iter_mixin(MutableMapping):
     def _make_iter_cursor(self):
@@ -282,14 +275,14 @@ class _DBWithCursor(_iter_mixin):
         self._checkCursor()
         return _DeadlockWrap(self.dbc.set_range, key)
 
-    def __next__(self):  # Renamed by "2to3"
+    def next(self):
         self._checkOpen()
         self._checkCursor()
-        rv = _DeadlockWrap(getattr(self.dbc, "next"))
+        rv = _DeadlockWrap(self.dbc.next)
         return rv
 
-    if sys.version_info[0] >= 3 :  # For "2to3" conversion
-        next = __next__
+    def __next__(self):
+        return self.next()
 
     def previous(self):
         self._checkOpen()

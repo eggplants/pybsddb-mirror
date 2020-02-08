@@ -30,28 +30,15 @@ storage.
 #------------------------------------------------------------------------
 
 import sys
-absolute_import = (sys.version_info[0] >= 3)
-if absolute_import :
-    from . import db
-else :
-    from . import db
+from collections.abc import MutableMapping
+import pickle
+from . import db
 
-if sys.version_info[0] >= 3 :
-    import pickle  # Will be converted to "pickle" by "2to3"
-else :
-    import warnings
-    with warnings.catch_warnings() :
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        import pickle
 
 HIGHEST_PROTOCOL = pickle.HIGHEST_PROTOCOL
 def _dumps(object, protocol):
     return pickle.dumps(object, protocol=protocol)
 
-if (sys.version_info[0] >= 3):
-    from collections.abc import MutableMapping
-else:
-    from collections import MutableMapping
 
 #------------------------------------------------------------------------
 
@@ -207,10 +194,9 @@ class DBShelf(MutableMapping):
 
     def associate(self, secondaryDB, callback, flags=0):
         def _shelf_callback(priKey, priData, realCallback=callback):
-            # Safe in Python 2.x because expresion short circuit
-            if sys.version_info[0] < 3 or isinstance(priData, bytes) :
+            if isinstance(priData, bytes):
                 data = pickle.loads(priData)
-            else :
+            else:
                 data = pickle.loads(bytes(priData, "iso8859-1"))  # 8 bits
             return realCallback(priKey, data)
 
@@ -344,10 +330,9 @@ class DBShelfCursor:
             return None
         else:
             key, data = rec
-            # Safe in Python 2.x because expresion short circuit
-            if sys.version_info[0] < 3 or isinstance(data, bytes) :
+            if isinstance(data, bytes):
                 return key, pickle.loads(data)
-            else :
+            else:
                 return key, pickle.loads(bytes(data, "iso8859-1"))  # 8 bits
 
     #----------------------------------------------

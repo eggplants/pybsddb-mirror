@@ -14,6 +14,8 @@ TODO: Implement PEP 384 (Stable API)
   * Drop support for Python 2.6, 2.7, 3.3 and 3.4.
   * If you try to install this package on Python 2,
     an appropriate error is raised and directions are provided.
+  * Remove dead code for unsupported Python releases.
+  * Remove dead code for unsupported Berkeley DB releases.
 
 6.2.7:
   * Update copyright notices.

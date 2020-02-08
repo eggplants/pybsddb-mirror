@@ -43,7 +43,7 @@ import glob
 
 try :
   from setuptools import setup, Extension
-except :
+except Exception:
   from distutils.core import setup, Extension
 
 from distutils.dep_util import newer

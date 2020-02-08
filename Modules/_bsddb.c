@@ -100,18 +100,6 @@
 /* --------------------------------------------------------------------- */
 /* Various macro definitions */
 
-#if (PY_VERSION_HEX >= 0x03000000)
-#define NUMBER_Check    PyLong_Check
-#define NUMBER_AsLong   PyLong_AsLong
-#define NUMBER_FromLong PyLong_FromLong
-#define NUMBER_FromUnsignedLong PyLong_FromUnsignedLong
-#else
-#define NUMBER_Check    PyInt_Check
-#define NUMBER_AsLong   PyInt_AsLong
-#define NUMBER_FromLong PyInt_FromLong
-#define NUMBER_FromUnsignedLong PyInt_FromSize_t
-#endif
-
 #ifdef WITH_THREAD
 
 /* These are for when calling Python --> C */
@@ -170,10 +158,6 @@ static PyObject* DBForeignConflictError; /* DB_FOREIGN_CONFLICT */
 
 
 static PyObject* DBRepUnavailError;     /* DB_REP_UNAVAIL */
-
-#if (DBVER < 48)
-#define DB_GID_SIZE DB_XIDDATASIZE
-#endif
 
 
 /* --------------------------------------------------------------------- */
@@ -347,11 +331,7 @@ static int make_dbt(PyObject* obj, DBT* dbt)
     }
     else if (!PyArg_Parse(obj, "s#", &dbt->data, &size)) {
         PyErr_SetString(PyExc_TypeError,
-#if (PY_VERSION_HEX < 0x03000000)
-                        "Data values must be of type string or None.");
-#else
                         "Data values must be of type bytes or None.");
-#endif
         return 0;
     }
     dbt->size = size;
@@ -391,11 +371,7 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
         if (type == DB_RECNO || type == DB_QUEUE) {
             PyErr_SetString(
                 PyExc_TypeError,
-#if (PY_VERSION_HEX < 0x03000000)
-                "String keys not allowed for Recno and Queue DB's");
-#else
                 "Bytes keys not allowed for Recno and Queue DB's");
-#endif
             return 0;
         }
 
@@ -417,7 +393,7 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
         key->size = PyBytes_GET_SIZE(keyobj);
     }
 
-    else if (NUMBER_Check(keyobj)) {
+    else if (PyLong_Check(keyobj)) {
         /* verify access method type */
         type = _DB_get_type(self);
         if (type == -1)
@@ -436,7 +412,7 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
 
         /* Make a key out of the requested recno, use allocated space so DB
          * will be able to realloc room for the real key if needed. */
-        recno = NUMBER_AsLong(keyobj);
+        recno = PyLong_AsLong(keyobj);
         key->data = malloc(sizeof(db_recno_t));
         if (key->data == NULL) {
             PyErr_SetString(PyExc_MemoryError, "Key memory allocation failed");
@@ -448,11 +424,7 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
     }
     else {
         PyErr_Format(PyExc_TypeError,
-#if (PY_VERSION_HEX < 0x03000000)
-                     "String or Integer object expected for key, %s found",
-#else
                      "Bytes or Integer object expected for key, %s found",
-#endif
                      Py_TYPE(keyobj)->tp_name);
         return 0;
     }
@@ -794,18 +766,18 @@ static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
 /* add an integer to a dictionary using the given name as a key */
 static void _addIntToDict(PyObject* dict, char *name, int value)
 {
-    PyObject* v = NUMBER_FromLong((long) value);
+    PyObject* v = PyLong_FromLong((long) value);
     if (!v || PyDict_SetItemString(dict, name, v))
         PyErr_Clear();
 
     Py_XDECREF(v);
 }
 
-#if (DBVER >= 61)
+#if (DBVER >= 62)
 /* add an unsigned integer to a dictionary using the given name as a key */
 static void _addUnsignedIntToDict(PyObject* dict, char *name, unsigned int value)
 {
-    PyObject* v = NUMBER_FromUnsignedLong((unsigned long) value);
+    PyObject* v = PyLong_FromUnsignedLong((unsigned long) value);
     if (!v || PyDict_SetItemString(dict, name, v))
         PyErr_Clear();
 
@@ -823,7 +795,7 @@ static void _addTimeTToDict(PyObject* dict, char *name, time_t value)
 		v = PyLong_FromLongLong((PY_LONG_LONG) value);
 	else
 #endif
-		v = NUMBER_FromLong((long) value);
+		v = PyLong_FromLong((long) value);
     if (!v || PyDict_SetItemString(dict, name, v))
         PyErr_Clear();
 
@@ -1409,7 +1381,7 @@ DB_append(DBObject* self, PyObject* args, PyObject* kwargs)
     if (-1 == _DB_put(self, txn, &key, &data, DB_APPEND))
         return NULL;
 
-    return NUMBER_FromLong(recno);
+    return PyLong_FromLong(recno);
 }
 
 
@@ -1441,8 +1413,8 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
         else if (result == Py_None) {
             retval = DB_DONOTINDEX;
         }
-        else if (NUMBER_Check(result)) {
-            retval = NUMBER_AsLong(result);
+        else if (PyLong_Check(result)) {
+            retval = PyLong_AsLong(result);
         }
         else if (PyBytes_Check(result)) {
             char* data;
@@ -1480,11 +1452,7 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
                 {
                     PyErr_SetString(
                        PyExc_TypeError,
-#if (PY_VERSION_HEX < 0x03000000)
-"The list returned by DB->associate callback should be a list of strings.");
-#else
 "The list returned by DB->associate callback should be a list of bytes.");
-#endif
                     PyErr_Print();
                 }
 
@@ -1520,11 +1488,7 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
         else {
             PyErr_SetString(
                PyExc_TypeError,
-#if (PY_VERSION_HEX < 0x03000000)
-"DB associate callback should return DB_DONOTINDEX/string/list of strings.");
-#else
 "DB associate callback should return DB_DONOTINDEX/bytes/list of bytes.");
-#endif
             PyErr_Print();
         }
 
@@ -1856,7 +1820,7 @@ DB_fd(DBObject* self)
     err = self->db->fd(self->db, &the_fd);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(the_fd);
+    return PyLong_FromLong(the_fd);
 }
 
 
@@ -2036,7 +2000,7 @@ DB_pget(DBObject* self, PyObject* args, PyObject* kwargs)
 
         if (self->primaryDBType == DB_RECNO ||
             self->primaryDBType == DB_QUEUE)
-            pkeyObj = NUMBER_FromLong(*(int *)pkey.data);
+            pkeyObj = PyLong_FromLong(*(int *)pkey.data);
         else
             pkeyObj = Build_PyString(pkey.data, pkey.size);
 
@@ -2045,7 +2009,7 @@ DB_pget(DBObject* self, PyObject* args, PyObject* kwargs)
             PyObject *keyObj;
             int type = _DB_get_type(self);
             if (type == DB_RECNO || type == DB_QUEUE)
-                keyObj = NUMBER_FromLong(*(int *)key.data);
+                keyObj = PyLong_FromLong(*(int *)key.data);
             else
                 keyObj = Build_PyString(key.data, key.size);
             retval = PyTuple_Pack(3, keyObj, pkeyObj, dataObj);
@@ -2099,7 +2063,7 @@ DB_get_size(DBObject* self, PyObject* args, PyObject* kwargs)
     err = self->db->get(self->db, txn, &key, &data, flags);
     MYDB_END_ALLOW_THREADS;
     if ((err == DB_BUFFER_SMALL) || (err == 0)) {
-        retval = NUMBER_FromLong((long)data.size);
+        retval = PyLong_FromLong((long)data.size);
         err = 0;
     }
 
@@ -2184,7 +2148,7 @@ DB_get_byteswapped(DBObject* self)
     err = self->db->get_byteswapped(self->db, &retval);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(retval);
+    return PyLong_FromLong(retval);
 }
 
 
@@ -2198,7 +2162,7 @@ DB_get_type(DBObject* self)
     type = _DB_get_type(self);
     if (type == -1)
         return NULL;
-    return NUMBER_FromLong(type);
+    return PyLong_FromLong(type);
 }
 
 
@@ -2393,7 +2357,7 @@ DB_put(DBObject* self, PyObject* args, PyObject* kwargs)
     }
 
     if (flags & DB_APPEND)
-        retval = NUMBER_FromLong(*((db_recno_t*)key.data));
+        retval = PyLong_FromLong(*((db_recno_t*)key.data));
     else {
         retval = Py_None;
         Py_INCREF(retval);
@@ -2497,7 +2461,7 @@ DB_get_priority(DBObject* self)
     err = self->db->get_priority(self->db, &priority);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(priority);
+    return PyLong_FromLong(priority);
 }
 
 static PyObject*
@@ -2528,7 +2492,7 @@ DB_get_open_flags(DBObject* self)
     err = self->db->get_open_flags(self->db, &flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(flags);
+    return PyLong_FromLong(flags);
 }
 
 static PyObject*
@@ -2560,7 +2524,7 @@ DB_get_q_extentsize(DBObject* self)
     err = self->db->get_q_extentsize(self->db, &extentsize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(extentsize);
+    return PyLong_FromLong(extentsize);
 }
 
 static PyObject*
@@ -2591,7 +2555,7 @@ DB_get_bt_minkey(DBObject* self)
     err = self->db->get_bt_minkey(self->db, &bt_minkey);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(bt_minkey);
+    return PyLong_FromLong(bt_minkey);
 }
 
 static int
@@ -2619,7 +2583,7 @@ static int
 _db_compareCallback(DB* db,
             const DBT *leftKey,
             const DBT *rightKey
-#if (DBVER >= 61)
+#if (DBVER >= 62)
           , size_t *locp
 #endif
             )
@@ -2629,7 +2593,7 @@ _db_compareCallback(DB* db,
     PyObject *result = NULL;
     DBObject *self = (DBObject *)db->app_private;
 
-# if (DBVER >= 61)
+#if (DBVER >= 62)
     locp = NULL;  /* As required by documentation */
 #endif
 
@@ -2654,8 +2618,8 @@ _db_compareCallback(DB* db,
 	    /* we're in a callback within the DB code, we can't raise */
 	    PyErr_Print();
 	    res = _default_cmp(leftKey, rightKey);
-	} else if (NUMBER_Check(result)) {
-	    res = NUMBER_AsLong(result);
+	} else if (PyLong_Check(result)) {
+	    res = PyLong_AsLong(result);
 	} else {
 	    PyErr_SetString(PyExc_TypeError,
 			    "DB_bt_compare callback MUST return an int.");
@@ -2695,12 +2659,12 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
     Py_DECREF(tuple);
     if (result == NULL)
         return NULL;
-    if (!NUMBER_Check(result)) {
+    if (!PyLong_Check(result)) {
 	Py_DECREF(result);
 	PyErr_SetString(PyExc_TypeError,
 		        "callback MUST return an int");
 	return NULL;
-    } else if (NUMBER_AsLong(result) != 0) {
+    } else if (PyLong_AsLong(result) != 0) {
 	Py_DECREF(result);
 	PyErr_SetString(PyExc_TypeError,
 		        "callback failed to return 0 on two empty strings");
@@ -2741,7 +2705,7 @@ static int
 _db_dupCompareCallback(DB* db,
             const DBT *leftKey,
             const DBT *rightKey
-#if (DBVER >= 61)
+#if (DBVER >= 62)
           , size_t *locp
 #endif
         )
@@ -2751,7 +2715,7 @@ _db_dupCompareCallback(DB* db,
     PyObject *result = NULL;
     DBObject *self = (DBObject *)db->app_private;
 
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     locp = NULL;  /* As required by documentation */
 #endif
 
@@ -2776,8 +2740,8 @@ _db_dupCompareCallback(DB* db,
 	    /* we're in a callback within the DB code, we can't raise */
 	    PyErr_Print();
 	    res = _default_cmp(leftKey, rightKey);
-	} else if (NUMBER_Check(result)) {
-	    res = NUMBER_AsLong(result);
+	} else if (PyLong_Check(result)) {
+	    res = PyLong_AsLong(result);
 	} else {
 	    PyErr_SetString(PyExc_TypeError,
 			    "DB_dup_compare callback MUST return an int.");
@@ -2817,12 +2781,12 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
     Py_DECREF(tuple);
     if (result == NULL)
         return NULL;
-    if (!NUMBER_Check(result)) {
+    if (!PyLong_Check(result)) {
 	Py_DECREF(result);
 	PyErr_SetString(PyExc_TypeError,
 		        "callback MUST return an int");
 	return NULL;
-    } else if (NUMBER_AsLong(result) != 0) {
+    } else if (PyLong_AsLong(result) != 0) {
 	Py_DECREF(result);
 	PyErr_SetString(PyExc_TypeError,
 		        "callback failed to return 0 on two empty strings");
@@ -2926,7 +2890,7 @@ DB_get_flags(DBObject* self)
     err = self->db->get_flags(self->db, &flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(flags);
+    return PyLong_FromLong(flags);
 }
 
 static PyObject*
@@ -2985,7 +2949,7 @@ DB_get_h_ffactor(DBObject* self)
     err = self->db->get_h_ffactor(self->db, &ffactor);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(ffactor);
+    return PyLong_FromLong(ffactor);
 }
 
 static PyObject*
@@ -3016,7 +2980,7 @@ DB_get_h_nelem(DBObject* self)
     err = self->db->get_h_nelem(self->db, &nelem);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(nelem);
+    return PyLong_FromLong(nelem);
 }
 
 static PyObject*
@@ -3047,7 +3011,7 @@ DB_get_lorder(DBObject* self)
     err = self->db->get_lorder(self->db, &lorder);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lorder);
+    return PyLong_FromLong(lorder);
 }
 
 static PyObject*
@@ -3078,7 +3042,7 @@ DB_get_pagesize(DBObject* self)
     err = self->db->get_pagesize(self->db, &pagesize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(pagesize);
+    return PyLong_FromLong(pagesize);
 }
 
 static PyObject*
@@ -3113,7 +3077,7 @@ DB_get_re_delim(DBObject* self)
     err = self->db->get_re_delim(self->db, &re_delim);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(re_delim);
+    return PyLong_FromLong(re_delim);
 }
 
 static PyObject*
@@ -3144,7 +3108,7 @@ DB_get_re_len(DBObject* self)
     err = self->db->get_re_len(self->db, &re_len);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(re_len);
+    return PyLong_FromLong(re_len);
 }
 
 static PyObject*
@@ -3178,7 +3142,7 @@ DB_get_re_pad(DBObject* self)
     err = self->db->get_re_pad(self->db, &re_pad);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(re_pad);
+    return PyLong_FromLong(re_pad);
 }
 
 static PyObject*
@@ -3378,7 +3342,7 @@ DB_truncate(DBObject* self, PyObject* args, PyObject* kwargs)
     err = self->db->truncate(self->db, txn, &count, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(count);
+    return PyLong_FromLong(count);
 }
 
 
@@ -3460,7 +3424,7 @@ DB_set_get_returns_none(DBObject* self, PyObject* args)
         ++oldValue;
     self->moduleFlags.getReturnsNone = (flags >= 1);
     self->moduleFlags.cursorSetReturnsNone = (flags >= 2);
-    return NUMBER_FromLong(oldValue);
+    return PyLong_FromLong(oldValue);
 }
 
 static PyObject*
@@ -3496,7 +3460,7 @@ DB_get_encrypt_flags(DBObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(flags);
+    return PyLong_FromLong(flags);
 }
 
 
@@ -3745,7 +3709,7 @@ _DB_make_list(DBObject* self, DB_TXN* txn, int type)
                 break;
             case DB_RECNO:
             case DB_QUEUE:
-                item = NUMBER_FromLong(*((db_recno_t*)key.data));
+                item = PyLong_FromLong(*((db_recno_t*)key.data));
                 break;
             }
             break;
@@ -4006,7 +3970,7 @@ DBSite_get_eid(DBSiteObject* self)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    return NUMBER_FromLong(eid);
+    return PyLong_FromLong(eid);
 }
 
 static PyObject*
@@ -4130,7 +4094,7 @@ DBC_count(DBCursorObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(count);
+    return PyLong_FromLong(count);
 }
 
 
@@ -4327,7 +4291,7 @@ DBC_pget(DBCursorObject* self, PyObject* args, PyObject *kwargs)
 
         if (self->mydb->primaryDBType == DB_RECNO ||
             self->mydb->primaryDBType == DB_QUEUE)
-            pkeyObj = NUMBER_FromLong(*(int *)pkey.data);
+            pkeyObj = PyLong_FromLong(*(int *)pkey.data);
         else
             pkeyObj = Build_PyString(pkey.data, pkey.size);
 
@@ -4336,7 +4300,7 @@ DBC_pget(DBCursorObject* self, PyObject* args, PyObject *kwargs)
             PyObject *keyObj;
             int type = _DB_get_type(self->mydb);
             if (type == DB_RECNO || type == DB_QUEUE)
-                keyObj = NUMBER_FromLong(*(int *)key.data);
+                keyObj = PyLong_FromLong(*(int *)key.data);
             else
                 keyObj = Build_PyString(key.data, key.size);
             retval = PyTuple_Pack(3, keyObj, pkeyObj, dataObj);
@@ -4379,7 +4343,7 @@ DBC_get_recno(DBCursorObject* self)
     RETURN_IF_ERR();
 
     recno = *((db_recno_t*)data.data);
-    return NUMBER_FromLong(recno);
+    return PyLong_FromLong(recno);
 }
 
 
@@ -4647,7 +4611,7 @@ DBC_get_current_size(DBCursorObject* self)
     MYDB_END_ALLOW_THREADS;
     if (err == DB_BUFFER_SMALL || !err) {
         /* DB_BUFFER_SMALL means positive size, !err means zero length value */
-        retval = NUMBER_FromLong((long)data.size);
+        retval = PyLong_FromLong((long)data.size);
         err = 0;
     }
 
@@ -4828,7 +4792,7 @@ DBC_get_priority(DBCursorObject* self)
     err = self->dbc->get_priority(self->dbc, &priority);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(priority);
+    return PyLong_FromLong(priority);
 }
 
 
@@ -4980,9 +4944,7 @@ DBEnv_memp_stat(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     MAKE_ENTRY(alloc_pages);
     MAKE_ENTRY(alloc_max_pages);
     MAKE_ENTRY(io_wait);
-#if (DBVER >= 48)
     MAKE_ENTRY(sync_interrupted);
-#endif
 
 #undef MAKE_ENTRY
     free(gsp);
@@ -5064,7 +5026,7 @@ DBEnv_memp_trickle(DBEnvObject* self, PyObject* args)
     err = self->db_env->memp_trickle(self->db_env, percent, &nwrotep);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(nwrotep);
+    return PyLong_FromLong(nwrotep);
 }
 
 static PyObject*
@@ -5196,7 +5158,7 @@ DBEnv_get_encrypt_flags(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(flags);
+    return PyLong_FromLong(flags);
 }
 
 static PyObject*
@@ -5217,7 +5179,7 @@ DBEnv_get_timeout(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     err = self->db_env->get_timeout(self->db_env, &timeout, flag);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(timeout);
+    return PyLong_FromLong(timeout);
 }
 
 
@@ -5271,7 +5233,7 @@ DBEnv_get_shm_key(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(shm_key);
+    return PyLong_FromLong(shm_key);
 }
 
 static PyObject*
@@ -5337,7 +5299,7 @@ DBEnv_get_thread_count(DBEnvObject* self)
     err = self->db_env->get_thread_count(self->db_env, &count);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(count);
+    return PyLong_FromLong(count);
 }
 
 static PyObject*
@@ -5405,7 +5367,7 @@ DBEnv_get_flags(DBEnvObject* self)
     err = self->db_env->get_flags(self->db_env, &flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(flags);
+    return PyLong_FromLong(flags);
 }
 
 static PyObject*
@@ -5474,7 +5436,7 @@ DBEnv_mutex_get_max(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(value);
+    return PyLong_FromLong(value);
 }
 
 static PyObject*
@@ -5510,7 +5472,7 @@ DBEnv_mutex_get_align(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(align);
+    return PyLong_FromLong(align);
 }
 
 static PyObject*
@@ -5546,7 +5508,7 @@ DBEnv_mutex_get_increment(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(increment);
+    return PyLong_FromLong(increment);
 }
 
 static PyObject*
@@ -5582,7 +5544,7 @@ DBEnv_mutex_get_tas_spins(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong(tas_spins);
+    return PyLong_FromLong(tas_spins);
 }
 
 static PyObject*
@@ -5669,7 +5631,7 @@ DBEnv_get_lg_filemode(DBEnvObject* self)
     err = self->db_env->get_lg_filemode(self->db_env, &filemode);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(filemode);
+    return PyLong_FromLong(filemode);
 }
 
 static PyObject*
@@ -5700,7 +5662,7 @@ DBEnv_get_lg_bsize(DBEnvObject* self)
     err = self->db_env->get_lg_bsize(self->db_env, &lg_bsize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lg_bsize);
+    return PyLong_FromLong(lg_bsize);
 }
 
 static PyObject*
@@ -5763,7 +5725,7 @@ DBEnv_get_lg_max(DBEnvObject* self)
     err = self->db_env->get_lg_max(self->db_env, &lg_max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lg_max);
+    return PyLong_FromLong(lg_max);
 }
 
 static PyObject*
@@ -5794,7 +5756,7 @@ DBEnv_get_lg_regionmax(DBEnvObject* self)
     err = self->db_env->get_lg_regionmax(self->db_env, &lg_regionmax);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lg_regionmax);
+    return PyLong_FromLong(lg_regionmax);
 }
 
 static PyObject*
@@ -5825,7 +5787,7 @@ DBEnv_get_lk_partitions(DBEnvObject* self)
     err = self->db_env->get_lk_partitions(self->db_env, &lk_partitions);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lk_partitions);
+    return PyLong_FromLong(lk_partitions);
 }
 
 static PyObject*
@@ -5856,7 +5818,7 @@ DBEnv_get_lk_detect(DBEnvObject* self)
     err = self->db_env->get_lk_detect(self->db_env, &lk_detect);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lk_detect);
+    return PyLong_FromLong(lk_detect);
 }
 
 
@@ -5888,7 +5850,7 @@ DBEnv_get_lk_max_locks(DBEnvObject* self)
     err = self->db_env->get_lk_max_locks(self->db_env, &lk_max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lk_max);
+    return PyLong_FromLong(lk_max);
 }
 
 static PyObject*
@@ -5919,7 +5881,7 @@ DBEnv_get_lk_max_lockers(DBEnvObject* self)
     err = self->db_env->get_lk_max_lockers(self->db_env, &lk_max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lk_max);
+    return PyLong_FromLong(lk_max);
 }
 
 static PyObject*
@@ -5950,7 +5912,7 @@ DBEnv_get_lk_max_objects(DBEnvObject* self)
     err = self->db_env->get_lk_max_objects(self->db_env, &lk_max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(lk_max);
+    return PyLong_FromLong(lk_max);
 }
 
 static PyObject*
@@ -5965,7 +5927,7 @@ DBEnv_get_mp_mmapsize(DBEnvObject* self)
     err = self->db_env->get_mp_mmapsize(self->db_env, &mmapsize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(mmapsize);
+    return PyLong_FromLong(mmapsize);
 }
 
 static PyObject*
@@ -6028,7 +5990,7 @@ DBEnv_txn_recover(DBEnvObject* self)
     DBTxnObject *txn;
 #define PREPLIST_LEN 16
     DB_PREPLIST preplist[PREPLIST_LEN];
-#if (DBVER < 48) || (DBVER >= 53)
+#if (DBVER >= 53)
     long retp, i;
 #else
     u_int32_t retp, i;
@@ -6175,7 +6137,7 @@ DBEnv_get_tx_timestamp(DBEnvObject* self)
     err = self->db_env->get_tx_timestamp(self->db_env, &timestamp);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(timestamp);
+    return PyLong_FromLong(timestamp);
 }
 
 static PyObject*
@@ -6211,7 +6173,7 @@ DBEnv_lock_detect(DBEnvObject* self, PyObject* args)
     err = self->db_env->lock_detect(self->db_env, flags, atype, &aborted);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(aborted);
+    return PyLong_FromLong(aborted);
 }
 
 
@@ -6246,7 +6208,7 @@ DBEnv_lock_id(DBEnvObject* self)
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
 
-    return NUMBER_FromLong((long)theID);
+    return PyLong_FromLong((long)theID);
 }
 
 static PyObject*
@@ -6867,7 +6829,7 @@ DBEnv_set_get_returns_none(DBEnvObject* self, PyObject* args)
         ++oldValue;
     self->moduleFlags.getReturnsNone = (flags >= 1);
     self->moduleFlags.cursorSetReturnsNone = (flags >= 2);
-    return NUMBER_FromLong(oldValue);
+    return PyLong_FromLong(oldValue);
 }
 
 static PyObject*
@@ -6933,32 +6895,8 @@ DBEnv_get_open_flags(DBEnvObject* self)
     err = self->db_env->get_open_flags(self->db_env, &flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(flags);
+    return PyLong_FromLong(flags);
 }
-
-#if (DBVER < 48)
-static PyObject*
-DBEnv_set_rpc_server(DBEnvObject* self, PyObject* args, PyObject* kwargs)
-{
-    int err;
-    char *host;
-    long cl_timeout=0, sv_timeout=0;
-
-    static char* kwnames[] = { "host", "cl_timeout", "sv_timeout", NULL};
-
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|ll:set_rpc_server", kwnames,
-                                     &host, &cl_timeout, &sv_timeout))
-        return NULL;
-    CHECK_ENV_NOT_CLOSED(self);
-
-    MYDB_BEGIN_ALLOW_THREADS;
-    err = self->db_env->set_rpc_server(self->db_env, NULL, host, cl_timeout,
-            sv_timeout, 0);
-    MYDB_END_ALLOW_THREADS;
-    RETURN_IF_ERR();
-    RETURN_NONE();
-}
-#endif
 
 static PyObject*
 DBEnv_set_mp_max_openfd(DBEnvObject* self, PyObject* args)
@@ -6989,7 +6927,7 @@ DBEnv_get_mp_max_openfd(DBEnvObject* self)
     err = self->db_env->get_mp_max_openfd(self->db_env, &maxopenfd);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(maxopenfd);
+    return PyLong_FromLong(maxopenfd);
 }
 
 
@@ -7319,7 +7257,7 @@ DBEnv_rep_get_limit(DBEnvObject* self)
     err = self->db_env->rep_get_limit(self->db_env, &gbytes, &bytes);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(bytes);
+    return PyLong_FromLong(bytes);
 }
 
 static PyObject*
@@ -7444,7 +7382,7 @@ DBEnv_rep_get_nsites(DBEnvObject* self)
     err = self->db_env->rep_get_nsites(self->db_env, &nsites);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(nsites);
+    return PyLong_FromLong(nsites);
 }
 
 static PyObject*
@@ -7475,7 +7413,7 @@ DBEnv_rep_get_priority(DBEnvObject* self)
     err = self->db_env->rep_get_priority(self->db_env, &priority);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(priority);
+    return PyLong_FromLong(priority);
 }
 
 static PyObject*
@@ -7510,7 +7448,7 @@ DBEnv_rep_get_timeout(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_get_timeout(self->db_env, which, &timeout);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(timeout);
+    return PyLong_FromLong(timeout);
 }
 
 
@@ -7728,7 +7666,7 @@ DBEnv_repmgr_add_remote_site(DBEnvObject* self, PyObject* args, PyObject*
     err = self->db_env->repmgr_add_remote_site(self->db_env, host, port, &eidp, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(eidp);
+    return PyLong_FromLong(eidp);
 }
 #endif
 
@@ -7761,7 +7699,7 @@ DBEnv_repmgr_get_ack_policy(DBEnvObject* self)
     err = self->db_env->repmgr_get_ack_policy(self->db_env, &ack_policy);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return NUMBER_FromLong(ack_policy);
+    return PyLong_FromLong(ack_policy);
 }
 
 static PyObject*
@@ -7785,7 +7723,7 @@ DBEnv_repmgr_site_list(DBEnvObject* self)
     }
 
     for(;countp--;) {
-        key=NUMBER_FromLong(listp[countp].eid);
+        key=PyLong_FromLong(listp[countp].eid);
         if(!key) {
             Py_DECREF(stats);
             free(listp);
@@ -8084,7 +8022,7 @@ DBTxn_id(DBTxnObject* self)
     MYDB_BEGIN_ALLOW_THREADS;
     id = self->txn->id(self->txn);
     MYDB_END_ALLOW_THREADS;
-    return NUMBER_FromLong(id);
+    return PyLong_FromLong(id);
 }
 
 
@@ -8139,17 +8077,10 @@ DBTxn_get_name(DBTxnObject* self)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-#if (PY_VERSION_HEX < 0x03000000)
-    if (!name) {
-        return PyString_FromString("");
-    }
-    return PyString_FromString(name);
-#else
     if (!name) {
         return PyUnicode_FromString("");
     }
     return PyUnicode_FromString(name);
-#endif
 }
 
 
@@ -8204,7 +8135,7 @@ static PyObject*
 DBSequence_get(DBSequenceObject* self, PyObject* args, PyObject* kwargs)
 {
     int err, flags = 0;
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     unsigned
 #endif
     int delta = 1;
@@ -8214,7 +8145,7 @@ DBSequence_get(DBSequenceObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames[] = {"delta", "txn", "flags", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
-#if (DBVER >= 61)
+#if (DBVER >= 62)
             "|IOi:get",
 #else
             "|iOi:get",
@@ -8350,13 +8281,13 @@ static PyObject*
 DBSequence_set_cachesize(DBSequenceObject* self, PyObject* args)
 {
     int err;
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     unsigned
 #endif
     int size;
 
     if (!PyArg_ParseTuple(args,
-#if (DBVER >= 61)
+#if (DBVER >= 62)
             "I:set_cachesize",
 #else
             "i:set_cachesize",
@@ -8377,7 +8308,7 @@ static PyObject*
 DBSequence_get_cachesize(DBSequenceObject* self)
 {
     int err;
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     unsigned
 #endif
     int size;
@@ -8389,7 +8320,7 @@ DBSequence_get_cachesize(DBSequenceObject* self)
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
-    return NUMBER_FromLong(size);
+    return PyLong_FromLong(size);
 }
 
 static PyObject*
@@ -8421,7 +8352,7 @@ DBSequence_get_flags(DBSequenceObject* self)
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
-    return NUMBER_FromLong((int)flags);
+    return PyLong_FromLong((int)flags);
 }
 
 static PyObject*
@@ -8509,7 +8440,7 @@ DBSequence_stat(DBSequenceObject* self, PyObject* args, PyObject* kwargs)
 
 
 #define MAKE_INT_ENTRY(name)  _addIntToDict(dict_stat, #name, sp->st_##name)
-#if (DBVER >= 61)
+#if (DBVER >= 62)
 #define MAKE_UNSIGNED_INT_ENTRY(name)   _addUnsignedIntToDict(dict_stat, #name, sp->st_##name)
 #endif
 #define MAKE_LONG_LONG_ENTRY(name)  _addDb_seq_tToDict(dict_stat, #name, sp->st_##name)
@@ -8521,7 +8452,7 @@ DBSequence_stat(DBSequenceObject* self, PyObject* args, PyObject* kwargs)
     MAKE_LONG_LONG_ENTRY(last_value);
     MAKE_LONG_LONG_ENTRY(min);
     MAKE_LONG_LONG_ENTRY(max);
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     MAKE_UNSIGNED_INT_ENTRY(cache_size);
 #else
     MAKE_INT_ENTRY(cache_size);
@@ -8798,10 +8729,6 @@ static PyMethodDef DBEnv_methods[] = {
     {"lsn_reset",       (PyCFunction)DBEnv_lsn_reset,       METH_VARARGS|METH_KEYWORDS},
     {"set_get_returns_none",(PyCFunction)DBEnv_set_get_returns_none, METH_VARARGS},
     {"txn_recover",     (PyCFunction)DBEnv_txn_recover,     METH_NOARGS},
-#if (DBVER < 48)
-    {"set_rpc_server",  (PyCFunction)DBEnv_set_rpc_server,
-        METH_VARARGS||METH_KEYWORDS},
-#endif
     {"set_mp_max_openfd", (PyCFunction)DBEnv_set_mp_max_openfd, METH_VARARGS},
     {"get_mp_max_openfd", (PyCFunction)DBEnv_get_mp_max_openfd, METH_NOARGS},
     {"set_mp_max_write", (PyCFunction)DBEnv_set_mp_max_write, METH_VARARGS},
@@ -8929,12 +8856,7 @@ static PyGetSetDef DBEnv_getsets[] = {
 
 
 statichere PyTypeObject DB_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DB",               /*tp_name*/
     sizeof(DBObject),   /*tp_basicsize*/
     0,                  /*tp_itemsize*/
@@ -8954,11 +8876,7 @@ statichere PyTypeObject DB_Type = {
     0,  		/* tp_getattro */
     0,          /* tp_setattro */
     0,			/* tp_as_buffer */
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,		    /* tp_traverse */
     0,			/* tp_clear */
@@ -8972,12 +8890,7 @@ statichere PyTypeObject DB_Type = {
 
 
 statichere PyTypeObject DBCursor_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBCursor",         /*tp_name*/
     sizeof(DBCursorObject),  /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -8997,11 +8910,7 @@ statichere PyTypeObject DBCursor_Type = {
     0,          /*tp_getattro*/
     0,          /*tp_setattro*/
     0,          /*tp_as_buffer*/
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,          /* tp_traverse */
     0,          /* tp_clear */
@@ -9015,12 +8924,7 @@ statichere PyTypeObject DBCursor_Type = {
 
 
 statichere PyTypeObject DBLogCursor_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBLogCursor",         /*tp_name*/
     sizeof(DBLogCursorObject),  /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -9040,11 +8944,7 @@ statichere PyTypeObject DBLogCursor_Type = {
     0,          /*tp_getattro*/
     0,          /*tp_setattro*/
     0,          /*tp_as_buffer*/
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,          /* tp_traverse */
     0,          /* tp_clear */
@@ -9058,12 +8958,7 @@ statichere PyTypeObject DBLogCursor_Type = {
 
 #if (DBVER >= 53)
 statichere PyTypeObject DBSite_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBSite",         /*tp_name*/
     sizeof(DBSiteObject),  /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -9083,11 +8978,7 @@ statichere PyTypeObject DBSite_Type = {
     0,          /*tp_getattro*/
     0,          /*tp_setattro*/
     0,          /*tp_as_buffer*/
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,          /* tp_traverse */
     0,          /* tp_clear */
@@ -9101,12 +8992,7 @@ statichere PyTypeObject DBSite_Type = {
 #endif
 
 statichere PyTypeObject DBEnv_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBEnv",            /*tp_name*/
     sizeof(DBEnvObject),    /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -9126,11 +9012,7 @@ statichere PyTypeObject DBEnv_Type = {
     0,  		/* tp_getattro */
     0,          /* tp_setattro */
     0,			/* tp_as_buffer */
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,		    /* tp_traverse */
     0,			/* tp_clear */
@@ -9144,12 +9026,7 @@ statichere PyTypeObject DBEnv_Type = {
 };
 
 statichere PyTypeObject DBTxn_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBTxn",    /*tp_name*/
     sizeof(DBTxnObject),  /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -9169,11 +9046,7 @@ statichere PyTypeObject DBTxn_Type = {
     0,  		/* tp_getattro */
     0,          /* tp_setattro */
     0,			/* tp_as_buffer */
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,	        /* tp_traverse */
     0,			/* tp_clear */
@@ -9187,12 +9060,7 @@ statichere PyTypeObject DBTxn_Type = {
 
 
 statichere PyTypeObject DBLock_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBLock",   /*tp_name*/
     sizeof(DBLockObject),  /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -9212,11 +9080,7 @@ statichere PyTypeObject DBLock_Type = {
     0,  		/* tp_getattro */
     0,          /* tp_setattro */
     0,			/* tp_as_buffer */
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,		    /* tp_traverse */
     0,			/* tp_clear */
@@ -9225,12 +9089,7 @@ statichere PyTypeObject DBLock_Type = {
 };
 
 statichere PyTypeObject DBSequence_Type = {
-#if (PY_VERSION_HEX < 0x03000000)
-    PyObject_HEAD_INIT(NULL)
-    0,                  /*ob_size*/
-#else
     PyVarObject_HEAD_INIT(NULL, 0)
-#endif
     "DBSequence",                   /*tp_name*/
     sizeof(DBSequenceObject),       /*tp_basicsize*/
     0,          /*tp_itemsize*/
@@ -9250,11 +9109,7 @@ statichere PyTypeObject DBSequence_Type = {
     0,  		/* tp_getattro */
     0,          /* tp_setattro */
     0,			/* tp_as_buffer */
-#if (PY_VERSION_HEX < 0x03000000)
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_HAVE_WEAKREFS,      /* tp_flags */
-#else
     Py_TPFLAGS_DEFAULT,      /* tp_flags */
-#endif
     0,          /* tp_doc */
     0,		    /* tp_traverse */
     0,			/* tp_clear */
@@ -9328,7 +9183,7 @@ bsddb_version(PyObject* self)
     return Py_BuildValue("(iii)", major, minor, patch);
 }
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
 static PyObject*
 bsddb_version_full(PyObject* self)
 {
@@ -9349,7 +9204,7 @@ static PyMethodDef bsddb_methods[] = {
     {"DBEnv",       (PyCFunction)DBEnv_construct,       METH_VARARGS},
     {"DBSequence",  (PyCFunction)DBSequence_construct,  METH_VARARGS | METH_KEYWORDS },
     {"version",     (PyCFunction)bsddb_version,         METH_NOARGS, bsddb_version_doc},
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     {"full_version", (PyCFunction)bsddb_version_full, METH_NOARGS},
 #endif
     {NULL,      NULL}       /* sentinel */
@@ -9377,7 +9232,6 @@ static BSDDB_api bsddb_api;
 #define MODULE_NAME_MAX_LEN     11
 static char _bsddbModuleName[MODULE_NAME_MAX_LEN+1] = "_bsddb";
 
-#if (PY_VERSION_HEX >= 0x03000000)
 static struct PyModuleDef bsddbmodule = {
     PyModuleDef_HEAD_INIT,
     _bsddbModuleName,   /* Name of module */
@@ -9390,14 +9244,9 @@ static struct PyModuleDef bsddbmodule = {
     NULL,   /* Clear */
     NULL    /* Free */
 };
-#endif
 
 
-#if (PY_VERSION_HEX < 0x03000000)
-DL_EXPORT(void) init_bsddb(void)
-#else
 PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
-#endif
 {
     PyObject* m;
     PyObject* d;
@@ -9405,14 +9254,9 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     PyObject* pybsddb_version_s;
     PyObject* db_version_s;
 
-#if (PY_VERSION_HEX < 0x03000000)
-    pybsddb_version_s = PyString_FromString(PY_BSDDB_VERSION);
-    db_version_s = PyString_FromString(DB_VERSION_STRING);
-#else
     /* This data should be ascii, so UTF-8 conversion is fine */
     pybsddb_version_s = PyUnicode_FromString(PY_BSDDB_VERSION);
     db_version_s = PyUnicode_FromString(DB_VERSION_STRING);
-#endif
 
     /* Initialize object types */
     if ((PyType_Ready(&DB_Type) < 0)
@@ -9426,25 +9270,13 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
         || (PyType_Ready(&DBSite_Type) < 0)
 #endif
         ) {
-#if (PY_VERSION_HEX < 0x03000000)
-        return;
-#else
         return NULL;
-#endif
     }
 
     /* Create the module and add the functions */
-#if (PY_VERSION_HEX < 0x03000000)
-    m = Py_InitModule(_bsddbModuleName, bsddb_methods);
-#else
     m=PyModule_Create(&bsddbmodule);
-#endif
     if (m == NULL) {
-#if (PY_VERSION_HEX < 0x03000000)
-        return;
-#else
     	return NULL;
-#endif
     }
 
     /* Add some symbolic constants to the module */
@@ -9463,14 +9295,6 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_MAX_PAGES);
     ADD_INT(d, DB_MAX_RECORDS);
 
-#if (DBVER < 48)
-    ADD_INT(d, DB_RPCCLIENT);
-#endif
-
-#if (DBVER < 48)
-    ADD_INT(d, DB_XA_CREATE);
-#endif
-
     ADD_INT(d, DB_CREATE);
     ADD_INT(d, DB_NOMMAP);
     ADD_INT(d, DB_THREAD);
@@ -9483,15 +9307,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_INIT_MPOOL);
     ADD_INT(d, DB_INIT_TXN);
     ADD_INT(d, DB_JOINENV);
-
-#if (DBVER >= 48)
     ADD_INT(d, DB_GID_SIZE);
-#else
-    ADD_INT(d, DB_XIDDATASIZE);
-    /* Allow new code to work in old BDB releases */
-    _addIntToDict(d, "DB_GID_SIZE", DB_XIDDATASIZE);
-#endif
-
     ADD_INT(d, DB_RECOVER);
     ADD_INT(d, DB_RECOVER_FATAL);
     ADD_INT(d, DB_TXN_NOSYNC);
@@ -9505,13 +9321,11 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_TXN_SYNC);
     ADD_INT(d, DB_TXN_NOWAIT);
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_TXN_BULK);
 #endif
 
-#if (DBVER >= 48)
     ADD_INT(d, DB_CURSOR_BULK);
-#endif
 
     ADD_INT(d, DB_TXN_WAIT);
 
@@ -9682,9 +9496,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_STAT_LOCK_OBJECTS);
     ADD_INT(d, DB_STAT_LOCK_PARAMS);
 
-#if (DBVER >= 48)
     ADD_INT(d, DB_OVERWRITE_DUP);
-#endif
 
     ADD_INT(d, DB_FOREIGN_ABORT);
     ADD_INT(d, DB_FOREIGN_CASCADE);
@@ -9709,7 +9521,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_LOG_AUTO_REMOVE);
     ADD_INT(d, DB_LOG_ZERO);
 
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     ADD_INT(d, DB_LOG_BLOB);
 #endif
 
@@ -9725,7 +9537,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_VERB_REPLICATION);
     ADD_INT(d, DB_VERB_WAITSFOR);
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_VERB_REP_SYSTEM);
 #endif
 
@@ -9746,18 +9558,17 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_EVENT_REP_STARTUPDONE);
     ADD_INT(d, DB_EVENT_WRITE_FAILED);
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_REPMGR_CONF_ELECTIONS);
     ADD_INT(d, DB_EVENT_REP_MASTER_FAILURE);
     ADD_INT(d, DB_EVENT_REP_DUPMASTER);
     ADD_INT(d, DB_EVENT_REP_ELECTION_FAILED);
 #endif
-#if (DBVER >= 48)
+
     ADD_INT(d, DB_EVENT_REG_ALIVE);
     ADD_INT(d, DB_EVENT_REG_PANIC);
-#endif
 
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     ADD_INT(d, DB_EVENT_REP_AUTOTAKEOVER_FAILED);
     ADD_INT(d, DB_FORCESYNCENV);
     ADD_INT(d, DB_LOG_NOSYNC);
@@ -9799,7 +9610,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
     ADD_INT(d, DB_REP_PERMANENT);
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_REP_CONF_AUTOINIT);
 #else
     ADD_INT(d, DB_REP_CONF_NOAUTOINIT);
@@ -9841,15 +9652,14 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_REPMGR_DISCONNECTED);
     ADD_INT(d, DB_STAT_ALL);
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_REPMGR_ACKS_ALL_AVAILABLE);
 #endif
 
-#if (DBVER >= 48)
     ADD_INT(d, DB_REP_CONF_INMEM);
 #endif
 
-#if (DBVER >= 61)
+#if (DBVER >= 62)
     ADD_INT(d, DB_REPMGR_ISVIEW);
 
     ADD_INT(d, DB_DBT_BLOB);
@@ -9861,15 +9671,13 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
     ADD_INT(d, DB_TIMEOUT);
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_FORCESYNC);
 #endif
 
-#if (DBVER >= 48)
     ADD_INT(d, DB_FAILCHK);
-#endif
 
-#if (DBVER >= 51)
+#if (DBVER >= 53)
     ADD_INT(d, DB_HOTBACKUP_IN_PROGRESS);
 #endif
 
@@ -9901,9 +9709,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     ADD_INT(d, DB_SET_LOCK_TIMEOUT);
     ADD_INT(d, DB_SET_TXN_TIMEOUT);
 
-#if (DBVER >= 48)
     ADD_INT(d, DB_SET_REG_TIMEOUT);
-#endif
 
     /* The exception name must be correct for pickled exception *
      * objects to unpickle properly.                            */
@@ -9979,9 +9785,6 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     bsddb_api.dbsequence_type  = &DBSequence_Type;
     bsddb_api.makeDBError      = makeDBError;
 
-#if (PY_VERSION_HEX < 0x02070000)
-    py_api = PyCObject_FromVoidPtr((void*)&bsddb_api, NULL);
-#else
     {
         /*
         ** The data must outlive the call!!. So, the static definition.
@@ -9994,7 +9797,6 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
         py_api = PyCapsule_New((void*)&bsddb_api, py_api_name, NULL);
     }
-#endif
 
     /* Check error control */
     /*
@@ -10021,26 +9823,14 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
         Py_DECREF(m);
         m = NULL;
     }
-#if (PY_VERSION_HEX < 0x03000000)
-    return;
-#else
     return m;
-#endif
 }
 
 /* allow this module to be named _pybsddb so that it can be installed
  * and imported on top of python >= 2.3 that includes its own older
  * copy of the library named _bsddb without importing the old version. */
-#if (PY_VERSION_HEX < 0x03000000)
-DL_EXPORT(void) init_pybsddb(void)
-#else
 PyMODINIT_FUNC PyInit__pybsddb(void)  /* Note the two underscores */
-#endif
 {
     strncpy(_bsddbModuleName, "_pybsddb", MODULE_NAME_MAX_LEN);
-#if (PY_VERSION_HEX < 0x03000000)
-    init_bsddb();
-#else
     return PyInit__bsddb();   /* Note the two underscores */
-#endif
 }

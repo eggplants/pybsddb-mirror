@@ -52,13 +52,14 @@ if sys.version_info[0] >= 3 :
         def __getattr__(self, v) :
             return getattr(self._logcursor, v)
 
-        def __next__(self) :
-            v = getattr(self._logcursor, "next")()
+        def next(self):
+            v = self._logcursor.next()
             if v is not None :
                 v = (v[0], v[1].decode(charset))
             return v
 
-        next = __next__
+        def __next__(self):
+            return self.next()
 
         def first(self) :
             v = self._logcursor.first()
@@ -473,19 +474,12 @@ if sys.version_info[0] >= 3 :
 from bsddb3 import db, dbtables, dbutils, dbshelve, \
         hashopen, btopen, rnopen, dbobj
 
-if sys.version_info[0] < 3 :
-    from test import test_support
-else :
-    from test import support as test_support
+from test import support as test_support
 
 
 try:
-    if sys.version_info[0] < 3 :
-        from threading import Thread, currentThread
-        del Thread, currentThread
-    else :
-        from threading import Thread, current_thread
-        del Thread, current_thread
+    from threading import Thread, current_thread
+    del Thread, current_thread
     have_threads = True
 except ImportError:
     have_threads = False
@@ -505,7 +499,7 @@ def print_versions():
     print('-=' * 38)
     print(db.DB_VERSION_STRING)
     print('bsddb.db.version():   %s' % (db.version(), ))
-    if db.version() >= (5, 0) :
+    if db.version() >= (5, 3) :
         print('bsddb.db.full_version(): %s' %repr(db.full_version()))
     print('bsddb.db.__version__: %s' % db.__version__)
 
@@ -585,17 +579,6 @@ else :
 class PrintInfoFakeTest(unittest.TestCase):
     def testPrintVersions(self):
         print_versions()
-
-
-# This little hack is for when this module is run as main and all the
-# other modules import it so they will still be able to get the right
-# verbose setting.  It's confusing but it works.
-if sys.version_info[0] < 3 :
-    from . import test_all
-    test_all.verbose = verbose
-else :
-    import sys
-    print("Work to do!", file=sys.stderr)
 
 
 def suite(module_prefix='', timing_check=None):

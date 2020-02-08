@@ -22,16 +22,8 @@
 #
 
 import sys
-absolute_import = (sys.version_info[0] >= 3)
-if absolute_import :
-    from . import db
-else :
-    from . import db
-
-if (sys.version_info[0] >= 3):
-    from collections.abc import MutableMapping
-else:
-    from collections import MutableMapping
+from collections.abc import MutableMapping
+from . import db
 
 class DBEnv:
     def __init__(self, *args, **kwargs):

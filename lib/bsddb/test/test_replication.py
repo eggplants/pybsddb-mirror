@@ -107,7 +107,7 @@ class DBReplicationManager(DBReplication) :
     def test01_basic_replication(self) :
         master_port = test_support.find_unused_port()
         client_port = test_support.find_unused_port()
-        if db.version() >= (5, 2) :
+        if db.version() >= (5, 3) :
             self.site = self.dbenvMaster.repmgr_site("127.0.0.1", master_port)
             self.site.set_config(db.DB_GROUP_CREATOR, True)
             self.site.set_config(db.DB_LOCAL_SITE, True)
@@ -328,13 +328,8 @@ class DBBaseReplication(DBReplication) :
         from threading import Thread
         t_m=Thread(target=thread_master)
         t_c=Thread(target=thread_client)
-        import sys
-        if sys.version_info[0] < 3 :
-            t_m.setDaemon(True)
-            t_c.setDaemon(True)
-        else :
-            t_m.daemon = True
-            t_c.daemon = True
+        t_m.daemon = True
+        t_c.daemon = True
 
         self.t_m = t_m
         self.t_c = t_c
@@ -490,11 +485,7 @@ class DBBaseReplication(DBReplication) :
                         from threading import Thread
                         election_status[0] = True
                         t=Thread(target=elect)
-                        import sys
-                        if sys.version_info[0] < 3 :
-                            t.setDaemon(True)
-                        else :
-                            t.daemon = True
+                        t.daemon = True
                         t.start()
 
         self.thread_do = thread_do
@@ -537,7 +528,7 @@ def test_suite():
     try :
         dbenv.repmgr_get_ack_policy()
         ReplicationManager_available=True
-    except :
+    except Exception:
         ReplicationManager_available=False
     dbenv.close()
     del dbenv

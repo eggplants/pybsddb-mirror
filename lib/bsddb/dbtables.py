@@ -21,18 +21,10 @@ import sys
 import copy
 import random
 import struct
-
-
-if sys.version_info[0] >= 3 :
-    import pickle
-else :
-    import warnings
-    with warnings.catch_warnings() :
-        warnings.filterwarnings("ignore", category=DeprecationWarning)
-        import pickle as pickle
-
+import pickle
 
 from bsddb3 import db
+
 
 class TableDBError(Exception):
     pass
@@ -237,8 +229,7 @@ class bsdTableDB :
             if not getattr(self.db, "has_key")(_table_names_key, txn):
                 getattr(self.db, "put_bytes", self.db.put) \
                         (_table_names_key, pickle.dumps([], 1), txn=txn)
-        # Yes, bare except
-        except:
+        except Exception:
             txn.abort()
             raise
         else:
@@ -323,10 +314,7 @@ class bsdTableDB :
         except db.DBError as dberror:
             if txn:
                 txn.abort()
-            if sys.version_info < (2, 6) :
-                raise TableDBError(dberror[1])
-            else :
-                raise TableDBError(dberror.args[1])
+            raise TableDBError(dberror.args[1])
 
 
     def ListTableColumns(self, table):
@@ -408,10 +396,7 @@ class bsdTableDB :
             except db.DBError as dberror:
                 if txn:
                     txn.abort()
-                if sys.version_info < (2, 6) :
-                    raise TableDBError(dberror[1])
-                else :
-                    raise TableDBError(dberror.args[1])
+                raise TableDBError(dberror.args[1])
 
 
     def __load_column_info(self, table) :
@@ -438,8 +423,7 @@ class bsdTableDB :
                 blist.append(random.randint(0,255))
             newid = struct.pack('B'*_rowid_str_len, *blist)
 
-            if sys.version_info[0] >= 3 :
-                newid = newid.decode("iso8859-1")  # 8 bits
+            newid = newid.decode("iso8859-1")  # 8 bits
 
             # Guarantee uniqueness by adding this key to the database
             try:
@@ -491,10 +475,7 @@ class bsdTableDB :
             if txn:
                 txn.abort()
                 self.db.delete(_rowid_key(table, rowid))
-            if sys.version_info < (2, 6) :
-                raise TableDBError(dberror[1]).with_traceback(info[2])
-            else :
-                raise TableDBError(dberror.args[1]).with_traceback(info[2])
+            raise TableDBError(dberror.args[1]).with_traceback(info[2])
 
 
     def Modify(self, table, conditions={}, mappings={}):
@@ -540,16 +521,13 @@ class bsdTableDB :
                         txn = None
 
                 # catch all exceptions here since we call unknown callables
-                except:
+                except Exception:
                     if txn:
                         txn.abort()
                     raise
 
         except db.DBError as dberror:
-            if sys.version_info < (2, 6) :
-                raise TableDBError(dberror[1])
-            else :
-                raise TableDBError(dberror.args[1])
+            raise TableDBError(dberror.args[1])
 
     def Delete(self, table, conditions={}):
         """Delete(table, conditions) - Delete items matching the given
@@ -590,10 +568,7 @@ class bsdTableDB :
                         txn.abort()
                     raise
         except db.DBError as dberror:
-            if sys.version_info < (2, 6) :
-                raise TableDBError(dberror[1])
-            else :
-                raise TableDBError(dberror.args[1])
+            raise TableDBError(dberror.args[1])
 
 
     def Select(self, table, columns, conditions={}):
@@ -613,10 +588,7 @@ class bsdTableDB :
                 columns = self.__tablecolumns[table]
             matching_rowids = self.__Select(table, columns, conditions)
         except db.DBError as dberror:
-            if sys.version_info < (2, 6) :
-                raise TableDBError(dberror[1])
-            else :
-                raise TableDBError(dberror.args[1])
+            raise TableDBError(dberror.args[1])
         # return the matches as a list of dictionaries
         return list(matching_rowids.values())
 
@@ -676,19 +648,16 @@ class bsdTableDB :
             # leave all unknown condition callables alone as equals
             return 0
 
-        if sys.version_info < (2, 6) :
-            conditionlist = list(conditions.items())
-            conditionlist.sort(cmp_conditions)
-        else :  # Insertion Sort. Please, improve
-            conditionlist = []
-            for i in list(conditions.items()) :
-                for j, k in enumerate(conditionlist) :
-                    r = cmp_conditions(k, i)
-                    if r == 1 :
-                        conditionlist.insert(j, i)
-                        break
-                else :
-                    conditionlist.append(i)
+        # XXX: Insertion Sort. Please, improve
+        conditionlist = []
+        for i in list(conditions.items()) :
+            for j, k in enumerate(conditionlist) :
+                r = cmp_conditions(k, i)
+                if r == 1 :
+                    conditionlist.insert(j, i)
+                    break
+            else :
+                conditionlist.append(i)
 
         # Apply conditions to column data to find what we want
         cur = self.db.cursor()
@@ -744,12 +713,8 @@ class bsdTableDB :
                         rowdata[column] = self.db.get(
                             _data_key(table, column, rowid))
                     except db.DBError as dberror:
-                        if sys.version_info < (2, 6) :
-                            if dberror[0] != db.DB_NOTFOUND:
-                                raise
-                        else :
-                            if dberror.args[0] != db.DB_NOTFOUND:
-                                raise
+                        if dberror.args[0] != db.DB_NOTFOUND:
+                            raise
                         rowdata[column] = None
 
         # return the matches

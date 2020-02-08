@@ -48,13 +48,6 @@ from .test_all import db, test_support, verbose, get_new_environment_path, get_n
 #----------------------------------------------------------------------
 
 class SimpleRecnoTestCase(unittest.TestCase):
-    if sys.version_info < (2, 7) :
-        def assertIsInstance(self, obj, datatype, msg=None) :
-            return self.assertEqual(type(obj), datatype, msg=msg)
-        def assertGreaterEqual(self, a, b, msg=None) :
-            return self.assertTrue(a>=b, msg=msg)
-
-
     def setUp(self):
         self.filename = get_new_database_path()
         self.homeDir = None

@@ -65,32 +65,22 @@ class DataClass:
 
 
 class DBShelveTestCase(unittest.TestCase):
-    if sys.version_info < (2, 7) :
-        def assertIn(self, a, b, msg=None) :
-            return self.assertTrue(a in b, msg=msg)
-
-
     def setUp(self):
-        if sys.version_info[0] >= 3 :
-            from .test_all import do_proxy_db_py3k
-            self._flag_proxy_db_py3k = do_proxy_db_py3k(False)
+        from .test_all import do_proxy_db_py3k
+        self._flag_proxy_db_py3k = do_proxy_db_py3k(False)
         self.filename = get_new_database_path()
         self.do_open()
 
     def tearDown(self):
-        if sys.version_info[0] >= 3 :
-            from .test_all import do_proxy_db_py3k
-            do_proxy_db_py3k(self._flag_proxy_db_py3k)
+        from .test_all import do_proxy_db_py3k
+        do_proxy_db_py3k(self._flag_proxy_db_py3k)
         self.do_close()
         test_support.unlink(self.filename)
 
     def mk(self, key):
         """Turn key into an appropriate key type for this db"""
         # override in child class for RECNO
-        if sys.version_info[0] < 3 :
-            return key
-        else :
-            return bytes(key, "iso8859-1")  # 8 bits
+        return bytes(key, "iso8859-1")  # 8 bits
 
     def populateDB(self, d):
         for x in string.ascii_letters:
@@ -249,9 +239,8 @@ class DBShelveTestCase(unittest.TestCase):
     def checkrec(self, key, value):
         # override this in a subclass if the key type is different
 
-        if sys.version_info[0] >= 3 :
-            if isinstance(key, bytes) :
-                key = key.decode("iso8859-1")  # 8 bits
+        if isinstance(key, bytes) :
+            key = key.decode("iso8859-1")  # 8 bits
 
         x = key[1]
         if key[0] == 'S':
@@ -267,11 +256,7 @@ class DBShelveTestCase(unittest.TestCase):
             self.assertEqual(value, [x] * 10)
 
         elif key[0] == 'O':
-            if sys.version_info[0] < 3 :
-                from types import InstanceType
-                self.assertEqual(type(value), InstanceType)
-            else :
-                self.assertEqual(type(value), DataClass)
+            self.assertEqual(type(value), DataClass)
 
             self.assertEqual(value.S, 10 * x)
             self.assertEqual(value.I, ord(x))
@@ -334,9 +319,8 @@ class BasicEnvShelveTestCase(DBShelveTestCase):
         DBShelveTestCase.setUp(self)
 
     def tearDown(self):
-        if sys.version_info[0] >= 3 :
-            from .test_all import do_proxy_db_py3k
-            do_proxy_db_py3k(self._flag_proxy_db_py3k)
+        from .test_all import do_proxy_db_py3k
+        do_proxy_db_py3k(self._flag_proxy_db_py3k)
         self.do_close()
         test_support.rmtree(self.homeDir)
 

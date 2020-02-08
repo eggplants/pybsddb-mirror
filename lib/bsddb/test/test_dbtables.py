@@ -20,17 +20,9 @@
 #
 
 import os, re, sys
-
-if sys.version_info[0] < 3 :
-    try:
-        import pickle
-        pickle = cPickle
-    except ImportError:
-        import pickle
-else :
-    import pickle
-
+import pickle
 import unittest
+
 from .test_all import db, dbtables, test_support, verbose, \
         get_new_environment_path, get_new_database_path
 
@@ -40,10 +32,8 @@ class TableDBTestCase(unittest.TestCase):
     db_name = 'test-table.db'
 
     def setUp(self):
-        import sys
-        if sys.version_info[0] >= 3 :
-            from .test_all import do_proxy_db_py3k
-            self._flag_proxy_db_py3k = do_proxy_db_py3k(False)
+        from .test_all import do_proxy_db_py3k
+        self._flag_proxy_db_py3k = do_proxy_db_py3k(False)
 
         self.testHomeDir = get_new_environment_path()
         self.tdb = dbtables.bsdTableDB(
@@ -51,10 +41,8 @@ class TableDBTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.tdb.close()
-        import sys
-        if sys.version_info[0] >= 3 :
-            from .test_all import do_proxy_db_py3k
-            do_proxy_db_py3k(self._flag_proxy_db_py3k)
+        from .test_all import do_proxy_db_py3k
+        do_proxy_db_py3k(self._flag_proxy_db_py3k)
         test_support.rmtree(self.testHomeDir)
 
     def test01(self):
@@ -65,12 +53,8 @@ class TableDBTestCase(unittest.TestCase):
         except dbtables.TableDBError:
             pass
         self.tdb.CreateTable(tabname, [colname])
-        import sys
-        if sys.version_info[0] < 3 :
-            self.tdb.Insert(tabname, {colname: pickle.dumps(3.14159, 1)})
-        else :
-            self.tdb.Insert(tabname, {colname: pickle.dumps(3.14159,
-                1).decode("iso8859-1")})  # 8 bits
+        self.tdb.Insert(tabname, {colname: pickle.dumps(3.14159,
+            1).decode("iso8859-1")})  # 8 bits
 
         if verbose:
             self.tdb._db_print()
@@ -78,11 +62,7 @@ class TableDBTestCase(unittest.TestCase):
         values = self.tdb.Select(
             tabname, [colname], conditions={colname: None})
 
-        import sys
-        if sys.version_info[0] < 3 :
-            colval = pickle.loads(values[0][colname])
-        else :
-            colval = pickle.loads(bytes(values[0][colname], "iso8859-1"))
+        colval = pickle.loads(bytes(values[0][colname], "iso8859-1"))
         self.assertTrue(colval > 3.141)
         self.assertTrue(colval < 3.142)
 
@@ -93,22 +73,14 @@ class TableDBTestCase(unittest.TestCase):
         col1 = 'but can it fly?'
         col2 = 'Species'
 
-        import sys
-        if sys.version_info[0] < 3 :
-            testinfo = [
-                {col0: pickle.dumps(8, 1), col1: 'no', col2: 'Penguin'},
-                {col0: pickle.dumps(-1, 1), col1: 'no', col2: 'Turkey'},
-                {col0: pickle.dumps(9, 1), col1: 'yes', col2: 'SR-71A Blackbird'}
-            ]
-        else :
-            testinfo = [
-                {col0: pickle.dumps(8, 1).decode("iso8859-1"),
-                    col1: 'no', col2: 'Penguin'},
-                {col0: pickle.dumps(-1, 1).decode("iso8859-1"),
-                    col1: 'no', col2: 'Turkey'},
-                {col0: pickle.dumps(9, 1).decode("iso8859-1"),
-                    col1: 'yes', col2: 'SR-71A Blackbird'}
-            ]
+        testinfo = [
+            {col0: pickle.dumps(8, 1).decode("iso8859-1"),
+                col1: 'no', col2: 'Penguin'},
+            {col0: pickle.dumps(-1, 1).decode("iso8859-1"),
+                col1: 'no', col2: 'Turkey'},
+            {col0: pickle.dumps(9, 1).decode("iso8859-1"),
+                col1: 'yes', col2: 'SR-71A Blackbird'}
+        ]
 
         try:
             self.tdb.Drop(tabname)
@@ -118,14 +90,9 @@ class TableDBTestCase(unittest.TestCase):
         for row in testinfo :
             self.tdb.Insert(tabname, row)
 
-        import sys
-        if sys.version_info[0] < 3 :
-            values = self.tdb.Select(tabname, [col2],
-                conditions={col0: lambda x: pickle.loads(x) >= 8})
-        else :
-            values = self.tdb.Select(tabname, [col2],
-                conditions={col0: lambda x:
-                    pickle.loads(bytes(x, "iso8859-1")) >= 8})
+        values = self.tdb.Select(tabname, [col2],
+            conditions={col0: lambda x:
+                pickle.loads(bytes(x, "iso8859-1")) >= 8})
 
         self.assertEqual(len(values), 2)
         if values[0]['Species'] == 'Penguin' :
@@ -263,7 +230,7 @@ class TableDBTestCase(unittest.TestCase):
                              'filling': 'no',
                              'is it Guinness?': 'no'})
             self.fail("Insert should've failed due to bad column name")
-        except:
+        except Exception:
             pass
         self.tdb.CreateOrExtendTable(tabname,
                                      ['name', 'taste', 'is it Guinness?'])

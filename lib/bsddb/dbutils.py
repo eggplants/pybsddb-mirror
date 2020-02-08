@@ -27,11 +27,7 @@
 from time import sleep as _sleep
 
 import sys
-absolute_import = (sys.version_info[0] >= 3)
-if absolute_import :
-    from . import db
-else :
-    from . import db
+from . import db
 
 # always sleep at least N seconds between retrys
 _deadlock_MinSleepTime = 1.0/128

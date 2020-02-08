@@ -36,15 +36,6 @@ are met:
 import os
 import pickle
 import sys
-
-if sys.version_info[0] < 3 :
-    try:
-        import pickle
-    except ImportError:
-        cPickle = None
-else :
-    cPickle = None
-
 import unittest
 
 from .test_all import db, test_support, get_new_environment_path, get_new_database_path
@@ -88,10 +79,6 @@ class pickleTestCase(unittest.TestCase):
 
     def test01_pickle_DBError(self):
         self._base_test_pickle_DBError(pickle=pickle)
-
-    if cPickle:
-        def test02_cPickle_DBError(self):
-            self._base_test_pickle_DBError(pickle=cPickle)
 
 #----------------------------------------------------------------------
 

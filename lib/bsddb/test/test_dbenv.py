@@ -331,14 +331,13 @@ class DBEnv_log(DBEnv) :
         logc = self.env.log_cursor()
         self.assertTrue(msg in (logc.last()[1]))
 
-    if db.version() >= (4, 7) :
-        def test_log_config(self) :
-            self.env.log_set_config(db.DB_LOG_DSYNC | db.DB_LOG_ZERO, 1)
-            self.assertTrue(self.env.log_get_config(db.DB_LOG_DSYNC))
-            self.assertTrue(self.env.log_get_config(db.DB_LOG_ZERO))
-            self.env.log_set_config(db.DB_LOG_ZERO, 0)
-            self.assertTrue(self.env.log_get_config(db.DB_LOG_DSYNC))
-            self.assertFalse(self.env.log_get_config(db.DB_LOG_ZERO))
+    def test_log_config(self) :
+        self.env.log_set_config(db.DB_LOG_DSYNC | db.DB_LOG_ZERO, 1)
+        self.assertTrue(self.env.log_get_config(db.DB_LOG_DSYNC))
+        self.assertTrue(self.env.log_get_config(db.DB_LOG_ZERO))
+        self.env.log_set_config(db.DB_LOG_ZERO, 0)
+        self.assertTrue(self.env.log_get_config(db.DB_LOG_DSYNC))
+        self.assertFalse(self.env.log_get_config(db.DB_LOG_ZERO))
 
 
 class DBEnv_log_txn(DBEnv) :
@@ -347,7 +346,7 @@ class DBEnv_log_txn(DBEnv) :
         self.env.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
                 db.DB_INIT_LOG | db.DB_INIT_TXN)
 
-    if db.version() < (5, 2) :
+    if db.version() < (5, 3) :
         def test_tx_max(self) :
             txns=[]
             def tx() :

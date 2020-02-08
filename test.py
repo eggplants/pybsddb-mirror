@@ -431,7 +431,7 @@ def runner(files, test_filter, debug):
         suite.addTest(s)
     try:
         r = runner.run(suite)
-    except:
+    except Exception:
         if debugger:
             pdb.post_mortem(sys.exc_info()[2])
         else:
