@@ -125,7 +125,7 @@ class DBEnv_general(DBEnv) :
             self.assertEqual(i, self.env.get_mp_mmapsize())
 
     def test_tmp_dir(self) :
-        for i in ["a", "bb", "ccc"] :
+        for i in [b'a', b'bb', b'ccc'] :
             self.env.set_tmp_dir(i)
             self.assertEqual(i, self.env.get_tmp_dir())
 
@@ -399,22 +399,22 @@ class DBEnv_memp(DBEnv):
         DBEnv.tearDown(self)
 
     def test_memp_1_trickle(self) :
-        self.db.put("hi", "bye")
+        self.db.put(b'hi', b'bye')
         self.assertTrue(self.env.memp_trickle(100) > 0)
 
 # Preserve the order, do "memp_trickle" test first
     def test_memp_2_sync(self) :
-        self.db.put("hi", "bye")
+        self.db.put(b'hi', b'bye')
         self.env.memp_sync()  # Full flush
         # Nothing to do...
         self.assertTrue(self.env.memp_trickle(100) == 0)
 
-        self.db.put("hi", "bye2")
+        self.db.put(b'hi', b'bye2')
         self.env.memp_sync((1, 0))  # NOP, probably
         # Something to do... or not
         self.assertTrue(self.env.memp_trickle(100) >= 0)
 
-        self.db.put("hi", "bye3")
+        self.db.put(b'hi', b'bye3')
         self.env.memp_sync((123, 99))  # Full flush
         # Nothing to do...
         self.assertTrue(self.env.memp_trickle(100) == 0)
@@ -443,7 +443,7 @@ class DBEnv_logcursor(DBEnv):
         self.db = db.DB(self.env)
         self.db.open("test", db.DB_HASH, db.DB_CREATE, 0o660, txn=txn)
         txn.commit()
-        for i in ["2", "8", "20"] :
+        for i in [b'2', b'8', b'20'] :
             txn = self.env.txn_begin()
             self.db.put(key = i, data = i*int(i), txn=txn)
             txn.commit()
@@ -460,7 +460,7 @@ class DBEnv_logcursor(DBEnv):
         self.assertEqual(len(value[0]), 2)
         self.assertTrue(isinstance(value[0][0], int))
         self.assertTrue(isinstance(value[0][1], int))
-        self.assertTrue(isinstance(value[1], str))
+        self.assertTrue(isinstance(value[1], bytes))
 
     # Preserve test order
     def test_1_first(self) :
@@ -530,13 +530,13 @@ class DBEnv_logcursor(DBEnv):
     def test_explicit_close(self) :
         logc = self.env.log_cursor()
         logc.close()
-        self.assertRaises(db.DBCursorClosedError, logc.__next__)
+        self.assertRaises(db.DBCursorClosedError, logc.next)
 
     def test_implicit_close(self) :
         logc =  [self.env.log_cursor() for i in range(10)]
         self.env.close()  # This close should close too all its tree
         for i in logc :
-            self.assertRaises(db.DBCursorClosedError, i.__next__)
+            self.assertRaises(db.DBCursorClosedError, i.next)
 
 def test_suite():
     suite = unittest.TestSuite()

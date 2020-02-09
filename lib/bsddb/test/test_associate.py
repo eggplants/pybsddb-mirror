@@ -50,62 +50,62 @@ from .test_all import db, dbshelve, test_support, verbose, have_threads, \
 
 
 musicdata = {
-1 : ("Bad English", "The Price Of Love", "Rock"),
-2 : ("DNA featuring Suzanne Vega", "Tom's Diner", "Rock"),
-3 : ("George Michael", "Praying For Time", "Rock"),
-4 : ("Gloria Estefan", "Here We Are", "Rock"),
-5 : ("Linda Ronstadt", "Don't Know Much", "Rock"),
-6 : ("Michael Bolton", "How Am I Supposed To Live Without You", "Blues"),
-7 : ("Paul Young", "Oh Girl", "Rock"),
-8 : ("Paula Abdul", "Opposites Attract", "Rock"),
-9 : ("Richard Marx", "Should've Known Better", "Rock"),
-10: ("Rod Stewart", "Forever Young", "Rock"),
-11: ("Roxette", "Dangerous", "Rock"),
-12: ("Sheena Easton", "The Lover In Me", "Rock"),
-13: ("Sinead O'Connor", "Nothing Compares 2 U", "Rock"),
-14: ("Stevie B.", "Because I Love You", "Rock"),
-15: ("Taylor Dayne", "Love Will Lead You Back", "Rock"),
-16: ("The Bangles", "Eternal Flame", "Rock"),
-17: ("Wilson Phillips", "Release Me", "Rock"),
-18: ("Billy Joel", "Blonde Over Blue", "Rock"),
-19: ("Billy Joel", "Famous Last Words", "Rock"),
-20: ("Billy Joel", "Lullabye (Goodnight, My Angel)", "Rock"),
-21: ("Billy Joel", "The River Of Dreams", "Rock"),
-22: ("Billy Joel", "Two Thousand Years", "Rock"),
-23: ("Janet Jackson", "Alright", "Rock"),
-24: ("Janet Jackson", "Black Cat", "Rock"),
-25: ("Janet Jackson", "Come Back To Me", "Rock"),
-26: ("Janet Jackson", "Escapade", "Rock"),
-27: ("Janet Jackson", "Love Will Never Do (Without You)", "Rock"),
-28: ("Janet Jackson", "Miss You Much", "Rock"),
-29: ("Janet Jackson", "Rhythm Nation", "Rock"),
-30: ("Janet Jackson", "State Of The World", "Rock"),
-31: ("Janet Jackson", "The Knowledge", "Rock"),
-32: ("Spyro Gyra", "End of Romanticism", "Jazz"),
-33: ("Spyro Gyra", "Heliopolis", "Jazz"),
-34: ("Spyro Gyra", "Jubilee", "Jazz"),
-35: ("Spyro Gyra", "Little Linda", "Jazz"),
-36: ("Spyro Gyra", "Morning Dance", "Jazz"),
-37: ("Spyro Gyra", "Song for Lorraine", "Jazz"),
-38: ("Yes", "Owner Of A Lonely Heart", "Rock"),
-39: ("Yes", "Rhythm Of Love", "Rock"),
-40: ("Cusco", "Dream Catcher", "New Age"),
-41: ("Cusco", "Geronimos Laughter", "New Age"),
-42: ("Cusco", "Ghost Dance", "New Age"),
-43: ("Blue Man Group", "Drumbone", "New Age"),
-44: ("Blue Man Group", "Endless Column", "New Age"),
-45: ("Blue Man Group", "Klein Mandelbrot", "New Age"),
-46: ("Kenny G", "Silhouette", "Jazz"),
-47: ("Sade", "Smooth Operator", "Jazz"),
-48: ("David Arkenstone", "Papillon (On The Wings Of The Butterfly)",
-     "New Age"),
-49: ("David Arkenstone", "Stepping Stars", "New Age"),
-50: ("David Arkenstone", "Carnation Lily Lily Rose", "New Age"),
-51: ("David Lanz", "Behind The Waterfall", "New Age"),
-52: ("David Lanz", "Cristofori's Dream", "New Age"),
-53: ("David Lanz", "Heartsounds", "New Age"),
-54: ("David Lanz", "Leaves on the Seine", "New Age"),
-99: ("unknown artist", "Unnamed song", "Unknown"),
+1 : (b"Bad English", b"The Price Of Love", b"Rock"),
+2 : (b"DNA featuring Suzanne Vega", b"Tom's Diner", b"Rock"),
+3 : (b"George Michael", b"Praying For Time", b"Rock"),
+4 : (b"Gloria Estefan", b"Here We Are", b"Rock"),
+5 : (b"Linda Ronstadt", b"Don't Know Much", b"Rock"),
+6 : (b"Michael Bolton", b"How Am I Supposed To Live Without You", b"Blues"),
+7 : (b"Paul Young", b"Oh Girl", b"Rock"),
+8 : (b"Paula Abdul", b"Opposites Attract", b"Rock"),
+9 : (b"Richard Marx", b"Should've Known Better", b"Rock"),
+10: (b"Rod Stewart", b"Forever Young", b"Rock"),
+11: (b"Roxette", b"Dangerous", b"Rock"),
+12: (b"Sheena Easton", b"The Lover In Me", b"Rock"),
+13: (b"Sinead O'Connor", b"Nothing Compares 2 U", b"Rock"),
+14: (b"Stevie B.", b"Because I Love You", b"Rock"),
+15: (b"Taylor Dayne", b"Love Will Lead You Back", b"Rock"),
+16: (b"The Bangles", b"Eternal Flame", b"Rock"),
+17: (b"Wilson Phillips", b"Release Me", b"Rock"),
+18: (b"Billy Joel", b"Blonde Over Blue", b"Rock"),
+19: (b"Billy Joel", b"Famous Last Words", b"Rock"),
+20: (b"Billy Joel", b"Lullabye (Goodnight, My Angel)", b"Rock"),
+21: (b"Billy Joel", b"The River Of Dreams", b"Rock"),
+22: (b"Billy Joel", b"Two Thousand Years", b"Rock"),
+23: (b"Janet Jackson", b"Alright", b"Rock"),
+24: (b"Janet Jackson", b"Black Cat", b"Rock"),
+25: (b"Janet Jackson", b"Come Back To Me", b"Rock"),
+26: (b"Janet Jackson", b"Escapade", b"Rock"),
+27: (b"Janet Jackson", b"Love Will Never Do (Without You)", b"Rock"),
+28: (b"Janet Jackson", b"Miss You Much", b"Rock"),
+29: (b"Janet Jackson", b"Rhythm Nation", b"Rock"),
+30: (b"Janet Jackson", b"State Of The World", b"Rock"),
+31: (b"Janet Jackson", b"The Knowledge", b"Rock"),
+32: (b"Spyro Gyra", b"End of Romanticism", b"Jazz"),
+33: (b"Spyro Gyra", b"Heliopolis", b"Jazz"),
+34: (b"Spyro Gyra", b"Jubilee", b"Jazz"),
+35: (b"Spyro Gyra", b"Little Linda", b"Jazz"),
+36: (b"Spyro Gyra", b"Morning Dance", b"Jazz"),
+37: (b"Spyro Gyra", b"Song for Lorraine", b"Jazz"),
+38: (b"Yes", b"Owner Of A Lonely Heart", b"Rock"),
+39: (b"Yes", b"Rhythm Of Love", b"Rock"),
+40: (b"Cusco", b"Dream Catcher", b"New Age"),
+41: (b"Cusco", b"Geronimos Laughter", b"New Age"),
+42: (b"Cusco", b"Ghost Dance", b"New Age"),
+43: (b"Blue Man Group", b"Drumbone", b"New Age"),
+44: (b"Blue Man Group", b"Endless Column", b"New Age"),
+45: (b"Blue Man Group", b"Klein Mandelbrot", b"New Age"),
+46: (b"Kenny G", b"Silhouette", b"Jazz"),
+47: (b"Sade", b"Smooth Operator", b"Jazz"),
+48: (b"David Arkenstone", b"Papillon (On The Wings Of The Butterfly)",
+     b"New Age"),
+49: (b"David Arkenstone", b"Stepping Stars", b"New Age"),
+50: (b"David Arkenstone", b"Carnation Lily Lily Rose", b"New Age"),
+51: (b"David Lanz", b"Behind The Waterfall", b"New Age"),
+52: (b"David Lanz", b"Cristofori's Dream", b"New Age"),
+53: (b"David Lanz", b"Heartsounds", b"New Age"),
+54: (b"David Lanz", b"Leaves on the Seine", b"New Age"),
+99: (b"unknown artist", b"Unnamed song", b"Unknown"),
 }
 
 #----------------------------------------------------------------------
@@ -155,7 +155,7 @@ class AssociateErrorTestCase(unittest.TestCase):
 
 
 class AssociateTestCase(unittest.TestCase):
-    keytype = ''
+    keytype = b''
     envFlags = 0
     dbFlags = 0
 
@@ -174,9 +174,9 @@ class AssociateTestCase(unittest.TestCase):
 
     def addDataToDB(self, d, txn=None):
         for key, value in list(musicdata.items()):
-            if type(self.keytype) == type(''):
-                key = "%02d" % key
-            d.put(key, '|'.join(value), txn=txn)
+            if type(self.keytype) == type(b''):
+                key = b'%02d' % key
+            d.put(key, b'|'.join(value), txn=txn)
 
     def createDB(self, txn=None):
         self.cur = None
@@ -263,14 +263,14 @@ class AssociateTestCase(unittest.TestCase):
 
     def finish_test(self, secDB, txn=None):
         # 'Blues' should not be in the secondary database
-        vals = secDB.pget('Blues', txn=txn)
+        vals = secDB.pget(b'Blues', txn=txn)
         self.assertEqual(vals, None, vals)
 
-        vals = secDB.pget('Unknown', txn=txn)
-        self.assertTrue(vals[0] == 99 or vals[0] == '99', vals)
-        vals[1].index('Unknown')
-        vals[1].index('Unnamed')
-        vals[1].index('unknown')
+        vals = secDB.pget(b'Unknown', txn=txn)
+        self.assertTrue(vals[0] == 99 or vals[0] == b'99', vals)
+        vals[1].index(b'Unknown')
+        vals[1].index(b'Unnamed')
+        vals[1].index(b'unknown')
 
         if verbose:
             print("Primary key traversal:")
@@ -278,7 +278,7 @@ class AssociateTestCase(unittest.TestCase):
         count = 0
         rec = self.cur.first()
         while rec is not None:
-            if type(self.keytype) == type(''):
+            if type(self.keytype) == type(b''):
                 self.assertTrue(int(rec[0]))  # for primary db, key is a number
             else:
                 self.assertTrue(rec[0] and type(rec[0]) == type(0))
@@ -295,18 +295,19 @@ class AssociateTestCase(unittest.TestCase):
         count = 0
 
         # test cursor pget
-        vals = self.cur.pget('Unknown', flags=db.DB_LAST)
-        self.assertTrue(vals[1] == 99 or vals[1] == '99', vals)
-        self.assertEqual(vals[0], 'Unknown')
-        vals[2].index('Unknown')
-        vals[2].index('Unnamed')
-        vals[2].index('unknown')
+        vals = self.cur.pget(b'Unknown', flags=db.DB_LAST)
+        self.assertTrue(vals[1] == 99 or vals[1] == b'99', vals)
+        self.assertEqual(vals[0], b'Unknown')
+        vals[2].index(b'Unknown')
+        vals[2].index(b'Unnamed')
+        vals[2].index(b'unknown')
 
-        vals = self.cur.pget('Unknown', data='wrong value', flags=db.DB_GET_BOTH)
+        vals = self.cur.pget(b'Unknown', data=b'wrong value',
+                             flags=db.DB_GET_BOTH)
         self.assertEqual(vals, None, vals)
 
         rec = self.cur.first()
-        self.assertEqual(rec[0], "Jazz")
+        self.assertEqual(rec[0], b'Jazz')
         while rec is not None:
             count = count + 1
             if verbose:
@@ -318,20 +319,20 @@ class AssociateTestCase(unittest.TestCase):
         self.cur = None
 
     def getGenre(self, priKey, priData):
-        self.assertEqual(type(priData), type(""))
-        genre = priData.split('|')[2]
+        self.assertEqual(type(priData), type(b''))
+        genre = priData.split(b'|')[2]
 
         if verbose:
             print('getGenre key: %r data: %r' % (priKey, priData))
 
-        if genre == 'Blues':
+        if genre == b'Blues':
             return db.DB_DONOTINDEX
         else:
             return genre
 
     def getGenreList(self, priKey, PriData) :
         v = self.getGenre(priKey, PriData)
-        if type(v) == type("") :
+        if type(v) == type(b'') :
             v = [v]
         return v
 
@@ -402,8 +403,8 @@ class ShelveAssociateTestCase(AssociateTestCase):
 
     def addDataToDB(self, d):
         for key, value in list(musicdata.items()):
-            if type(self.keytype) == type(''):
-                key = "%02d" % key
+            if type(self.keytype) == type(b''):
+                key = b'%02d' % key
             d.put(key, value)    # save the value as is this time
 
 
@@ -412,7 +413,7 @@ class ShelveAssociateTestCase(AssociateTestCase):
         if verbose:
             print('getGenre key: %r data: %r' % (priKey, priData))
         genre = priData[2]
-        if genre == 'Blues':
+        if genre == b'Blues':
             return db.DB_DONOTINDEX
         else:
             return genre
@@ -448,15 +449,15 @@ class ThreadedAssociateTestCase(AssociateTestCase):
 
     def writer1(self, d):
         for key, value in list(musicdata.items()):
-            if type(self.keytype) == type(''):
-                key = "%02d" % key
-            d.put(key, '|'.join(value))
+            if type(self.keytype) == type(b''):
+                key = b'%02d' % key
+            d.put(key, b'|'.join(value))
 
     def writer2(self, d):
         for x in range(100, 600):
             key = 'z%2d' % x
             value = [key] * 4
-            d.put(key, '|'.join(value))
+            d.put(key, b'|'.join(value))
 
 
 class ThreadedAssociateHashTestCase(ShelveAssociateTestCase):

@@ -32,17 +32,12 @@ class TableDBTestCase(unittest.TestCase):
     db_name = 'test-table.db'
 
     def setUp(self):
-        from .test_all import do_proxy_db_py3k
-        self._flag_proxy_db_py3k = do_proxy_db_py3k(False)
-
         self.testHomeDir = get_new_environment_path()
         self.tdb = dbtables.bsdTableDB(
             filename='tabletest.db', dbhome=self.testHomeDir, create=1)
 
     def tearDown(self):
         self.tdb.close()
-        from .test_all import do_proxy_db_py3k
-        do_proxy_db_py3k(self._flag_proxy_db_py3k)
         test_support.rmtree(self.testHomeDir)
 
     def test01(self):

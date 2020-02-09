@@ -52,7 +52,7 @@ def DeadlockWrap(function, *_args, **_kwargs):
 
         d = DB(...)
         d.open(...)
-        DeadlockWrap(d.put, "foo", data="bar")  # set key "foo" to "bar"
+        DeadlockWrap(d.put, b'foo', data=b'bar')  # set key b'foo' to b'bar'
     """
     sleeptime = _deadlock_MinSleepTime
     max_retries = _kwargs.get('max_retries', -1)

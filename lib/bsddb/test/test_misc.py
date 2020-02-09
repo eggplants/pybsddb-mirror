@@ -74,8 +74,8 @@ class MiscTestCase(unittest.TestCase):
         db = hashopen(self.filename)
         d = {}
         for i in range(100) :
-            db[repr(i)] = repr(100*i)
-            d[repr(i)] = repr(100*i)
+            db[b'%d' % i] = b'%d' % 100*i
+            d[b'%d' % i] = b'%d' % 100*i
         db.close()
         db = hashopen(self.filename)
         rp = repr(sorted(db.items()))
@@ -97,7 +97,7 @@ class MiscTestCase(unittest.TestCase):
                      db.DB_CREATE | db.DB_THREAD)
 
             curs = db1.cursor()
-            t = curs.get("/foo", db.DB_SET)
+            t = curs.get(b'/foo', db.DB_SET)
             # double free happened during exit from DBC_get
         finally:
             db1.close()
@@ -107,17 +107,17 @@ class MiscTestCase(unittest.TestCase):
         try:
             db1 = db.DB()
             db1.open(self.filename, None, db.DB_HASH, db.DB_CREATE)
-            db1['a'] = 'eh?'
-            db1['a\x00'] = 'eh zed.'
-            db1['a\x00a'] = 'eh zed eh?'
-            db1['aaa'] = 'eh eh eh!'
+            db1[b'a'] = b'eh?'
+            db1[b'a\x00'] = b'eh zed.'
+            db1[b'a\x00a'] = b'eh zed eh?'
+            db1[b'aaa'] = b'eh eh eh!'
             keys = list(db1.keys())
             keys.sort()
-            self.assertEqual(['a', 'a\x00', 'a\x00a', 'aaa'], keys)
-            self.assertEqual(db1['a'], 'eh?')
-            self.assertEqual(db1['a\x00'], 'eh zed.')
-            self.assertEqual(db1['a\x00a'], 'eh zed eh?')
-            self.assertEqual(db1['aaa'], 'eh eh eh!')
+            self.assertEqual([b'a', b'a\x00', b'a\x00a', b'aaa'], keys)
+            self.assertEqual(db1[b'a'], b'eh?')
+            self.assertEqual(db1[b'a\x00'], b'eh zed.')
+            self.assertEqual(db1[b'a\x00a'], b'eh zed eh?')
+            self.assertEqual(db1[b'aaa'], b'eh eh eh!')
         finally:
             db1.close()
             test_support.unlink(self.filename)
@@ -127,21 +127,21 @@ class MiscTestCase(unittest.TestCase):
             db1 = db.DB()
             db1.set_flags(db.DB_DUPSORT)
             db1.open(self.filename, db.DB_HASH, db.DB_CREATE)
-            db1['a'] = 'eh'
-            db1['a'] = 'A'
-            self.assertEqual([('a', 'A')], list(db1.items()))
-            db1.put('a', 'Aa')
-            self.assertEqual([('a', 'A'), ('a', 'Aa')], list(db1.items()))
+            db1[b'a'] = b'eh'
+            db1[b'a'] = b'A'
+            self.assertEqual([(b'a', b'A')], list(db1.items()))
+            db1.put(b'a', b'Aa')
+            self.assertEqual([(b'a', b'A'), (b'a', b'Aa')], list(db1.items()))
             db1.close()
             db1 = db.DB()
             # no set_flags call, we're testing that it reads and obeys
             # the flags on open.
             db1.open(self.filename, db.DB_HASH)
-            self.assertEqual([('a', 'A'), ('a', 'Aa')], list(db1.items()))
+            self.assertEqual([(b'a', b'A'), (b'a', b'Aa')], list(db1.items()))
             # if it read the flags right this will replace all values
             # for key 'a' instead of adding a new one.  (as a dict should)
-            db1['a'] = 'new A'
-            self.assertEqual([('a', 'new A')], list(db1.items()))
+            db1[b'a'] = b'new A'
+            self.assertEqual([(b'a', b'new A')], list(db1.items()))
         finally:
             db1.close()
             test_support.unlink(self.filename)

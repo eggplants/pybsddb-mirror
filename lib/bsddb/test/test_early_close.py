@@ -77,8 +77,8 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         self.assertRaises(db.DBNoSuchFileError, d2.open,
                 self.filename+"2", db.DB_BTREE, db.DB_THREAD, 0o666)
 
-        d.put("test","this is a test")
-        self.assertEqual(d.get("test"), "this is a test", "put!=get")
+        d.put(b'test', b'this is a test')
+        self.assertEqual(d.get(b'test'), b'this is a test', 'put!=get')
         dbenv.close()  # This "close" should close the child db handle also
         self.assertRaises(db.DBError, d.get, "test")
 
@@ -91,25 +91,25 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         d = db.DB(dbenv)
         d.open(self.filename, db.DB_BTREE, db.DB_CREATE | db.DB_THREAD, 0o666)
 
-        d.put("test","this is a test")
-        d.put("test2","another test")
-        d.put("test3","another one")
-        self.assertEqual(d.get("test"), "this is a test", "put!=get")
+        d.put(b'test', b'this is a test')
+        d.put(b'test2', b'another test')
+        d.put(b'test3', b'another one')
+        self.assertEqual(d.get(b'test'), b'this is a test', 'put!=get')
         c=d.cursor()
         c.first()
-        next(c)
+        c.next()
         d.close()  # This "close" should close the child db handle also
      # db.close should close the child cursor
-        self.assertRaises(db.DBError,c.__next__)
+        self.assertRaises(db.DBError,c.next)
 
         d = db.DB(dbenv)
         d.open(self.filename, db.DB_BTREE, db.DB_CREATE | db.DB_THREAD, 0o666)
         c=d.cursor()
         c.first()
-        next(c)
+        c.next()
         dbenv.close()
     # The "close" should close the child db handle also, with cursors
-        self.assertRaises(db.DBError, c.__next__)
+        self.assertRaises(db.DBError, c.next)
 
     def test03_close_db_before_dbcursor_without_env(self):
         import os.path
@@ -117,16 +117,16 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         d = db.DB()
         d.open(path, db.DB_BTREE, db.DB_CREATE | db.DB_THREAD, 0o666)
 
-        d.put("test","this is a test")
-        d.put("test2","another test")
-        d.put("test3","another one")
-        self.assertEqual(d.get("test"), "this is a test", "put!=get")
+        d.put(b'test', b'this is a test')
+        d.put(b'test2', b'another test')
+        d.put(b'test3', b'another one')
+        self.assertEqual(d.get(b'test'), b'this is a test', 'put!=get')
         c=d.cursor()
         c.first()
-        next(c)
+        c.next()
         d.close()
     # The "close" should close the child db handle also
-        self.assertRaises(db.DBError, c.__next__)
+        self.assertRaises(db.DBError, c.next)
 
     def test04_close_massive(self):
         dbenv = db.DBEnv()
@@ -139,10 +139,10 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         for i in dbs :
             i.open(self.filename, db.DB_BTREE, db.DB_CREATE | db.DB_THREAD, 0o666)
 
-        dbs[10].put("test","this is a test")
-        dbs[10].put("test2","another test")
-        dbs[10].put("test3","another one")
-        self.assertEqual(dbs[4].get("test"), "this is a test", "put!=get")
+        dbs[10].put(b'test', b'this is a test')
+        dbs[10].put(b'test2', b'another test')
+        dbs[10].put(b'test3', b'another one')
+        self.assertEqual(dbs[4].get(b'test'), b'this is a test', 'put!=get')
 
         for i in dbs :
             cursors.extend([i.cursor() for j in range(32)])
@@ -159,10 +159,10 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         self.assertRaises(db.DBError, cursors[101].first)
 
         cursors[80].first()
-        next(cursors[80])
+        cursors[80].next()
         dbenv.close()  # This "close" should close the child db handle also
     # Check for missing exception! (after DBEnv close)
-        self.assertRaises(db.DBError, cursors[80].__next__)
+        self.assertRaises(db.DBError, cursors[80].next)
 
     def test05_close_dbenv_delete_db_success(self):
         dbenv = db.DBEnv()
@@ -192,12 +192,12 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         txn = dbenv.txn_begin()
         d.open(self.filename, dbtype = db.DB_HASH, flags = db.DB_CREATE,
                 txn=txn)
-        d.put("XXX", "yyy", txn=txn)
+        d.put(b'XXX', b'yyy', txn=txn)
         txn.commit()
         txn = dbenv.txn_begin()
         c1 = d.cursor(txn)
         c2 = c1.dup()
-        self.assertEqual(("XXX", "yyy"), c1.first())
+        self.assertEqual((b'XXX', b'yyy'), c1.first())
 
         # Not interested in warnings about implicit close.
         import warnings

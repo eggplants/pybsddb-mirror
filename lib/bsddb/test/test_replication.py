@@ -258,19 +258,19 @@ class DBReplicationManager(DBReplication) :
             break
 
         txn=self.dbenvMaster.txn_begin()
-        self.dbMaster.put("ABC", "123", txn=txn)
+        self.dbMaster.put(b'ABC', b'123', txn=txn)
         txn.commit()
         import time
         timeout=time.time()+10
         v=None
         while (time.time()<timeout) and (v is None) :
             txn=self.dbenvClient.txn_begin()
-            v=self.dbClient.get("ABC", txn=txn)
+            v=self.dbClient.get(b'ABC', txn=txn)
             txn.commit()
             if v is None :
                 time.sleep(0.02)
         self.assertTrue(time.time()<timeout)
-        self.assertEqual("123", v)
+        self.assertEqual(b'123', v)
 
         txn=self.dbenvMaster.txn_begin()
         self.dbMaster.delete("ABC", txn=txn)
@@ -278,7 +278,7 @@ class DBReplicationManager(DBReplication) :
         timeout=time.time()+10
         while (time.time()<timeout) and (v is not None) :
             txn=self.dbenvClient.txn_begin()
-            v=self.dbClient.get("ABC", txn=txn)
+            v=self.dbClient.get(b'ABC', txn=txn)
             txn.commit()
             if v is None :
                 time.sleep(0.02)
@@ -431,19 +431,19 @@ class DBBaseReplication(DBReplication) :
         self.assertTrue("master_changes" in d)
 
         txn=self.dbenvMaster.txn_begin()
-        self.dbMaster.put("ABC", "123", txn=txn)
+        self.dbMaster.put(b'ABC', b'123', txn=txn)
         txn.commit()
         import time
         timeout=time.time()+10
         v=None
         while (time.time()<timeout) and (v is None) :
             txn=self.dbenvClient.txn_begin()
-            v=self.dbClient.get("ABC", txn=txn)
+            v=self.dbClient.get(b'ABC', txn=txn)
             txn.commit()
             if v is None :
                 time.sleep(0.02)
         self.assertTrue(time.time()<timeout)
-        self.assertEqual("123", v)
+        self.assertEqual(b'123', v)
 
         txn=self.dbenvMaster.txn_begin()
         self.dbMaster.delete("ABC", txn=txn)
@@ -451,7 +451,7 @@ class DBBaseReplication(DBReplication) :
         timeout=time.time()+10
         while (time.time()<timeout) and (v is not None) :
             txn=self.dbenvClient.txn_begin()
-            v=self.dbClient.get("ABC", txn=txn)
+            v=self.dbClient.get(b'ABC', txn=txn)
             txn.commit()
             if v is None :
                 time.sleep(0.02)

@@ -68,39 +68,45 @@ class DBSequenceTest(unittest.TestCase):
         start_value = 10 * self.int_32_max
         self.assertEqual(0xA00000000, start_value)
         self.assertEqual(None, self.seq.initial_value(start_value))
-        self.assertEqual(None, self.seq.open(key='id', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'id', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(start_value, self.seq.get(5))
         self.assertEqual(start_value + 5, self.seq.get())
 
     def test_remove(self):
         self.seq = db.DBSequence(self.d, flags=0)
-        self.assertEqual(None, self.seq.open(key='foo', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'foo', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(None, self.seq.remove(txn=None, flags=0))
         del self.seq
 
     def test_get_key(self):
         self.seq = db.DBSequence(self.d, flags=0)
-        key = 'foo'
-        self.assertEqual(None, self.seq.open(key=key, txn=None, flags=db.DB_CREATE))
+        key = b'foo'
+        self.assertEqual(None, self.seq.open(key=key, txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(key, self.seq.get_key())
 
     def test_get_dbp(self):
         self.seq = db.DBSequence(self.d, flags=0)
-        self.assertEqual(None, self.seq.open(key='foo', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'foo', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(self.d, self.seq.get_dbp())
 
     def test_cachesize(self):
         self.seq = db.DBSequence(self.d, flags=0)
         cashe_size = 10
         self.assertEqual(None, self.seq.set_cachesize(cashe_size))
-        self.assertEqual(None, self.seq.open(key='foo', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'foo', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(cashe_size, self.seq.get_cachesize())
 
     def test_flags(self):
         self.seq = db.DBSequence(self.d, flags=0)
         flag = db.DB_SEQ_WRAP;
         self.assertEqual(None, self.seq.set_flags(flag))
-        self.assertEqual(None, self.seq.open(key='foo', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'foo', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(flag, self.seq.get_flags() & flag)
 
     def test_range(self):
@@ -108,12 +114,14 @@ class DBSequenceTest(unittest.TestCase):
         seq_range = (10 * self.int_32_max, 11 * self.int_32_max - 1)
         self.assertEqual(None, self.seq.set_range(seq_range))
         self.seq.initial_value(seq_range[0])
-        self.assertEqual(None, self.seq.open(key='foo', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'foo', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(seq_range, self.seq.get_range())
 
     def test_stat(self):
         self.seq = db.DBSequence(self.d, flags=0)
-        self.assertEqual(None, self.seq.open(key='foo', txn=None, flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'foo', txn=None,
+                                             flags=db.DB_CREATE))
         stat = self.seq.stat()
         for param in ('nowait', 'min', 'max', 'value', 'current',
                       'flags', 'cache_size', 'last_value', 'wait'):
@@ -126,7 +134,7 @@ class DBSequenceTest(unittest.TestCase):
         seq = db.DBSequence(d, flags=0)
 
         self.assertRaises(db.DBNotFoundError, seq.open,
-                key='id', txn=None, flags=0)
+                key=b'id', txn=None, flags=0)
 
         self.assertRaises(db.DBInvalidArgError, seq.stat)
 
@@ -140,8 +148,8 @@ class DBSequenceTest(unittest.TestCase):
         self.assertEqual(-9223372036854775807,value_minus)
         self.seq = db.DBSequence(self.d, flags=0)
         self.assertEqual(None, self.seq.initial_value(value_plus-1))
-        self.assertEqual(None, self.seq.open(key='id', txn=None,
-            flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'id', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(value_plus-1, self.seq.get(1))
         self.assertEqual(value_plus, self.seq.get(1))
 
@@ -149,8 +157,8 @@ class DBSequenceTest(unittest.TestCase):
 
         self.seq = db.DBSequence(self.d, flags=0)
         self.assertEqual(None, self.seq.initial_value(value_minus))
-        self.assertEqual(None, self.seq.open(key='id', txn=None,
-            flags=db.DB_CREATE))
+        self.assertEqual(None, self.seq.open(key=b'id', txn=None,
+                                             flags=db.DB_CREATE))
         self.assertEqual(value_minus, self.seq.get(1))
         self.assertEqual(value_minus+1, self.seq.get(1))
 

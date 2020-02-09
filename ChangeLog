@@ -16,6 +16,10 @@ TODO: Implement PEP 384 (Stable API)
     an appropriate error is raised and directions are provided.
   * Remove dead code for unsupported Python releases.
   * Remove dead code for unsupported Berkeley DB releases.
+  * *WARNING:* Now *ALL* keys and values must be bytes (or ints when
+    appropriate). Previous releases did mostly transparent encoding. This
+    is not the case anymore. All needed encoding must be explicit in
+    your code, both when reading and when writing to the database.
   * Support for DB_REPMGR_CONF_DISABLE_SSL flag in
     "DB_ENV.rep_set_config()".
   * *WARNING:* In Berkeley DB 18.1 and up, Replication Manager uses SSL by

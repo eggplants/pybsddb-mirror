@@ -129,24 +129,24 @@ class CompatibilityTestCase(unittest.TestCase):
         else:
             if verbose: print("truth test: false")
 
-        f['0'] = ''
-        f['a'] = 'Guido'
-        f['b'] = 'van'
-        f['c'] = 'Rossum'
-        f['d'] = 'invented'
-        # 'e' intentionally left out
-        f['f'] = 'Python'
+        f[b'0'] = b''
+        f[b'a'] = b'Guido'
+        f[b'b'] = b'van'
+        f[b'c'] = b'Rossum'
+        f[b'd'] = b'invented'
+        # b'e' intentionally left out
+        f[b'f'] = b'Python'
         if verbose:
-            print('%s %s %s' % (f['a'], f['b'], f['c']))
+            print('%s %s %s' % (f[b'a'], f[b'b'], f[b'c']))
 
         if verbose:
             print('key ordering...')
         start = f.set_location(f.first()[0])
-        if start != ('0', ''):
+        if start != (b'0', b''):
             self.fail("incorrect first() result: "+repr(start))
         while 1:
             try:
-                rec = next(f)
+                rec = f.next()
             except KeyError:
                 self.assertEqual(rec, f.last(), 'Error, last <> last!')
                 f.previous()
@@ -154,17 +154,17 @@ class CompatibilityTestCase(unittest.TestCase):
             if verbose:
                 print(rec)
 
-        self.assertTrue('f' in f, 'Error, missing key!')
+        self.assertTrue(b'f' in f, 'Error, missing key!')
 
         # test that set_location() returns the next nearest key, value
         # on btree databases and raises KeyError on others.
         if factory == btopen:
-            e = f.set_location('e')
-            if e != ('f', 'Python'):
+            e = f.set_location(b'e')
+            if e != (b'f', b'Python'):
                 self.fail('wrong key,value returned: '+repr(e))
         else:
             try:
-                e = f.set_location('e')
+                e = f.set_location(b'e')
             except KeyError:
                 pass
             else:
@@ -188,7 +188,7 @@ class CompatibilityTestCase(unittest.TestCase):
         if verbose:
             print('modification...')
         f = factory(self.filename, 'w')
-        f['d'] = 'discovered'
+        f[b'd'] = 'discovered'
 
         if verbose:
             print('access...')
@@ -198,7 +198,7 @@ class CompatibilityTestCase(unittest.TestCase):
                 print(word)
 
         def noRec(f):
-            rec = f['no such key']
+            rec = f[b'no such key']
         self.assertRaises(KeyError, noRec, f)
 
         def badKey(f):

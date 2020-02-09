@@ -66,14 +66,10 @@ class DataClass:
 
 class DBShelveTestCase(unittest.TestCase):
     def setUp(self):
-        from .test_all import do_proxy_db_py3k
-        self._flag_proxy_db_py3k = do_proxy_db_py3k(False)
         self.filename = get_new_database_path()
         self.do_open()
 
     def tearDown(self):
-        from .test_all import do_proxy_db_py3k
-        do_proxy_db_py3k(self._flag_proxy_db_py3k)
         self.do_close()
         test_support.unlink(self.filename)
 
@@ -189,8 +185,7 @@ class DBShelveTestCase(unittest.TestCase):
                 print(rec)
             key, value = rec
             self.checkrec(key, value)
-            # Hack to avoid conversion by 2to3 tool
-            rec = getattr(c, "next")()
+            rec = c.next()
         del c
 
         self.assertEqual(count, len(d))
@@ -319,8 +314,6 @@ class BasicEnvShelveTestCase(DBShelveTestCase):
         DBShelveTestCase.setUp(self)
 
     def tearDown(self):
-        from .test_all import do_proxy_db_py3k
-        do_proxy_db_py3k(self._flag_proxy_db_py3k)
         self.do_close()
         test_support.rmtree(self.homeDir)
 

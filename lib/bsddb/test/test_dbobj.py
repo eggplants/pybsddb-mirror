@@ -67,10 +67,10 @@ class dbobjTestCase(unittest.TestCase):
         self.env.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL)
         self.db = TestDB(self.env)
         self.db.open(self.db_name, db.DB_HASH, db.DB_CREATE)
-        self.db.put('spam', 'eggs')
-        self.assertEqual(self.db.get('spam'), None,
+        self.db.put(b'spam', b'eggs')
+        self.assertEqual(self.db.get(b'spam'), None,
                "overridden dbobj.DB.put() method failed [1]")
-        self.assertEqual(self.db.get('SPAM'), 'eggs',
+        self.assertEqual(self.db.get(b'SPAM'), b'eggs',
                "overridden dbobj.DB.put() method failed [2]")
         self.db.close()
         self.env.close()
@@ -81,14 +81,14 @@ class dbobjTestCase(unittest.TestCase):
         self.db = dbobj.DB(self.env)
         self.db.open(self.db_name+'02', db.DB_HASH, db.DB_CREATE)
         # __setitem__
-        self.db['spam'] = 'eggs'
+        self.db[b'spam'] = b'eggs'
         # __len__
         self.assertEqual(len(self.db), 1)
         # __getitem__
-        self.assertEqual(self.db['spam'], 'eggs')
+        self.assertEqual(self.db[b'spam'], b'eggs')
         # __del__
-        del self.db['spam']
-        self.assertEqual(self.db.get('spam'), None, "dbobj __del__ failed")
+        del self.db[b'spam']
+        self.assertEqual(self.db.get(b'spam'), None, "dbobj __del__ failed")
         self.db.close()
         self.env.close()
 

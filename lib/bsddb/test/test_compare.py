@@ -184,7 +184,7 @@ class BtreeKeyCompareTestCase(AbstractBtreeKeyCompareTestCase) :
         def socialist_comparator(l, r) :
             return 0
         self.createDB(socialist_comparator)
-        self.addDataToDB(['b', 'a', 'd'])
+        self.addDataToDB([b'b', b'a', b'd'])
         # all things being equal the first key will be the only key
         # in the database...  (with the last key's value fwiw)
         self.finishTest(['b'])
@@ -239,7 +239,7 @@ class BtreeExceptionsTestCase(AbstractBtreeKeyCompareTestCase) :
             raise RuntimeError("i'm a naughty comparison function")
         self.createDB(bad_comparator)
         #print "\n*** test should print 2 uncatchable tracebacks ***"
-        self.addDataToDB(['a', 'b', 'c'])  # this should raise, but...
+        self.addDataToDB([b'a', b'b', b'c'])  # this should raise, but...
         self.finishTest()
 
     def test_compare_function_exception(self) :
@@ -257,7 +257,7 @@ class BtreeExceptionsTestCase(AbstractBtreeKeyCompareTestCase) :
             return l
         self.createDB(bad_comparator)
         #print "\n*** test should print 2 errors about returning an int ***"
-        self.addDataToDB(['a', 'b', 'c'])  # this should raise, but...
+        self.addDataToDB([b'a', b'b', b'c'])  # this should raise, but...
         self.finishTest()
 
     def test_compare_function_bad_return(self) :
@@ -386,7 +386,8 @@ class DuplicateExceptionsTestCase(AbstractDuplicateCompareTestCase) :
             return 0
         self.createDB(socialist_comparator)
         # DUPSORT does not allow "duplicate duplicates"
-        self.assertRaises(db.DBKeyExistError, self.addDataToDB, ['b', 'a', 'd'])
+        self.assertRaises(db.DBKeyExistError, self.addDataToDB,
+                          [b'b', b'a', b'd'])
         self.finishTest()
 
     def verifyStderr(self, method, successRe) :
@@ -415,7 +416,7 @@ class DuplicateExceptionsTestCase(AbstractDuplicateCompareTestCase) :
             raise RuntimeError("i'm a naughty comparison function")
         self.createDB(bad_comparator)
         #print "\n*** test should print 2 uncatchable tracebacks ***"
-        self.addDataToDB(['a', 'b', 'c'])  # this should raise, but...
+        self.addDataToDB([b'a', b'b', b'c'])  # this should raise, but...
         self.finishTest()
 
     def test_compare_function_exception(self) :
@@ -433,7 +434,7 @@ class DuplicateExceptionsTestCase(AbstractDuplicateCompareTestCase) :
             return l
         self.createDB(bad_comparator)
         #print "\n*** test should print 2 errors about returning an int ***"
-        self.addDataToDB(['a', 'b', 'c'])  # this should raise, but...
+        self.addDataToDB([b'a', b'b', b'c'])  # this should raise, but...
         self.finishTest()
 
     def test_compare_function_bad_return(self) :
