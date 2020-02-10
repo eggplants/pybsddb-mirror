@@ -92,13 +92,11 @@ class DBTxn_distributed(unittest.TestCase):
 
     def test01_distributed_transactions(self) :
         txns=set()
-        adapt = lambda x : bytes(x, "ascii")
     # Create transactions, "prepare" them, and
     # let them be garbage collected.
         for i in range(self.num_txns) :
+            gid = (b'0' * db.DB_GID_SIZE + (b'%d' % i)) [-db.DB_GID_SIZE:]
             txn = self.dbenv.txn_begin()
-            gid = "%%%dd" %db.DB_GID_SIZE
-            gid = adapt(gid %i)
             self.db.put(i, gid, txn=txn, flags=db.DB_APPEND)
             txns.add(gid)
             txn.prepare(gid)

@@ -47,7 +47,7 @@ import time
 import sys
 
 from .test_all import db, test_support, verbose, get_new_environment_path, \
-        get_new_database_path
+        get_new_database_path, printable_bytes
 
 DASH = b'-'
 
@@ -997,7 +997,7 @@ class BasicMultiDBTestCase(BasicTestCase):
         for x in b'The quick brown fox jumped over the lazy dog'.split():
             d2.put(x, self.makeData(x))
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             d3.put(x, x*70)
 
         d1.sync()
@@ -1045,7 +1045,7 @@ class BasicMultiDBTestCase(BasicTestCase):
             if verbose:
                 print(rec)
             rec = c3.next()
-        self.assertEqual(count, len(string.ascii_letters))
+        self.assertEqual(count, len(printable_bytes))
 
 
         c1.close()

@@ -39,10 +39,10 @@ are met:
 import os, sys
 import errno
 from pprint import pprint
-import string
 import unittest
 
-from .test_all import db, test_support, verbose, get_new_environment_path, get_new_database_path
+from .test_all import db, test_support, verbose, printable_bytes, \
+        get_new_environment_path, get_new_database_path
 
 
 #----------------------------------------------------------------------
@@ -65,7 +65,7 @@ class SimpleRecnoTestCase(unittest.TestCase):
 
         d.open(self.filename, db.DB_RECNO, db.DB_CREATE)
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             recno = d.append(x * 60)
             self.assertIsInstance(recno, int)
             self.assertGreaterEqual(recno, 1)
@@ -83,7 +83,7 @@ class SimpleRecnoTestCase(unittest.TestCase):
             if verbose:
                 print(data)
 
-            self.assertIsInstance(data, str)
+            self.assertIsInstance(data, bytes)
             self.assertEqual(data, d.get(recno))
 
         try:
@@ -103,14 +103,14 @@ class SimpleRecnoTestCase(unittest.TestCase):
             self.fail("has_key did not raise a proper exception")
 
         try:
-            data = d[100]
+            data = d[128]
         except KeyError:
             pass
         else:
             self.fail("expected exception")
 
         try:
-            data = d.get(100)
+            data = d.get(128)
         except db.DBNotFoundError as val:
             if get_returns_none:
                 self.fail("unexpected exception")
@@ -131,7 +131,7 @@ class SimpleRecnoTestCase(unittest.TestCase):
         self.assertIsInstance(items[0], tuple)
         self.assertEqual(len(items[0]), 2)
         self.assertIsInstance(items[0][0], int)
-        self.assertIsInstance(items[0][1], str)
+        self.assertIsInstance(items[0][1], bytes)
         self.assertEqual(len(items), len(d))
 
         self.assertTrue(25 in d)
@@ -142,8 +142,8 @@ class SimpleRecnoTestCase(unittest.TestCase):
         d.delete(13)
         self.assertFalse(13 in d)
 
-        data = d.get_both(26, "z" * 60)
-        self.assertEqual(data, "z" * 60, 'was %r' % data)
+        data = d.get_both(10 + 26, b'z' * 60)
+        self.assertEqual(data, b'z' * 60, 'was %r' % data)
         if verbose:
             print(data)
 
@@ -156,18 +156,18 @@ class SimpleRecnoTestCase(unittest.TestCase):
         while rec:
             if verbose:
                 print(rec)
-            rec = next(c)
+            rec = c.next()
 
         c.set(50)
         rec = c.current()
         if verbose:
             print(rec)
 
-        c.put(-1, "a replacement record", db.DB_CURRENT)
+        c.put(-1, b'a replacement record', db.DB_CURRENT)
 
         c.set(50)
         rec = c.current()
-        self.assertEqual(rec, (50, "a replacement record"))
+        self.assertEqual(rec, (50, b'a replacement record'))
         if verbose:
             print(rec)
 
@@ -190,18 +190,18 @@ class SimpleRecnoTestCase(unittest.TestCase):
         c = d.cursor()
 
         # put a record beyond the consecutive end of the recno's
-        d[100] = "way out there"
-        self.assertEqual(d[100], "way out there")
+        d[128] = b'way out there'
+        self.assertEqual(d[128], b'way out there')
 
         try:
-            data = d[99]
+            data = d[127]
         except KeyError:
             pass
         else:
             self.fail("expected exception")
 
         try:
-            d.get(99)
+            d.get(127)
         except db.DBKeyEmptyError as val:
             if get_returns_none:
                 self.fail("unexpected DBKeyEmptyError exception")
@@ -216,7 +216,7 @@ class SimpleRecnoTestCase(unittest.TestCase):
         while rec:
             if verbose:
                 print(rec)
-            rec = next(c)
+            rec = c.next()
 
         c.close()
         d.close()
@@ -238,19 +238,21 @@ class SimpleRecnoTestCase(unittest.TestCase):
 
         d = db.DB()
         # This is the default value, just checking if both int
-        d.set_re_delim(0x0A)
-        d.set_re_delim('\n')  # and char can be used...
+        d.set_re_delim(0x0d)
+        self.assertEqual(d.get_re_delim(), b'\r')
+        d.set_re_delim(b'\n')  # and char can be used...
+        self.assertEqual(d.get_re_delim(), b'\n')
         d.set_re_source(source)
         d.open(self.filename, db.DB_RECNO, db.DB_CREATE)
 
-        data = "The quick brown fox jumped over the lazy dog".split()
+        data = b"The quick brown fox jumped over the lazy dog".split()
         for datum in data:
             d.append(datum)
         d.sync()
         d.close()
 
         # get the text from the backing source
-        f = open(source, 'r')
+        f = open(source, 'rb')
         text = f.read()
         f.close()
         text = text.strip()
@@ -259,44 +261,46 @@ class SimpleRecnoTestCase(unittest.TestCase):
             print(data)
             print(text.split('\n'))
 
-        self.assertEqual(text.split('\n'), data)
+        self.assertEqual(text.split(b'\n'), data)
 
         # open as a DB again
         d = db.DB()
         d.set_re_source(source)
         d.open(self.filename, db.DB_RECNO)
 
-        d[3] = 'reddish-brown'
-        d[8] = 'comatose'
+        d[3] = b'reddish-brown'
+        d[8] = b'comatose'
 
         d.sync()
         d.close()
 
-        f = open(source, 'r')
+        f = open(source, 'rb')
         text = f.read()
         f.close()
         text = text.strip()
         if verbose:
             print(text)
-            print(text.split('\n'))
+            print(text.split(b'\n'))
 
-        self.assertEqual(text.split('\n'),
-           "The quick reddish-brown fox jumped over the comatose dog".split())
+        self.assertEqual(text.split(b'\n'),
+           b'The quick reddish-brown fox jumped over the comatose dog'.split())
 
     def test03_FixedLength(self):
         d = db.DB()
         d.set_re_len(40)  # fixed length records, 40 bytes long
-        d.set_re_pad('-') # sets the pad character...
-        d.set_re_pad(45)  # ...test both int and char
+        d.set_re_pad(b'-') # sets the pad character...
+        self.assertEqual(d.get_re_pad(), b'-')
+        d.set_re_pad(42)  # ...test both int and char
+        self.assertEqual(d.get_re_pad(), b'*')
         d.open(self.filename, db.DB_RECNO, db.DB_CREATE)
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             d.append(x * 35)    # These will be padded
 
-        d.append('.' * 40)      # this one will be exact
+        d.append(b'.' * 40)      # this one will be exact
 
         try:                    # this one will fail
-            d.append('bad' * 20)
+            d.append(b'bad' * 20)
         except db.DBInvalidArgError as val:
             self.assertEqual(val.args[0], db.EINVAL)
             if verbose: print(val)
@@ -308,7 +312,7 @@ class SimpleRecnoTestCase(unittest.TestCase):
         while rec:
             if verbose:
                 print(rec)
-            rec = next(c)
+            rec = c.next()
 
         c.close()
         d.close()
@@ -317,9 +321,9 @@ class SimpleRecnoTestCase(unittest.TestCase):
         d = db.DB()
         d.open(self.filename, dbtype=db.DB_RECNO, flags=db.DB_CREATE)
 
-        row_id = d.append(' ')
+        row_id = d.append(b' ')
         self.assertEqual(1, d.get_size(key=row_id))
-        row_id = d.append('')
+        row_id = d.append(b'')
         self.assertEqual(0, d.get_size(key=row_id))
 
 

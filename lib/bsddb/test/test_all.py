@@ -145,6 +145,11 @@ else :
     del Lock
 
 
+import string
+
+# Transparent Encoding
+printable_bytes = [i.encode('ascii') for i in string.printable]
+
 
 class PrintInfoFakeTest(unittest.TestCase):
     def testPrintVersions(self):

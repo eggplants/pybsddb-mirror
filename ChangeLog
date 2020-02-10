@@ -20,6 +20,12 @@ TODO: Implement PEP 384 (Stable API)
     appropriate). Previous releases did mostly transparent encoding. This
     is not the case anymore. All needed encoding must be explicit in
     your code, both when reading and when writing to the database.
+  * In previous releases, database cursors were iterable under Python 3,
+    but not under Python 2. For this release, database cursors are not
+    iterable anymore. This will be improved in a future release.
+  * In previous releases, log cursors were iterable under Python 3,
+    but not under Python 2. For this release, log cursors are not
+    iterable anymore. This will be improved in a future release.
   * Support for DB_REPMGR_CONF_DISABLE_SSL flag in
     "DB_ENV.rep_set_config()".
   * *WARNING:* In Berkeley DB 18.1 and up, Replication Manager uses SSL by
@@ -35,6 +41,11 @@ TODO: Implement PEP 384 (Stable API)
     in your code.
 
     This limitation will be overcomed in a future release of this project.
+
+  * "DB_ENV.set_re_pad()" param must be bytes or integer.
+  * "DB_ENV.get_re_pad()" returns bytes.
+  * "DB_ENV.set_re_delim()" param must be bytes or integer.
+  * "DB_ENV.get_re_delim()" returns bytes.
 
 6.2.7:
   * Update copyright notices.

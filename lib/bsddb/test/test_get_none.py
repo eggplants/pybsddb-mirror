@@ -37,10 +37,11 @@ are met:
 TestCases for checking set_get_returns_none.
 """
 
-import os, string
+import os
 import unittest
 
-from .test_all import db, verbose, get_new_database_path
+
+from .test_all import db, verbose, get_new_database_path, printable_bytes
 
 
 #----------------------------------------------------------------------
@@ -61,24 +62,24 @@ class GetReturnsNoneTestCase(unittest.TestCase):
         d.open(self.filename, db.DB_BTREE, db.DB_CREATE)
         d.set_get_returns_none(1)
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             d.put(x, x * 40)
 
-        data = d.get('bad key')
+        data = d.get(b'bad key')
         self.assertEqual(data, None)
 
-        data = d.get(string.ascii_letters[0])
-        self.assertEqual(data, string.ascii_letters[0]*40)
+        data = d.get(printable_bytes[31])
+        self.assertEqual(data, printable_bytes[31]*40)
 
         count = 0
         c = d.cursor()
         rec = c.first()
         while rec:
             count = count + 1
-            rec = next(c)
+            rec = c.next()
 
         self.assertEqual(rec, None)
-        self.assertEqual(count, len(string.ascii_letters))
+        self.assertEqual(count, len(printable_bytes))
 
         c.close()
         d.close()
@@ -89,14 +90,14 @@ class GetReturnsNoneTestCase(unittest.TestCase):
         d.open(self.filename, db.DB_BTREE, db.DB_CREATE)
         d.set_get_returns_none(0)
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             d.put(x, x * 40)
 
-        self.assertRaises(db.DBNotFoundError, d.get, 'bad key')
-        self.assertRaises(KeyError, d.get, 'bad key')
+        self.assertRaises(db.DBNotFoundError, d.get, b'bad key')
+        self.assertRaises(KeyError, d.get, b'bad key')
 
-        data = d.get(string.ascii_letters[0])
-        self.assertEqual(data, string.ascii_letters[0]*40)
+        data = d.get(printable_bytes[11])
+        self.assertEqual(data, printable_bytes[11]*40)
 
         count = 0
         exceptionHappened = 0
@@ -105,14 +106,14 @@ class GetReturnsNoneTestCase(unittest.TestCase):
         while rec:
             count = count + 1
             try:
-                rec = next(c)
+                rec = c.next()
             except db.DBNotFoundError:  # end of the records
                 exceptionHappened = 1
                 break
 
         self.assertNotEqual(rec, None)
         self.assertTrue(exceptionHappened)
-        self.assertEqual(count, len(string.ascii_letters))
+        self.assertEqual(count, len(printable_bytes))
 
         c.close()
         d.close()

@@ -108,8 +108,8 @@ class DBReplicationManager(DBReplication) :
         super().setUp()
 
         if db.version() >= (18, 1):
-            self.dbenvMaster.rep_set_config(DB_REPMGR_CONF_DISABLE_SSL, 1)
-            self.dbenvClient.rep_set_config(DB_REPMGR_CONF_DISABLE_SSL, 1)
+            self.dbenvMaster.rep_set_config(db.DB_REPMGR_CONF_DISABLE_SSL, 1)
+            self.dbenvClient.rep_set_config(db.DB_REPMGR_CONF_DISABLE_SSL, 1)
 
     def test01_basic_replication(self) :
         master_port = test_support.find_unused_port()
@@ -273,7 +273,7 @@ class DBReplicationManager(DBReplication) :
         self.assertEqual(b'123', v)
 
         txn=self.dbenvMaster.txn_begin()
-        self.dbMaster.delete("ABC", txn=txn)
+        self.dbMaster.delete(b'ABC', txn=txn)
         txn.commit()
         timeout=time.time()+10
         while (time.time()<timeout) and (v is not None) :
@@ -446,7 +446,7 @@ class DBBaseReplication(DBReplication) :
         self.assertEqual(b'123', v)
 
         txn=self.dbenvMaster.txn_begin()
-        self.dbMaster.delete("ABC", txn=txn)
+        self.dbMaster.delete(b'ABC', txn=txn)
         txn.commit()
         timeout=time.time()+10
         while (time.time()<timeout) and (v is not None) :

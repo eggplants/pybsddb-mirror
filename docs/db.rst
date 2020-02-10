@@ -339,14 +339,14 @@ DB Methods
 
    Returns the delimiting byte, which is used to mark the end of a
    record in the backing source file for the Recno access method.
-   The return value will be a numeric byte value.
+   The return value will be a single character bytes object.
    :OracleAPIC:`More info... <dbget_re_delim.html>`
 
 .. function:: set_re_delim(delim)
 
    Set the delimiting byte used to mark the end of a record in the
    backing source file for the Recno access method. You can
-   specify a char or a numeric byte value.
+   specify a single character bytes object or a numeric value.
    :OracleAPIC:`More info... <dbset_re_delim.html>`
 
 .. function:: get_re_len()
@@ -365,15 +365,15 @@ DB Methods
 .. function:: get_re_pad()
 
    Returns the pad character used for short, fixed-length records used
-   by the Queue and Recno access methods. The method returns a byte
-   value.
+   by the Queue and Recno access methods. The return value will be
+   a single character bytes object.
    :OracleAPIC:`More info... <dbget_re_pad.html>`
 
 .. function:: set_re_pad(pad)
 
-   Set the padding character for short, fixed-length records for the
-   Queue and Recno access methods. You can specify a char or a numeric
-   byte value.
+   Set the padding character for short, fixed-length records for
+   the Queue and Recno access methods. You can specify a single
+   character bytes object or a numeric value
    :OracleAPIC:`More info... <dbset_re_pad.html>`
 
 .. function:: get_re_source()

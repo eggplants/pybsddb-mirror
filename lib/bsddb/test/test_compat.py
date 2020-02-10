@@ -103,7 +103,7 @@ class CompatibilityTestCase(unittest.TestCase):
             if verbose:
                 print(rec)
             try:
-                rec = next(f)
+                rec = f.next()
             except KeyError:
                 break
 

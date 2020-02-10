@@ -480,18 +480,18 @@ class DBEnv_logcursor(DBEnv):
     def test_3_next(self) :
         logc = self.env.log_cursor()
         lsn_last = logc.last()[0]
-        self.assertEqual(next(logc), None)
+        self.assertEqual(logc.next(), None)
         lsn_first = logc.first()[0]
-        v = next(logc)
+        v = logc.next()
         self._check_return(v)
         self.assertTrue(lsn_first < v[0])
         self.assertTrue(lsn_last > v[0])
 
-        v2 = next(logc)
+        v2 = logc.next()
         self.assertTrue(v2[0] > v[0])
         self.assertTrue(lsn_last > v2[0])
 
-        v3 = next(logc)
+        v3 = logc.next()
         self.assertTrue(v3[0] > v2[0])
         self.assertTrue(lsn_last > v3[0])
 
@@ -516,15 +516,15 @@ class DBEnv_logcursor(DBEnv):
     def test_5_current(self) :
         logc = self.env.log_cursor()
         logc.first()
-        v = next(logc)
+        v = logc.next()
         self.assertEqual(v, logc.current())
 
     def test_6_set(self) :
         logc = self.env.log_cursor()
         logc.first()
-        v = next(logc)
-        self.assertNotEqual(v, next(logc))
-        self.assertNotEqual(v, next(logc))
+        v = logc.next()
+        self.assertNotEqual(v, logc.next())
+        self.assertNotEqual(v, logc.next())
         self.assertEqual(v, logc.set(v[0]))
 
     def test_explicit_close(self) :

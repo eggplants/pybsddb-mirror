@@ -42,7 +42,7 @@ import time
 import errno
 from random import random
 
-DASH = '-'
+DASH = b'-'
 
 try:
     WindowsError
@@ -138,10 +138,8 @@ class ConcurrentDataStoreBase(BaseThreadedTestCase):
                         name = 'writer %d' % x,
                         )#verbose = verbose)
             writers.append(wt)
-
-        for t in writers:
-            t.daemon = True
-            t.start()
+            wt.daemon = True
+            wt.start()
 
         for t in writers:
             t.join()
@@ -157,7 +155,7 @@ class ConcurrentDataStoreBase(BaseThreadedTestCase):
         count=len(keys)//len(readers)
         count2=count
         for x in keys :
-            key = '%04d' % x
+            key = b'%04d' % x
             dbutils.DeadlockWrap(d.put, key, self.makeData(key),
                                  max_retries=12)
             if verbose and x % 100 == 0:
@@ -185,7 +183,7 @@ class ConcurrentDataStoreBase(BaseThreadedTestCase):
                 count += 1
                 key, data = rec
                 self.assertEqual(self.makeData(key), data)
-                rec = next(c)
+                rec = c.next()
             if verbose:
                 print("%s: found %d records" % (name, count))
             c.close()
@@ -272,7 +270,7 @@ class SimpleThreadedBase(BaseThreadedTestCase):
         count=len(keys)//len(readers)
         count2=count
         for x in keys :
-            key = '%04d' % x
+            key = b'%04d' % x
             dbutils.DeadlockWrap(d.put, key, self.makeData(key),
                                  max_retries=12)
 
@@ -297,7 +295,7 @@ class SimpleThreadedBase(BaseThreadedTestCase):
             count += 1
             key, data = rec
             self.assertEqual(self.makeData(key), data)
-            rec = dbutils.DeadlockWrap(c.__next__, max_retries=10)
+            rec = dbutils.DeadlockWrap(c.next, max_retries=10)
         if verbose:
             print("%s: found %d records" % (name, count))
         c.close()
@@ -393,7 +391,7 @@ class ThreadedTransactionsBase(BaseThreadedTestCase):
                 txn = self.env.txn_begin(None, self.txnFlag)
                 keys2=keys[:count]
                 for x in keys2 :
-                    key = '%04d' % x
+                    key = b'%04d' % x
                     d.put(key, self.makeData(key), txn)
                     if verbose and x % 100 == 0:
                         print("%s: records %d - %d finished" % (name, start, x))
@@ -423,7 +421,7 @@ class ThreadedTransactionsBase(BaseThreadedTestCase):
                     count += 1
                     key, data = rec
                     self.assertEqual(self.makeData(key), data)
-                    rec = next(c)
+                    rec = c.next()
                 if verbose: print("%s: found %d records" % (name, count))
                 c.close()
                 txn.commit()

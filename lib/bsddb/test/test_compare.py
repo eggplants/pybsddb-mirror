@@ -157,7 +157,7 @@ class AbstractBtreeKeyCompareTestCase(unittest.TestCase) :
                                  "expected value `%s' at %d but got `%s'"
                                  % (expected[index], index, key))
                 index = index + 1
-                rec = next(curs)
+                rec = curs.next()
             self.assertEqual(index, len(expected),
                              "not enough values returned from cursor")
         finally:
@@ -335,7 +335,7 @@ class AbstractDuplicateCompareTestCase(unittest.TestCase) :
                                  "expected value `%s' at %d but got `%s'"
                                  % (expected[index], index, data))
                 index = index + 1
-                rec = next(curs)
+                rec = curs.next()
             self.assertEqual(index, len(expected),
                              "not enough values returned from cursor")
         finally:

@@ -37,11 +37,11 @@ are met:
 TestCases for exercising a Queue DB.
 """
 
-import os, string
+import os
 from pprint import pprint
 import unittest
 
-from .test_all import db, verbose, get_new_database_path
+from .test_all import db, verbose, get_new_database_path, printable_bytes
 
 #----------------------------------------------------------------------
 
@@ -71,17 +71,17 @@ class SimpleQueueTestCase(unittest.TestCase):
             print("before appends" + '-' * 30)
             pprint(d.stat())
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             d.append(x * 40)
 
-        self.assertEqual(len(d), len(string.ascii_letters))
+        self.assertEqual(len(d), len(printable_bytes))
 
-        d.put(100, "some more data")
-        d.put(101, "and some more ")
-        d.put(75,  "out of order")
-        d.put(1,   "replacement data")
+        d.put(128, b'some more data')
+        d.put(129, b'and some more ')
+        d.put(120,  b'out of order')
+        d.put(1,   b'replacement data')
 
-        self.assertEqual(len(d), len(string.ascii_letters)+3)
+        self.assertEqual(len(d), len(printable_bytes)+3)
 
         if verbose:
             print("before close" + '-' * 30)
@@ -97,9 +97,9 @@ class SimpleQueueTestCase(unittest.TestCase):
             pprint(d.stat())
 
         # Test "txn" as a positional parameter
-        d.append("one more", None)
+        d.append(b'one more', None)
         # Test "txn" as a keyword parameter
-        d.append("another one", txn=None)
+        d.append(b'another one', txn=None)
 
         c = d.cursor()
 
@@ -118,12 +118,8 @@ class SimpleQueueTestCase(unittest.TestCase):
             print("after consume loop" + '-' * 30)
             pprint(d.stat())
 
-        self.assertEqual(len(d), 0, \
-               "if you see this message then you need to rebuild " \
-               "Berkeley DB 3.1.17 with the patch in patches/qam_stat.diff")
-
+        self.assertEqual(len(d), 0)
         d.close()
-
 
 
     def test02_basicPost32(self):
@@ -142,17 +138,17 @@ class SimpleQueueTestCase(unittest.TestCase):
             print("before appends" + '-' * 30)
             pprint(d.stat())
 
-        for x in string.ascii_letters:
+        for x in printable_bytes:
             d.append(x * 40)
 
-        self.assertEqual(len(d), len(string.ascii_letters))
+        self.assertEqual(len(d), len(printable_bytes))
 
-        d.put(100, "some more data")
-        d.put(101, "and some more ")
-        d.put(75,  "out of order")
-        d.put(1,   "replacement data")
+        d.put(128, b'some more data')
+        d.put(129, b'and some more ')
+        d.put(120,  b'out of order')
+        d.put(1,   b'replacement data')
 
-        self.assertEqual(len(d), len(string.ascii_letters)+3)
+        self.assertEqual(len(d), len(printable_bytes)+3)
 
         if verbose:
             print("before close" + '-' * 30)
@@ -168,7 +164,7 @@ class SimpleQueueTestCase(unittest.TestCase):
             print("after open" + '-' * 30)
             pprint(d.stat())
 
-        d.append("one more")
+        d.append(b'one more')
 
         if verbose:
             print("after append" + '-' * 30)

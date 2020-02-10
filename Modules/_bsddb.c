@@ -320,7 +320,7 @@ static int _DB_get_type(DBObject* self)
 
 
 /* Create a DBT structure (containing key and data values) from Python
-   strings.  Returns 1 on success, 0 on an error. */
+   bytes.  Returns 1 on success, 0 on an error. */
 static int make_dbt(PyObject* obj, DBT* dbt)
 {
     Py_ssize_t size=0;
@@ -329,7 +329,7 @@ static int make_dbt(PyObject* obj, DBT* dbt)
     if (obj == Py_None) {
         /* no need to do anything, the structure has already been zeroed */
     }
-    else if (!PyArg_Parse(obj, "s#", &dbt->data, &size)) {
+    else if (!PyArg_Parse(obj, "y#", &dbt->data, &size)) {
         PyErr_SetString(PyExc_TypeError,
                         "Data values must be of type bytes or None.");
         return 0;
@@ -3070,6 +3070,7 @@ static PyObject*
 DB_get_re_delim(DBObject* self)
 {
     int err, re_delim;
+    char buf[1];
 
     CHECK_DB_NOT_CLOSED(self);
 
@@ -3077,7 +3078,8 @@ DB_get_re_delim(DBObject* self)
     err = self->db->get_re_delim(self->db, &re_delim);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return PyLong_FromLong(re_delim);
+    buf[0] = re_delim;
+    return PyBytes_FromStringAndSize(buf, 1);
 }
 
 static PyObject*
@@ -3135,6 +3137,7 @@ static PyObject*
 DB_get_re_pad(DBObject* self)
 {
     int err, re_pad;
+    char buf[1];
 
     CHECK_DB_NOT_CLOSED(self);
 
@@ -3142,7 +3145,8 @@ DB_get_re_pad(DBObject* self)
     err = self->db->get_re_pad(self->db, &re_pad);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return PyLong_FromLong(re_pad);
+    buf[0] = re_pad;
+    return PyBytes_FromStringAndSize(buf, 1);
 }
 
 static PyObject*
@@ -7907,7 +7911,7 @@ DBTxn_prepare(DBTxnObject* self, PyObject* args)
     char* gid=NULL;
     Py_ssize_t gid_size=0;
 
-    if (!PyArg_ParseTuple(args, "s#:prepare", &gid, &gid_size))
+    if (!PyArg_ParseTuple(args, "y#:prepare", &gid, &gid_size))
         return NULL;
 
     if (gid_size != DB_GID_SIZE) {

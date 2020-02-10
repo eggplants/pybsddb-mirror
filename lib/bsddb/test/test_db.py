@@ -151,20 +151,20 @@ class DB_txn(DB) :
 
 class DB_recno(DB) :
     def test_re_pad(self) :
-        for i in [' ', '*'] :  # Check chars
-            self.db.set_re_pad(i)
-            self.assertEqual(ord(i), self.db.get_re_pad())
-        for i in [97, 65] :  # Check integers
+        for i in [b' ', b'*'] :  # Check chars
             self.db.set_re_pad(i)
             self.assertEqual(i, self.db.get_re_pad())
+        for i in [97, 65] :  # Check integers
+            self.db.set_re_pad(i)
+            self.assertEqual(b'%c' % i, self.db.get_re_pad())
 
     def test_re_delim(self) :
-        for i in [' ', '*'] :  # Check chars
-            self.db.set_re_delim(i)
-            self.assertEqual(ord(i), self.db.get_re_delim())
-        for i in [97, 65] :  # Check integers
+        for i in [b' ', b'*'] :  # Check chars
             self.db.set_re_delim(i)
             self.assertEqual(i, self.db.get_re_delim())
+        for i in [97, 65] :  # Check integers
+            self.db.set_re_delim(i)
+            self.assertEqual(b'%c' % i, self.db.get_re_delim())
 
     def test_re_source(self) :
         for i in ["test", "test2", "test3"] :

@@ -41,6 +41,8 @@ import os, string, sys
 import random
 import unittest
 
+printable_bytes = string.printable.encode('iso-8859-1')  # Transparent_encoding
+
 
 from .test_all import db, dbshelve, test_support, verbose, \
         get_new_environment_path, get_new_database_path
@@ -57,11 +59,8 @@ class DataClass:
     def __init__(self):
         self.value = random.random()
 
-    def __repr__(self) :  # For Python 3.0 comparison
-        return "DataClass %f" %self.value
-
-    def __cmp__(self, other):  # For Python 2.x comparison
-        return cmp(self.value, other)
+    def __repr__(self):
+        return "DataClass %f" % self.value
 
 
 class DBShelveTestCase(unittest.TestCase):
@@ -76,19 +75,20 @@ class DBShelveTestCase(unittest.TestCase):
     def mk(self, key):
         """Turn key into an appropriate key type for this db"""
         # override in child class for RECNO
-        return bytes(key, "iso8859-1")  # 8 bits
+        return key
 
     def populateDB(self, d):
-        for x in string.ascii_letters:
-            d[self.mk('S' + x)] = 10 * x           # add a string
-            d[self.mk('I' + x)] = ord(x)           # add an integer
-            d[self.mk('L' + x)] = [x] * 10         # add a list
+        for x in printable_bytes:
+            xx = b'%c' % x
+            d[self.mk(b'S%c' % x)] = 10 * xx    # add bytes
+            d[self.mk(b'I%c' % x)] = x          # add an integer
+            d[self.mk(b'L%c' % x)] = [xx] * 10  # add a list
 
             inst = DataClass()            # add an instance
-            inst.S = 10 * x
-            inst.I = ord(x)
-            inst.L = [x] * 10
-            d[self.mk('O' + x)] = inst
+            inst.S = 10 * xx
+            inst.I = x
+            inst.L = [xx] * 10
+            d[self.mk(b'O%c' % x)] = inst
 
 
     # overridable in derived classes to affect how the shelf is created/opened
@@ -122,14 +122,14 @@ class DBShelveTestCase(unittest.TestCase):
             print("keys:", k)
             print("stats:", s)
 
-        self.assertEqual(0, self.mk('bad key') in d)
-        self.assertEqual(1, self.mk('IA') in d)
-        self.assertEqual(1, self.mk('OA') in d)
+        self.assertEqual(0, self.mk(b'bad key') in d)
+        self.assertEqual(1, self.mk(b'IA') in d)
+        self.assertEqual(1, self.mk(b'OA') in d)
 
-        d.delete(self.mk('IA'))
-        del d[self.mk('OA')]
-        self.assertEqual(0, self.mk('IA') in d)
-        self.assertEqual(0, self.mk('OA') in d)
+        d.delete(self.mk(b'IA'))
+        del d[self.mk(b'OA')]
+        self.assertEqual(0, self.mk(b'IA') in d)
+        self.assertEqual(0, self.mk(b'OA') in d)
         self.assertEqual(len(d), l-2)
 
         values = []
@@ -143,8 +143,8 @@ class DBShelveTestCase(unittest.TestCase):
         dbvalues = list(d.values())
         self.assertEqual(len(dbvalues), len(list(d.keys())))
         # XXX: Convert all to strings. Please, improve
-        values.sort(key=lambda x : str(x))
-        dbvalues.sort(key=lambda x : str(x))
+        values.sort(key=lambda x: repr(x))
+        dbvalues.sort(key=lambda x: repr(x))
         self.assertEqual(repr(values), repr(dbvalues))
 
         items = list(d.items())
@@ -153,18 +153,18 @@ class DBShelveTestCase(unittest.TestCase):
         for key, value in items:
             self.checkrec(key, value)
 
-        self.assertEqual(d.get(self.mk('bad key')), None)
-        self.assertEqual(d.get(self.mk('bad key'), None), None)
-        self.assertEqual(d.get(self.mk('bad key'), 'a string'), 'a string')
-        self.assertEqual(d.get(self.mk('bad key'), [1, 2, 3]), [1, 2, 3])
+        self.assertEqual(d.get(self.mk(b'bad key')), None)
+        self.assertEqual(d.get(self.mk(b'bad key'), None), None)
+        self.assertEqual(d.get(self.mk(b'bad key'), b'a string'), b'a string')
+        self.assertEqual(d.get(self.mk(b'bad key'), [1, 2, 3]), [1, 2, 3])
 
         d.set_get_returns_none(0)
-        self.assertRaises(db.DBNotFoundError, d.get, self.mk('bad key'))
+        self.assertRaises(db.DBNotFoundError, d.get, self.mk(b'bad key'))
         d.set_get_returns_none(1)
 
-        d.put(self.mk('new key'), 'new data')
-        self.assertEqual(d.get(self.mk('new key')), 'new data')
-        self.assertEqual(d[self.mk('new key')], 'new data')
+        d.put(self.mk(b'new key'), b'new data')
+        self.assertEqual(d.get(self.mk(b'new key')), b'new data')
+        self.assertEqual(d[self.mk(b'new key')], b'new data')
 
 
 
@@ -203,7 +203,7 @@ class DBShelveTestCase(unittest.TestCase):
 
         self.assertEqual(count, len(d))
 
-        c.set(self.mk('SS'))
+        c.set(self.mk(b'SS'))
         key, value = c.current()
         self.checkrec(key, value)
         del c
@@ -234,23 +234,20 @@ class DBShelveTestCase(unittest.TestCase):
     def checkrec(self, key, value):
         # override this in a subclass if the key type is different
 
-        if isinstance(key, bytes) :
-            key = key.decode("iso8859-1")  # 8 bits
-
-        x = key[1]
-        if key[0] == 'S':
-            self.assertEqual(type(value), str)
+        x = key[1:2]
+        if key[0:1] == b'S':
+            self.assertEqual(type(value), bytes)
             self.assertEqual(value, 10 * x)
 
-        elif key[0] == 'I':
+        elif key[0:1] == b'I':
             self.assertEqual(type(value), int)
             self.assertEqual(value, ord(x))
 
-        elif key[0] == 'L':
+        elif key[0:1] == b'L':
             self.assertEqual(type(value), list)
             self.assertEqual(value, [x] * 10)
 
-        elif key[0] == 'O':
+        elif key[0:1] == b'O':
             self.assertEqual(type(value), DataClass)
 
             self.assertEqual(value.S, 10 * x)
@@ -372,14 +369,14 @@ class RecNoShelveTestCase(BasicShelveTestCase):
             print('\n', '-=' * 30)
             print("Running %s.test03_append..." % self.__class__.__name__)
 
-        self.d[1] = 'spam'
-        self.d[5] = 'eggs'
-        self.assertEqual(6, self.d.append('spam'))
-        self.assertEqual(7, self.d.append('baked beans'))
-        self.assertEqual('spam', self.d.get(6))
-        self.assertEqual('spam', self.d.get(1))
-        self.assertEqual('baked beans', self.d.get(7))
-        self.assertEqual('eggs', self.d.get(5))
+        self.d[1] = b'spam'
+        self.d[5] = b'eggs'
+        self.assertEqual(6, self.d.append(b'spam'))
+        self.assertEqual(7, self.d.append(b'baked beans'))
+        self.assertEqual(b'spam', self.d.get(6))
+        self.assertEqual(b'spam', self.d.get(1))
+        self.assertEqual(b'baked beans', self.d.get(7))
+        self.assertEqual(b'eggs', self.d.get(5))
 
 
 #----------------------------------------------------------------------
