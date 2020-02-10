@@ -326,10 +326,14 @@ class DBEnv_log(DBEnv) :
 
     # The version with transactions is checked in other test object
     def test_log_printf(self) :
-        msg = "This is a test..."
+        msg = b'This is a test...'
         self.env.log_printf(msg)
         logc = self.env.log_cursor()
         self.assertTrue(msg in (logc.last()[1]))
+
+    def test_log_printf_zero(self) :
+        msg = b'This is must \0 fail...'
+        self.assertRaises(ValueError, self.env.log_printf, msg)
 
     def test_log_config(self) :
         self.env.log_set_config(db.DB_LOG_DSYNC | db.DB_LOG_ZERO, 1)
@@ -363,7 +367,7 @@ class DBEnv_log_txn(DBEnv) :
 
     # The version without transactions is checked in other test object
     def test_log_printf(self) :
-        msg = "This is a test..."
+        msg = b'This is a test...'
         txn = self.env.txn_begin()
         self.env.log_printf(msg, txn=txn)
         txn.commit()
@@ -371,14 +375,14 @@ class DBEnv_log_txn(DBEnv) :
         logc.last()  # Skip the commit
         self.assertTrue(msg in (logc.prev()[1]))
 
-        msg = "This is another test..."
+        msg = b'This is another test...'
         txn = self.env.txn_begin()
         self.env.log_printf(msg, txn=txn)
         txn.abort()  # Do not store the new message
         logc.last()  # Skip the abort
         self.assertTrue(msg not in (logc.prev()[1]))
 
-        msg = "This is a third test..."
+        msg = b'This is a third test...'
         txn = self.env.txn_begin()
         self.env.log_printf(msg, txn=txn)
         txn.commit()  # Do not store the new message

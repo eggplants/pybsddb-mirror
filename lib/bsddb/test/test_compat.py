@@ -63,7 +63,7 @@ class CompatibilityTestCase(unittest.TestCase):
         self.do_bthash_test(hashopen, 'hashopen')
 
     def test03_rnopen(self):
-        data = "The quick brown fox jumped over the lazy dog.".split()
+        data = b'The quick brown fox jumped over the lazy dog.'.split()
         if verbose:
             print("\nTesting: rnopen")
 
@@ -75,25 +75,25 @@ class CompatibilityTestCase(unittest.TestCase):
         if verbose:
             print('%s %s %s' % getTest)
 
-        self.assertEqual(getTest[1], 'quick', 'data mismatch!')
+        self.assertEqual(getTest[1], b'quick', 'data mismatch!')
 
         rv = f.set_location(3)
-        if rv != (3, 'brown'):
+        if rv != (3, b'brown'):
             self.fail('recno database set_location failed: '+repr(rv))
 
-        f[25] = 'twenty-five'
+        f[25] = b'twenty-five'
         f.close()
         del f
 
         f = rnopen(self.filename, 'w')
-        f[20] = 'twenty'
+        f[20] = b'twenty'
 
         def noRec(f):
             rec = f[15]
         self.assertRaises(KeyError, noRec, f)
 
         def badKey(f):
-            rec = f['a string']
+            rec = f[b'a string']
         self.assertRaises(TypeError, badKey, f)
 
         del f[3]
@@ -188,7 +188,7 @@ class CompatibilityTestCase(unittest.TestCase):
         if verbose:
             print('modification...')
         f = factory(self.filename, 'w')
-        f[b'd'] = 'discovered'
+        f[b'd'] = b'discovered'
 
         if verbose:
             print('access...')

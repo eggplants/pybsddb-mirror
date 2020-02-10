@@ -6567,7 +6567,7 @@ DBEnv_log_printf(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     DB_TXN *txn = NULL;
     static char* kwnames[] = {"string", "txn", NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|O:log_printf", kwnames,
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "y|O:log_printf", kwnames,
                 &string, &txnobj))
         return NULL;
 

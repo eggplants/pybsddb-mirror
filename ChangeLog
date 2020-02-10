@@ -50,6 +50,7 @@ TODO: Implement PEP 384 (Stable API)
   * 'DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
   * "DB.get_re_source()" returns unicode objects with the local
     filename encoding.
+  * "DB_ENV.log_prinf()" requires a bytes object not containing '\0'.
 
 6.2.7:
   * Update copyright notices.
