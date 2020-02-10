@@ -3153,11 +3153,15 @@ static PyObject*
 DB_set_re_source(DBObject* self, PyObject* args)
 {
     int err;
+    PyObject *sourceObj;
     char *source;
 
-    if (!PyArg_ParseTuple(args,"s:set_re_source", &source))
+    if (!PyArg_ParseTuple(args,"O&:set_re_source",
+                PyUnicode_FSConverter, &sourceObj))
         return NULL;
     CHECK_DB_NOT_CLOSED(self);
+
+    source = PyBytes_AS_STRING(sourceObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->set_re_source(self->db, source);
@@ -3178,7 +3182,7 @@ DB_get_re_source(DBObject* self)
     err = self->db->get_re_source(self->db, &source);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return PyBytes_FromString(source);
+    return PyUnicode_DecodeFSDefault(source);
 }
 
 static PyObject*

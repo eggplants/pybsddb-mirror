@@ -386,6 +386,7 @@ DB Methods
 .. function:: set_re_source(source)
 
    Set the underlying source file for the Recno access method.
+   Accepts path-like object with Python 3.6 or up.
    :OracleAPIC:`More info... <dbset_re_source.html>`
 
 .. function:: get_q_extentsize()
