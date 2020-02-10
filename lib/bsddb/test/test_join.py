@@ -46,22 +46,22 @@ from .test_all import db, dbshelve, test_support, verbose, \
 #----------------------------------------------------------------------
 
 ProductIndex = [
-    ('apple', "Convenience Store"),
-    ('blueberry', "Farmer's Market"),
-    ('shotgun', "S-Mart"),              # Aisle 12
-    ('pear', "Farmer's Market"),
-    ('chainsaw', "S-Mart"),             # "Shop smart.  Shop S-Mart!"
-    ('strawberry', "Farmer's Market"),
+    (b'apple', b"Convenience Store"),
+    (b'blueberry', b"Farmer's Market"),
+    (b'shotgun', b"S-Mart"),              # Aisle 12
+    (b'pear', b"Farmer's Market"),
+    (b'chainsaw', b"S-Mart"),             # "Shop smart.  Shop S-Mart!"
+    (b'strawberry', b"Farmer's Market"),
 ]
 
 ColorIndex = [
-    ('blue', "blueberry"),
-    ('red', "apple"),
-    ('red', "chainsaw"),
-    ('red', "strawberry"),
-    ('yellow', "peach"),
-    ('yellow', "pear"),
-    ('black', "shotgun"),
+    (b'blue', b'blueberry'),
+    (b'red', b'apple'),
+    (b'red', b'chainsaw'),
+    (b'red', b'strawberry'),
+    (b'yellow', b'peach'),
+    (b'yellow', b'pear'),
+    (b'black', b'shotgun'),
 ]
 
 class JoinTestCase(unittest.TestCase):
@@ -101,7 +101,7 @@ class JoinTestCase(unittest.TestCase):
             sCursor = secDB.cursor()
             # Don't do the .set() in an assert, or you can get a bogus failure
             # when running python -O
-            tmp = sCursor.set('red')
+            tmp = sCursor.set(b'red')
             self.assertTrue(tmp)
 
             # FIXME: jCursor doesn't properly hold a reference to its
@@ -109,11 +109,11 @@ class JoinTestCase(unittest.TestCase):
             # can cause a crash.
             jCursor = priDB.join([sCursor])
 
-            if jCursor.get(0) != ('apple', "Convenience Store"):
+            if jCursor.get(0) != (b'apple', b'Convenience Store'):
                 self.fail("join cursor positioned wrong")
-            if jCursor.join_item() != 'chainsaw':
+            if jCursor.join_item() != b'chainsaw':
                 self.fail("DBCursor.join_item returned wrong item")
-            if jCursor.get(0)[0] != 'strawberry':
+            if jCursor.get(0)[0] != b'strawberry':
                 self.fail("join cursor returned wrong thing")
             if jCursor.get(0):  # there were only three red items to return
                 self.fail("join cursor returned too many items")

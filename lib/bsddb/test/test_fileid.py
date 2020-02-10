@@ -52,14 +52,14 @@ class FileidResetTestCase(unittest.TestCase):
         # create DB 1
         self.db1 = db.DB()
         self.db1.open(self.db_path_1, dbtype=db.DB_HASH, flags=(db.DB_CREATE|db.DB_EXCL))
-        self.db1.put('spam', 'eggs')
+        self.db1.put(b'spam', b'eggs')
         self.db1.close()
 
         shutil.copy(self.db_path_1, self.db_path_2)
 
         self.db2 = db.DB()
         self.db2.open(self.db_path_2, dbtype=db.DB_HASH)
-        self.db2.put('spam', 'spam')
+        self.db2.put(b'spam', b'spam')
         self.db2.close()
 
         self.db_env = db.DBEnv()
@@ -70,11 +70,11 @@ class FileidResetTestCase(unittest.TestCase):
 
         self.db1 = db.DB(self.db_env)
         self.db1.open(self.db_path_1, dbtype=db.DB_HASH, flags=db.DB_RDONLY)
-        self.assertEqual(self.db1.get('spam'), 'eggs')
+        self.assertEqual(self.db1.get(b'spam'), b'eggs')
 
         self.db2 = db.DB(self.db_env)
         self.db2.open(self.db_path_2, dbtype=db.DB_HASH, flags=db.DB_RDONLY)
-        self.assertEqual(self.db2.get('spam'), 'spam')
+        self.assertEqual(self.db2.get(b'spam'), b'spam')
 
         self.db1.close()
         self.db2.close()

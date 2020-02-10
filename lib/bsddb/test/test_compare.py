@@ -63,8 +63,10 @@ def make_reverse_comparator(cmp) :
         return - delegate(left, right)
     return reverse
 
-_expected_lexical_test_data = ['', 'CCCP', 'a', 'aaa', 'b', 'c', 'cccce', 'ccccf']
-_expected_lowercase_test_data = ['', 'a', 'aaa', 'b', 'c', 'CC', 'cccce', 'ccccf', 'CCCP']
+_expected_lexical_test_data = [b'', b'CCCP', b'a', b'aaa', b'b', b'c',
+        b'cccce', b'ccccf']
+_expected_lowercase_test_data = [b'', b'a', b'aaa', b'b', b'c', b'CC',
+        b'cccce', b'ccccf', b'CCCP']
 
 class ComparatorTests(unittest.TestCase) :
     def comparator_test_helper(self, comparator, expected_data) :
@@ -120,7 +122,7 @@ class AbstractBtreeKeyCompareTestCase(unittest.TestCase) :
     def addDataToDB(self, data) :
         i = 0
         for item in data:
-            self.db.put(item, str(i))
+            self.db.put(item, b'%d' % i)
             i = i + 1
 
     def createDB(self, key_comparator) :
@@ -187,7 +189,7 @@ class BtreeKeyCompareTestCase(AbstractBtreeKeyCompareTestCase) :
         self.addDataToDB([b'b', b'a', b'd'])
         # all things being equal the first key will be the only key
         # in the database...  (with the last key's value fwiw)
-        self.finishTest(['b'])
+        self.finishTest([b'b'])
 
 
 class BtreeExceptionsTestCase(AbstractBtreeKeyCompareTestCase) :
@@ -298,7 +300,7 @@ class AbstractDuplicateCompareTestCase(unittest.TestCase) :
 
     def addDataToDB(self, data) :
         for item in data:
-            self.db.put("key", item)
+            self.db.put(b'key', item)
 
     def createDB(self, dup_comparator) :
         self.db = db.DB(self.env)
