@@ -64,6 +64,7 @@ TODO: Implement PEP 384 (Stable API)
   * "DB_ENV.get_data_dirs()" returns a tuple of unicode objects encoded with
     the local filename encoding.
   * "DB_ENV.log_prinf()" requires a bytes object not containing '\0'.
+  * The "DB_ENV.lock_get()" name can not be None.
 
 6.2.7:
   * Update copyright notices.

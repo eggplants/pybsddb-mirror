@@ -6202,17 +6202,19 @@ DBEnv_lock_get(DBEnvObject* self, PyObject* args)
 {
     int flags=0;
     int locker, lock_mode;
-    DBT obj;
-    PyObject* objobj;
+    DBT dbt;
+    char *objobj;
+    Py_ssize_t objsize;
 
-    if (!PyArg_ParseTuple(args, "iOi|i:lock_get", &locker, &objobj, &lock_mode, &flags))
+    if (!PyArg_ParseTuple(args, "is#i|i:lock_get",
+                          &locker, &objobj, &objsize, &lock_mode, &flags))
         return NULL;
 
+    CLEAR_DBT(dbt);
+    dbt.data = objobj;
+    dbt.size = objsize;
 
-    if (!make_dbt(objobj, &obj))
-        return NULL;
-
-    return (PyObject*)newDBLockObject(self, locker, &obj, lock_mode, flags);
+    return (PyObject*)newDBLockObject(self, locker, &dbt, lock_mode, flags);
 }
 
 

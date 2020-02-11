@@ -161,6 +161,14 @@ class LockingTestCase(unittest.TestCase):
 
         self.assertTrue(deadlock_detection.count>0)
 
+    def test05_not_None(self):
+        anID = self.env.lock_id()
+        try:
+            self.assertRaises(TypeError, self.env.lock_get,
+                              anID, None, db.DB_LOCK_WRITE)
+        finally:
+            self.env.lock_id_free(anID)
+
     def theThread(self, lockType):
         name = currentThread().name
 
