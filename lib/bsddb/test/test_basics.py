@@ -1110,6 +1110,163 @@ class DBPrivateObject(PrivateObject) :
         self.obj = db.DB()
 
 
+class open_path(unittest.TestCase):
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test01_open_env_path(self):
+        import pathlib
+        homeDir = pathlib.Path(get_new_environment_path())
+        env = db.DBEnv()
+        try:
+            env.open(homeDir, db.DB_CREATE)
+        finally:
+            env.close()
+            test_support.rmtree(homeDir)
+
+    def test02_open_env_None(self):
+        env = db.DBEnv()
+        try:
+            env.open(None, db.DB_CREATE)
+        finally:
+            env.close()
+
+    def test03_open_env_None_keywords(self):
+        env = db.DBEnv()
+        try:
+            env.open(flags=db.DB_CREATE)
+        finally:
+            env.close()
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test04_open_db_path(self):
+        import pathlib
+        filename = pathlib.Path(get_new_database_path())
+        dbname = 'test'
+        database = db.DB()
+        try:
+            database.open(filename, dbname, db.DB_HASH, db.DB_CREATE, 0o660)
+            self.assertEqual(database.get_dbname(),
+                    (filename.as_posix(), 'test'))
+        finally:
+            database.close()
+            os.remove(filename)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test05_open_db_path_keywords(self):
+        import pathlib
+        filename = pathlib.Path(get_new_database_path())
+        dbname = 'test'
+        database = db.DB()
+        try:
+            database.open(filename, dbname=dbname, dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(),
+                    (filename.as_posix(), 'test'))
+        finally:
+            database.close()
+            os.remove(filename)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test06_open_db_path_no_dbname(self):
+        import pathlib
+        filename = pathlib.Path(get_new_database_path())
+        database = db.DB()
+        try:
+            database.open(filename, db.DB_HASH, db.DB_CREATE, 0o660)
+            self.assertEqual(database.get_dbname(),
+                    (filename.as_posix(), None))
+        finally:
+            database.close()
+            os.remove(filename)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_open_db_path_no_dbname_keywords(self):
+        import pathlib
+        filename = pathlib.Path(get_new_database_path())
+        database = db.DB()
+        try:
+            database.open(filename, dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(),
+                    (filename.as_posix(), None))
+        finally:
+            database.close()
+            os.remove(filename)
+
+    def test08_open_db_missing(self):
+        database = db.DB()
+        self.assertRaises(TypeError, database.open,
+                          db.DB_HASH, db.DB_CREATE, 0o660)
+
+    def test09_open_db_missing_keywords(self):
+        database = db.DB()
+        try:
+            database.open(dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(), (None, None))
+        finally:
+            database.close()
+
+    def test10_open_db_none(self):
+        database = db.DB()
+        try:
+            database.open(None, db.DB_HASH, db.DB_CREATE, 0o660)
+            self.assertEqual(database.get_dbname(), (None, None))
+        finally:
+            database.close()
+
+    def test11_open_db_none_keywords(self):
+        database = db.DB()
+        try:
+            database.open(None, dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(), (None, None))
+        finally:
+            database.close()
+
+    def test12_open_db_none_none(self):
+        database = db.DB()
+        try:
+            database.open(None, None, db.DB_HASH, db.DB_CREATE, 0o660)
+            self.assertEqual(database.get_dbname(), (None, None))
+        finally:
+            database.close()
+
+    def test13_open_db_none_none_keywords(self):
+        database = db.DB()
+        try:
+            database.open(None, dbname=None, dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(), (None, None))
+        finally:
+            database.close()
+
+    def test14_open_db_none_dbname(self):
+        database = db.DB()
+        try:
+            database.open(None, 'test', db.DB_HASH, db.DB_CREATE, 0o660)
+            self.assertEqual(database.get_dbname(), (None, 'test'))
+        finally:
+            database.close()
+
+    def test15_open_db_none_dbname_keywords(self):
+        database = db.DB()
+        try:
+            database.open(None, dbname='test', dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(), (None, 'test'))
+        finally:
+            database.close()
+
+    def test16_open_db_missing_dbname_keywords(self):
+        database = db.DB()
+        try:
+            database.open(dbname='test', dbtype=db.DB_HASH,
+                          flags=db.DB_CREATE, mode=0o660)
+            self.assertEqual(database.get_dbname(), (None, 'test'))
+        finally:
+            database.close()
+
+
 #----------------------------------------------------------------------
 #----------------------------------------------------------------------
 
@@ -1135,6 +1292,7 @@ def test_suite():
     suite.addTest(unittest.makeSuite(HashMultiDBTestCase))
     suite.addTest(unittest.makeSuite(DBEnvPrivateObject))
     suite.addTest(unittest.makeSuite(DBPrivateObject))
+    suite.addTest(unittest.makeSuite(open_path))
 
     return suite
 

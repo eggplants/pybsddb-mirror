@@ -2246,8 +2246,10 @@ static PyObject*
 DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
 {
     int err, type = DB_UNKNOWN, flags=0, mode=0660;
-    char* filename = NULL;
-    char* dbname = NULL;
+    PyObject *obj = NULL;
+    PyObject *filenameObj = NULL;
+    char *filename = NULL;
+    char *dbname = NULL;
     PyObject *txnobj = NULL;
     DB_TXN *txn = NULL;
     /* with dbname */
@@ -2257,21 +2259,33 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames_basic[] = {
         "filename", "dbtype", "flags", "mode", "txn", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "z|ziiiO:open", kwnames,
-				     &filename, &dbname, &type, &flags, &mode,
-                                     &txnobj))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OziiiO:open", kwnames,
+                     &filenameObj, &dbname, &type, &flags, &mode, &txnobj))
     {
-	PyErr_Clear();
-	type = DB_UNKNOWN; flags = 0; mode = 0660;
-	filename = NULL; dbname = NULL;
-	if (!PyArg_ParseTupleAndKeywords(args, kwargs,"z|iiiO:open",
-                                         kwnames_basic,
-					 &filename, &type, &flags, &mode,
-                                         &txnobj))
-	    return NULL;
+	    PyErr_Clear();
+	    type = DB_UNKNOWN; flags = 0; mode = 0660;
+	    filenameObj = NULL; dbname = NULL;
+	    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"|OiiiO:open",
+                                             kwnames_basic,
+		                        			 &filenameObj, &type, &flags, &mode,
+                                             &txnobj))
+	        return NULL;
     }
 
-    if (!checkTxnObj(txnobj, &txn)) return NULL;
+    if ((filenameObj != NULL) && (filenameObj != Py_None))
+    {
+        if(!PyUnicode_FSConverter(filenameObj, &obj))
+        {
+            return NULL;
+        }
+        filename = PyBytes_AS_STRING(obj);
+    }
+
+    if (!checkTxnObj(txnobj, &txn))
+    {
+        Py_XDECREF(obj);
+        return NULL;
+    }
 
     if (NULL == self->db) {
         PyObject *t = Py_BuildValue("(is)", 0,
@@ -2280,6 +2294,7 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
             PyErr_SetObject(DBError, t);
             Py_DECREF(t);
         }
+        Py_XDECREF(obj);
         return NULL;
     }
 
@@ -2293,6 +2308,8 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->open(self->db, txn, filename, dbname, type, flags, mode);
     MYDB_END_ALLOW_THREADS;
+
+    Py_XDECREF(obj);
 
     if (makeDBError(err)) {
         PyObject *dummy;
@@ -4836,19 +4853,35 @@ DBEnv_close(DBEnvObject* self, PyObject* args)
 
 
 static PyObject*
-DBEnv_open(DBEnvObject* self, PyObject* args)
+DBEnv_open(DBEnvObject* self, PyObject* args, PyObject* kwargs)
 {
     int err, flags=0, mode=0660;
-    char *db_home;
+    PyObject *obj = NULL;
+    PyObject *db_homeObj = NULL;
+    char *db_home = NULL;
+    static char *kwnames[] = {
+        "filename", "flags", "mode", NULL};
 
-    if (!PyArg_ParseTuple(args, "z|ii:open", &db_home, &flags, &mode))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|Oii:open", kwnames,
+                &db_homeObj, &flags, &mode))
         return NULL;
-
     CHECK_ENV_NOT_CLOSED(self);
+
+    if ((db_homeObj != NULL) && (db_homeObj != Py_None))
+    {
+        if(!PyUnicode_FSConverter(db_homeObj, &obj))
+        {
+            return NULL;
+        }
+        db_home = PyBytes_AS_STRING(obj);
+    }
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->open(self->db_env, db_home, flags, mode);
     MYDB_END_ALLOW_THREADS;
+
+    Py_XDECREF(obj);
+
     RETURN_IF_ERR();
     self->closed = 0;
     self->flags = flags;
@@ -8620,7 +8653,7 @@ static PyMethodDef DBSite_methods[] = {
 
 static PyMethodDef DBEnv_methods[] = {
     {"close",           (PyCFunction)DBEnv_close,            METH_VARARGS},
-    {"open",            (PyCFunction)DBEnv_open,             METH_VARARGS},
+    {"open",            (PyCFunction)DBEnv_open,             METH_VARARGS|METH_KEYWORDS},
     {"remove",          (PyCFunction)DBEnv_remove,           METH_VARARGS},
     {"dbremove",        (PyCFunction)DBEnv_dbremove,         METH_VARARGS|METH_KEYWORDS},
     {"dbrename",        (PyCFunction)DBEnv_dbrename,         METH_VARARGS|METH_KEYWORDS},

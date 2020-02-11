@@ -42,10 +42,9 @@ TODO: Implement PEP 384 (Stable API)
 
     This limitation will be overcomed in a future release of this project.
 
-  * "DB_ENV.set_re_pad()" param must be bytes or integer.
-  * "DB_ENV.get_re_pad()" returns bytes.
-  * "DB_ENV.set_re_delim()" param must be bytes or integer.
-  * "DB_ENV.get_re_delim()" returns bytes.
+  * "open()" methods allow path-like objects.
+  * "DBEnv.open()" accepts keyword arguments.
+  * "DBEnv.open()" allows no homedir and a homedir of "None".
   * "DB.set_re_source()" uses local filename encoding.
   * "DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
   * "DB.get_re_source()" returns unicode objects with the local
@@ -65,6 +64,10 @@ TODO: Implement PEP 384 (Stable API)
     the local filename encoding.
   * "DB_ENV.log_prinf()" requires a bytes object not containing '\0'.
   * The "DB_ENV.lock_get()" name can not be None.
+  * "DB_ENV.set_re_pad()" param must be bytes or integer.
+  * "DB_ENV.get_re_pad()" returns bytes.
+  * "DB_ENV.set_re_delim()" param must be bytes or integer.
+  * "DB_ENV.get_re_delim()" returns bytes.
 
 6.2.7:
   * Update copyright notices.
