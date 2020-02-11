@@ -1540,19 +1540,6 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
     secondaryDB->associateCallback = callback;
     secondaryDB->primaryDBType = _DB_get_type(self);
 
-    /* PyEval_InitThreads is called here due to a quirk in python 1.5
-     * - 2.2.1 (at least) according to Russell Williamson <merel@wt.net>:
-     * The global interepreter lock is not initialized until the first
-     * thread is created using thread.start_new_thread() or fork() is
-     * called.  that would cause the ALLOW_THREADS here to segfault due
-     * to a null pointer reference if no threads or child processes
-     * have been created.  This works around that and is a no-op if
-     * threads have already been initialized.
-     *  (see pybsddb-users mailing list post on 2002-08-07)
-     */
-#ifdef WITH_THREAD
-    PyEval_InitThreads();
-#endif
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->associate(self->db,
 	                      txn,
@@ -2683,12 +2670,6 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
     Py_INCREF(comparator);
     self->btCompareCallback = comparator;
 
-    /* This is to workaround a problem with un-initialized threads (see
-       comment in DB_associate) */
-#ifdef WITH_THREAD
-    PyEval_InitThreads();
-#endif
-
     err = self->db->set_bt_compare(self->db, _db_compareCallback);
 
     if (err) {
@@ -2804,12 +2785,6 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
 
     Py_INCREF(comparator);
     self->dupCompareCallback = comparator;
-
-    /* This is to workaround a problem with un-initialized threads (see
-       comment in DB_associate) */
-#ifdef WITH_THREAD
-    PyEval_InitThreads();
-#endif
 
     err = self->db->set_dup_compare(self->db, _db_dupCompareCallback);
 
@@ -7071,12 +7046,6 @@ DBEnv_set_event_notify(DBEnvObject* self, PyObject* notifyFunc)
     Py_INCREF(notifyFunc);
     self->event_notifyCallback = notifyFunc;
 
-    /* This is to workaround a problem with un-initialized threads (see
-       comment in DB_associate) */
-#ifdef WITH_THREAD
-    PyEval_InitThreads();
-#endif
-
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->set_event_notify(self->db_env, _dbenv_event_notifyCallback);
     MYDB_END_ALLOW_THREADS;
@@ -9275,6 +9244,26 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     PyObject* py_api;
     PyObject* pybsddb_version_s;
     PyObject* db_version_s;
+
+    /*
+     * Python 3.7 and newer ALWAYS initialize the GIL.
+     * https://vstinner.github.io/python37-gil-change.html
+     */
+#if (PY_VERSION_HEX < 0x03070000)
+    /* PyEval_InitThreads is called here due to a quirk in python 1.5
+     * - 2.2.1 (at least) according to Russell Williamson <merel@wt.net>:
+     * The global interpreter lock is not initialized until the first
+     * thread is created using thread.start_new_thread() or fork() is
+     * called.  that would cause the ALLOW_THREADS here to segfault due
+     * to a null pointer reference if no threads or child processes
+     * have been created.  This works around that and is a no-op if
+     * threads have already been initialized.
+     *  (see pybsddb-users mailing list post on 2002-08-07)
+     */
+#ifdef WITH_THREAD
+    PyEval_InitThreads();
+#endif
+#endif
 
     /* This data should be ascii, so UTF-8 conversion is fine */
     pybsddb_version_s = PyUnicode_FromString(PY_BSDDB_VERSION);
