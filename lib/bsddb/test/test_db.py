@@ -172,7 +172,7 @@ class DB_recno(DB) :
             self.db.set_re_source(i)
             self.assertEqual(i, self.db.get_re_source())
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested Python < 3.6')
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_re_source_path(self) :
         import pathlib
         for i in ["test", "test2", "test3"] :

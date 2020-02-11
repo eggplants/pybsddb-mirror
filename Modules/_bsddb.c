@@ -5559,11 +5559,15 @@ static PyObject*
 DBEnv_set_data_dir(DBEnvObject* self, PyObject* args)
 {
     int err;
+    PyObject *dirObj;
     char *dir;
 
-    if (!PyArg_ParseTuple(args, "s:set_data_dir", &dir))
+    if (!PyArg_ParseTuple(args, "O&:set_data_dir",
+                PyUnicode_FSConverter, &dirObj))
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
+
+    dir = PyBytes_AS_STRING(dirObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->set_data_dir(self->db_env, dir);
@@ -5601,7 +5605,7 @@ DBEnv_get_data_dirs(DBEnvObject* self)
         return NULL;
 
     for (i=0; i<size; i++) {
-        item = PyBytes_FromString (*(dirpp+i));
+        item = PyUnicode_DecodeFSDefault(*(dirpp+i));
         if (item == NULL) {
             Py_DECREF(tuple);
             tuple = NULL;
@@ -5677,11 +5681,15 @@ static PyObject*
 DBEnv_set_lg_dir(DBEnvObject* self, PyObject* args)
 {
     int err;
+    PyObject *dirObj;
     char *dir;
 
-    if (!PyArg_ParseTuple(args, "s:set_lg_dir", &dir))
+    if (!PyArg_ParseTuple(args, "O&:set_lg_dir",
+                PyUnicode_FSConverter, &dirObj))
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
+
+    dir = PyBytes_AS_STRING(dirObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->set_lg_dir(self->db_env, dir);
@@ -5702,7 +5710,7 @@ DBEnv_get_lg_dir(DBEnvObject* self)
     err = self->db_env->get_lg_dir(self->db_env, &dirp);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    return PyBytes_FromString(dirp);
+    return PyUnicode_DecodeFSDefault(dirp);
 }
 
 static PyObject*
@@ -5960,10 +5968,14 @@ DBEnv_set_tmp_dir(DBEnvObject* self, PyObject* args)
 {
     int err;
     char *dir;
+    PyObject *dirObj;
 
-    if (!PyArg_ParseTuple(args, "s:set_tmp_dir", &dir))
+    if (!PyArg_ParseTuple(args, "O&:set_tmp_dir",
+                PyUnicode_FSConverter, &dirObj))
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
+
+    dir = PyBytes_AS_STRING(dirObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->set_tmp_dir(self->db_env, dir);
@@ -5986,7 +5998,7 @@ DBEnv_get_tmp_dir(DBEnvObject* self)
 
     RETURN_IF_ERR();
 
-    return PyBytes_FromString(dirpp);
+    return PyUnicode_DecodeFSDefault(dirpp);
 }
 
 static PyObject*

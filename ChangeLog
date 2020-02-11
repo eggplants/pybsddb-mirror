@@ -50,6 +50,19 @@ TODO: Implement PEP 384 (Stable API)
   * "DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
   * "DB.get_re_source()" returns unicode objects with the local
     filename encoding.
+  * "DB_ENV.set_lg_dir()" uses local filename encoding.
+  * "DB_ENV.set_lg_dir()" accepts path-like objects if using Python 3.6 or up.
+  * "DB_ENV.get_lg_dir()" returns unicode objects with the local
+    filename encoding.
+  * "DB_ENV.set_tmp_dir()" uses local filename encoding.
+  * "DB_ENV.set_tmp_dir()" accepts path-like objects if using Python 3.6 or up.
+  * "DB_ENV.get_tmp_dir()" returns unicode objects with the local
+    filename encoding.
+  * "DB_ENV.set_data_dir()" uses local filename encoding.
+  * "DB_ENV.set_data_dir()" accepts path-like objects if using Python 3.6 or
+    up.
+  * "DB_ENV.get_data_dirs()" returns a tuple of unicode objects encoded with
+    the local filename encoding.
   * "DB_ENV.log_prinf()" requires a bytes object not containing '\0'.
 
 6.2.7:

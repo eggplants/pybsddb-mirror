@@ -35,6 +35,7 @@ are met:
 
 import unittest
 import os, glob
+import sys
 
 from .test_all import db, test_support, get_new_environment_path, \
         get_new_database_path
@@ -125,8 +126,16 @@ class DBEnv_general(DBEnv) :
             self.assertEqual(i, self.env.get_mp_mmapsize())
 
     def test_tmp_dir(self) :
-        for i in [b'a', b'bb', b'ccc'] :
+        for i in ['a', 'bb', 'ccc'] :
             self.env.set_tmp_dir(i)
+            self.assertEqual(i, self.env.get_tmp_dir())
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test_tmp_dir_path(self) :
+        import pathlib
+        for i in ['a', 'bb', 'ccc'] :
+            i2 = pathlib.Path(i)
+            self.env.set_tmp_dir(i2)
             self.assertEqual(i, self.env.get_tmp_dir())
 
     def test_flags(self) :
@@ -179,6 +188,14 @@ class DBEnv_general(DBEnv) :
             self.env.set_lg_dir(i)
             self.assertEqual(i, self.env.get_lg_dir())
 
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test_lg_dir_path(self) :
+        import pathlib
+        for i in ["a", "bb", "ccc", "dddd"] :
+            i2 = pathlib.Path(i)
+            self.env.set_lg_dir(i2)
+            self.assertEqual(i, self.env.get_lg_dir())
+
     def test_lg_bsize(self) :
         log_size = 70*1024
         self.env.set_lg_bsize(log_size)
@@ -191,6 +208,15 @@ class DBEnv_general(DBEnv) :
         dirs = ("a", "b", "c", "d")
         for i in dirs :
             self.env.set_data_dir(i)
+        self.assertEqual(dirs, self.env.get_data_dirs())
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test_setget_data_dirs_path(self) :
+        import pathlib
+        dirs = ("a", "b", "c", "d")
+        for i in dirs :
+            i2 = pathlib.Path(i)
+            self.env.set_data_dir(i2)
         self.assertEqual(dirs, self.env.get_data_dirs())
 
     def test_setget_cachesize(self) :
