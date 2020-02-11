@@ -22,7 +22,7 @@ These DBLogCursor methods are all wrappers around the get() function in
 the C API.
 
 These functions returns a tuple. The first element is a LSN tuple,
-and the second element is a string/bytes with the log data.
+and the second element is a bytes object with the log data.
 
 If the following methods don't have log data to return, they return
 None.

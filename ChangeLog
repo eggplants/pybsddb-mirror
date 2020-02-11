@@ -47,7 +47,7 @@ TODO: Implement PEP 384 (Stable API)
   * "DB_ENV.set_re_delim()" param must be bytes or integer.
   * "DB_ENV.get_re_delim()" returns bytes.
   * "DB.set_re_source()" uses local filename encoding.
-  * 'DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
+  * "DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
   * "DB.get_re_source()" returns unicode objects with the local
     filename encoding.
   * "DB_ENV.log_prinf()" requires a bytes object not containing '\0'.
