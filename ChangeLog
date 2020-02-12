@@ -88,6 +88,8 @@ TODO: Implement PEP 384 (Stable API)
   * "DB_ENV.get_re_pad()" returns bytes.
   * "DB_ENV.set_re_delim()" param must be bytes or integer.
   * "DB_ENV.get_re_delim()" returns bytes.
+  * In the C code we don't need "statichere" neither "staticforward"
+    workaround anymore.
 
 6.2.7:
   * Update copyright notices.

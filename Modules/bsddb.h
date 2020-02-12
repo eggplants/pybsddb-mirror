@@ -268,6 +268,8 @@ typedef struct DBSequenceObject {
 */
 
 #define PYBSDDB_API_VERSION 1
+#define PYBSDDB_BASE "bsddb3.db."
+
 typedef struct {
     unsigned int api_version;
     /* Type objects */

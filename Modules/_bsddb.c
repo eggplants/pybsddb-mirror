@@ -167,20 +167,11 @@ static PyObject* DBRepUnavailError;     /* DB_REP_UNAVAIL */
 #define DEFAULT_GET_RETURNS_NONE                1
 #define DEFAULT_CURSOR_SET_RETURNS_NONE         1
 
-
-/* See comment in Python 2.6 "object.h" */
-#ifndef staticforward
-#define staticforward static
-#endif
-#ifndef statichere
-#define statichere static
-#endif
-
-staticforward PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type, DBTxn_Type,
-              DBLock_Type, DBLogCursor_Type;
-staticforward PyTypeObject DBSequence_Type;
+static PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type, DBTxn_Type,
+       DBLock_Type, DBLogCursor_Type;
+static PyTypeObject DBSequence_Type;
 #if (DBVER >= 53)
-staticforward PyTypeObject DBSite_Type;
+static PyTypeObject DBSite_Type;
 #endif
 
 #define DBObject_Check(v)           (Py_TYPE(v) == &DB_Type)
@@ -8957,7 +8948,7 @@ static PyGetSetDef DBEnv_getsets[] = {
 };
 
 
-statichere PyTypeObject DB_Type = {
+static PyTypeObject DB_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DB",               /*tp_name*/
     sizeof(DBObject),   /*tp_basicsize*/
@@ -8991,7 +8982,7 @@ statichere PyTypeObject DB_Type = {
 };
 
 
-statichere PyTypeObject DBCursor_Type = {
+static PyTypeObject DBCursor_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBCursor",         /*tp_name*/
     sizeof(DBCursorObject),  /*tp_basicsize*/
@@ -9025,7 +9016,7 @@ statichere PyTypeObject DBCursor_Type = {
 };
 
 
-statichere PyTypeObject DBLogCursor_Type = {
+static PyTypeObject DBLogCursor_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBLogCursor",         /*tp_name*/
     sizeof(DBLogCursorObject),  /*tp_basicsize*/
@@ -9059,7 +9050,7 @@ statichere PyTypeObject DBLogCursor_Type = {
 };
 
 #if (DBVER >= 53)
-statichere PyTypeObject DBSite_Type = {
+static PyTypeObject DBSite_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBSite",         /*tp_name*/
     sizeof(DBSiteObject),  /*tp_basicsize*/
@@ -9093,7 +9084,7 @@ statichere PyTypeObject DBSite_Type = {
 };
 #endif
 
-statichere PyTypeObject DBEnv_Type = {
+static PyTypeObject DBEnv_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBEnv",            /*tp_name*/
     sizeof(DBEnvObject),    /*tp_basicsize*/
@@ -9127,7 +9118,7 @@ statichere PyTypeObject DBEnv_Type = {
     DBEnv_getsets,      /* tp_getsets */
 };
 
-statichere PyTypeObject DBTxn_Type = {
+static PyTypeObject DBTxn_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBTxn",    /*tp_name*/
     sizeof(DBTxnObject),  /*tp_basicsize*/
@@ -9161,7 +9152,7 @@ statichere PyTypeObject DBTxn_Type = {
 };
 
 
-statichere PyTypeObject DBLock_Type = {
+static PyTypeObject DBLock_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBLock",   /*tp_name*/
     sizeof(DBLockObject),  /*tp_basicsize*/
@@ -9190,7 +9181,7 @@ statichere PyTypeObject DBLock_Type = {
     offsetof(DBLockObject, in_weakreflist),   /* tp_weaklistoffset */
 };
 
-statichere PyTypeObject DBSequence_Type = {
+static PyTypeObject DBSequence_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
     "DBSequence",                   /*tp_name*/
     sizeof(DBSequenceObject),       /*tp_basicsize*/
@@ -9838,7 +9829,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
     /* The exception name must be correct for pickled exception *
      * objects to unpickle properly.                            */
-#define PYBSDDB_EXCEPTION_BASE  "bsddb3.db."
+#define PYBSDDB_EXCEPTION_BASE  PYBSDDB_BASE
 
     /* All the rest of the exceptions derive only from DBError */
 #define MAKE_EX(name)   name = PyErr_NewException(PYBSDDB_EXCEPTION_BASE #name, DBError, NULL); \
