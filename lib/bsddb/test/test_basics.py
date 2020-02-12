@@ -646,6 +646,67 @@ class BasicTestCase(unittest.TestCase):
         d.verify(filename, outfile=filename_dump)
         filename_dump.unlink()
 
+    def test07_upgrade(self):
+        self.d.close()
+        d = db.DB(self.env)
+        d.upgrade(self.filename)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_upgrade_path(self):
+        import pathlib
+        self.d.close()
+        d = db.DB(self.env)
+        filename = pathlib.Path(self.filename)
+        d.upgrade(filename)
+
+    def test07_rename(self):
+        self.d.close()
+        d = db.DB(self.env)
+        d.rename(self.filename, None, self.filename + '.NEW')
+        d = db.DB(self.env)
+        d.rename(self.filename + '.NEW', None, self.filename)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_rename_path(self):
+        import pathlib
+        self.d.close()
+        filename = pathlib.Path(self.filename)
+        filename_new = pathlib.Path(self.filename + '.NEW')
+        d = db.DB(self.env)
+        d.rename(filename, None, filename_new)
+        d = db.DB(self.env)
+        d.rename(filename_new, None, filename)
+
+    def test07_remove(self):
+        self.d.close()
+        d = db.DB(self.env)
+        d.remove(self.filename)
+        open(self.filename, 'w').close()  # Touch
+
+    def test07_remove_None(self):
+        self.d.close()
+        d = db.DB(self.env)
+        d.remove(self.filename, None)
+        open(self.filename, 'w').close()  # Touch
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_remove_path(self):
+        import pathlib
+        self.d.close()
+        filename = pathlib.Path(self.filename)
+        d = db.DB(self.env)
+        d.remove(filename)
+        filename.touch()
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_remove_path_None(self):
+        import pathlib
+        self.d.close()
+        filename = pathlib.Path(self.filename)
+        d = db.DB(self.env)
+        d.remove(filename, None)
+        filename.touch()
+
     #----------------------------------------
 
     def test08_exists(self) :
@@ -715,6 +776,24 @@ class BasicWithEnvTestCase(BasicTestCase):
 
         newname = self.filename + '.renamed'
         self.env.dbrename(self.filename, None, newname)
+        self.env.dbremove(newname)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test09_EnvRemoveAndRename_path(self):
+        import pathlib
+        if not self.env:
+            return
+
+        if verbose:
+            print('\n', '-=' * 30)
+            print("Running %s.test09_EnvRemoveAndRename..." % self.__class__.__name__)
+
+        # can't rename or remove an open DB
+        self.d.close()
+
+        filename = pathlib.Path(self.filename)
+        newname = pathlib.Path(self.filename + '.renamed')
+        self.env.dbrename(filename, None, newname)
         self.env.dbremove(newname)
 
     #----------------------------------------
@@ -796,6 +875,7 @@ class BasicTransactionTestCase(BasicTestCase):
 
         # must have at least one log file present:
         logs = self.env.log_archive(db.DB_ARCH_ABS | db.DB_ARCH_LOG)
+        self.assertEqual(logs[0][-14:], 'log.0000000001')
         self.assertNotEqual(logs, None)
         for log in logs:
             if verbose:

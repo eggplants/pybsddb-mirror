@@ -892,23 +892,20 @@ newDBObject(DBEnvObject* arg, int flags)
 
 
 /* Forward declaration */
-static PyObject *DB_close_internal(DBObject* self, int flags, int do_not_close);
+static int DB_close_internal(DBObject* self, int flags, int do_not_close);
 
 static void
 DB_dealloc(DBObject* self)
 {
-  PyObject *dummy;
-
     if (self->db != NULL) {
-        dummy=DB_close_internal(self, 0, 0);
-        /*
-        ** Raising exceptions while doing
-        ** garbage collection is a fatal error.
-        */
-        if (dummy)
-            Py_DECREF(dummy);
-        else
+        if (!DB_close_internal(self, 0, 0))
+        {
+            /*
+            ** Raising exceptions while doing
+            ** garbage collection is a fatal error.
+            */
             PyErr_Clear();
+        }
     }
     if (self->in_weakreflist != NULL) {
         PyObject_ClearWeakRefs((PyObject *) self);
@@ -1073,23 +1070,21 @@ newDBEnvObject(int flags)
 }
 
 /* Forward declaration */
-static PyObject *DBEnv_close_internal(DBEnvObject* self, int flags);
+static int
+DBEnv_close_internal(DBEnvObject* self, int flags, int do_not_close);
 
 static void
 DBEnv_dealloc(DBEnvObject* self)
 {
-  PyObject *dummy;
-
     if (self->db_env) {
-        dummy=DBEnv_close_internal(self, 0);
-        /*
-        ** Raising exceptions while doing
-        ** garbage collection is a fatal error.
-        */
-        if (dummy)
-            Py_DECREF(dummy);
-        else
+        if(!DBEnv_close_internal(self, 0, 0))
+        {
+            /*
+            ** Raising exceptions while doing
+            ** garbage collection is a fatal error.
+            */
             PyErr_Clear();
+        }
     }
 
     Py_XDECREF(self->event_notifyCallback);
@@ -1559,8 +1554,7 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
 }
 
 
-static PyObject*
-DB_close_internal(DBObject* self, int flags, int do_not_close)
+static int DB_close_internal(DBObject* self, int flags, int do_not_close)
 {
     PyObject *dummy;
     int err = 0;
@@ -1596,11 +1590,15 @@ DB_close_internal(DBObject* self, int flags, int do_not_close)
             MYDB_BEGIN_ALLOW_THREADS;
             err = self->db->close(self->db, flags);
             MYDB_END_ALLOW_THREADS;
-            self->db = NULL;
         }
-        RETURN_IF_ERR();
+        self->db = NULL;
+        if (err)
+        {
+            makeDBError(err);
+            return 0;
+        }
     }
-    RETURN_NONE();
+    return !0; /* OK */
 }
 
 static PyObject*
@@ -1609,7 +1607,11 @@ DB_close(DBObject* self, PyObject* args)
     int flags=0;
     if (!PyArg_ParseTuple(args,"|i:close", &flags))
         return NULL;
-    return DB_close_internal(self, flags, 0);
+
+    if(!DB_close_internal(self, flags, 0))
+        return NULL;
+
+    RETURN_NONE();
 }
 
 
@@ -2312,10 +2314,7 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
     Py_XDECREF(obj);
 
     if (makeDBError(err)) {
-        PyObject *dummy;
-
-        dummy=DB_close_internal(self, 0, 0);
-        Py_XDECREF(dummy);
+        DB_close_internal(self, 0, 0);
         return NULL;
     }
 
@@ -2375,23 +2374,32 @@ DB_put(DBObject* self, PyObject* args, PyObject* kwargs)
 static PyObject*
 DB_remove(DBObject* self, PyObject* args, PyObject* kwargs)
 {
+    DB *db;
+    PyObject *filenameObj;
     char* filename;
     char* database = NULL;
     int err, flags=0;
     static char* kwnames[] = { "filename", "dbname", "flags", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|zi:remove", kwnames,
-                                     &filename, &database, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|zi:remove", kwnames,
+                                     PyUnicode_FSConverter, &filenameObj,
+                                     &database, &flags))
         return NULL;
     CHECK_DB_NOT_CLOSED(self);
 
-    EXTRACT_FROM_DOUBLE_LINKED_LIST_MAYBE_NULL(self);
+    filename = PyBytes_AS_STRING(filenameObj);
+
+    /* DB.remove acts as a DB handle destructor (like close) */
+    db = self->db;
+    if (!DB_close_internal(self, 0, 1))
+    {
+        return NULL;
+    }
 
     MYDB_BEGIN_ALLOW_THREADS;
-    err = self->db->remove(self->db, filename, database, flags);
+    err = db->remove(db, filename, database, flags);
     MYDB_END_ALLOW_THREADS;
 
-    self->db = NULL;
     RETURN_IF_ERR();
     RETURN_NONE();
 }
@@ -2401,18 +2409,31 @@ DB_remove(DBObject* self, PyObject* args, PyObject* kwargs)
 static PyObject*
 DB_rename(DBObject* self, PyObject* args)
 {
+    DB *db;
+    PyObject *filenameObj;
     char* filename;
     char* database;
+    PyObject *newnameObj;
     char* newname;
     int err, flags=0;
 
-    if (!PyArg_ParseTuple(args, "sss|i:rename", &filename, &database, &newname,
-                          &flags))
+    if (!PyArg_ParseTuple(args, "O&zO&|i:rename",
+                          PyUnicode_FSConverter, &filenameObj, &database,
+                          PyUnicode_FSConverter, &newnameObj, &flags))
         return NULL;
     CHECK_DB_NOT_CLOSED(self);
 
+    filename = PyBytes_AS_STRING(filenameObj);
+    newname = PyBytes_AS_STRING(newnameObj);
+
+    /* DB.rename acts as a DB handle destructor (like close) */
+    db = self->db;
+    if (!DB_close_internal(self, 0, 1))
+    {
+        return NULL;
+    }
     MYDB_BEGIN_ALLOW_THREADS;
-    err = self->db->rename(self->db, filename, database, newname, flags);
+    err = db->rename(db, filename, database, newname, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
     RETURN_NONE();
@@ -3351,10 +3372,14 @@ DB_upgrade(DBObject* self, PyObject* args)
 {
     int err, flags=0;
     char *filename;
+    PyObject *filenameObj;
 
-    if (!PyArg_ParseTuple(args,"s|i:upgrade", &filename, &flags))
+    if (!PyArg_ParseTuple(args,"O&|i:upgrade",
+                          PyUnicode_FSConverter, &filenameObj, &flags))
         return NULL;
     CHECK_DB_NOT_CLOSED(self);
+
+    filename = PyBytes_AS_STRING(filenameObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->upgrade(self->db, filename, flags);
@@ -3367,6 +3392,7 @@ DB_upgrade(DBObject* self, PyObject* args)
 static PyObject*
 DB_verify(DBObject* self, PyObject* args, PyObject* kwargs)
 {
+    DB *db;
     int err, flags=0;
     PyObject *obj=NULL;
     PyObject *fileNameObj;
@@ -3400,23 +3426,19 @@ DB_verify(DBObject* self, PyObject* args, PyObject* kwargs)
 	/* XXX(nnorwitz): it should probably be an exception if outFile
 	   can't be opened. */
 
-    {  /* DB.verify acts as a DB handle destructor (like close) */
-        PyObject *error;
-
-        error=DB_close_internal(self, 0, 1);
-        if (error) {
-            Py_XDECREF(obj);
-            return error;
-        }
-     }
+    /* DB.verify acts as a DB handle destructor (like close) */
+    db = self->db;
+    if (!DB_close_internal(self, 0, 1))
+    {
+        Py_XDECREF(obj);
+        return NULL;
+    }
 
     MYDB_BEGIN_ALLOW_THREADS;
-    err = self->db->verify(self->db, fileName, dbName, outFile, flags);
+    err = db->verify(db, fileName, dbName, outFile, flags);
     MYDB_END_ALLOW_THREADS;
 
     Py_XDECREF(obj);
-
-    self->db = NULL;  /* Implicit close; related objects already released */
 
     if (outFile)
         fclose(outFile);
@@ -4819,11 +4841,11 @@ DBC_get_priority(DBCursorObject* self)
 /* DBEnv methods */
 
 
-static PyObject*
-DBEnv_close_internal(DBEnvObject* self, int flags)
+static int
+DBEnv_close_internal(DBEnvObject* self, int flags, int do_not_close)
 {
     PyObject *dummy;
-    int err;
+    int err = 0;
 
     if (!self->closed) {      /* Don't close more than once */
         while(self->children_txns) {
@@ -4831,8 +4853,7 @@ DBEnv_close_internal(DBEnvObject* self, int flags)
             Py_XDECREF(dummy);
         }
         while(self->children_dbs) {
-            dummy = DB_close_internal(self->children_dbs, 0, 0);
-            Py_XDECREF(dummy);
+            DB_close_internal(self->children_dbs, 0, 0);
         }
         while(self->children_logcursors) {
             dummy = DBLogCursor_close_internal(self->children_logcursors);
@@ -4844,19 +4865,25 @@ DBEnv_close_internal(DBEnvObject* self, int flags)
             Py_XDECREF(dummy);
         }
 #endif
+
+        self->closed = 1;
+        if (!do_not_close && self->db_env) {
+            MYDB_BEGIN_ALLOW_THREADS;
+            err = self->db_env->close(self->db_env, flags);
+            MYDB_END_ALLOW_THREADS;
+            /* after calling DBEnv->close, regardless of error, this DBEnv
+             * may not be accessed again (Berkeley DB docs). */
+        }
+
+        self->db_env = NULL;
+        if (err)
+        {
+            makeDBError(err);
+            return 0;
+        }
     }
 
-    self->closed = 1;
-    if (self->db_env) {
-        MYDB_BEGIN_ALLOW_THREADS;
-        err = self->db_env->close(self->db_env, flags);
-        MYDB_END_ALLOW_THREADS;
-        /* after calling DBEnv->close, regardless of error, this DBEnv
-         * may not be accessed again (Berkeley DB docs). */
-        self->db_env = NULL;
-        RETURN_IF_ERR();
-    }
-    RETURN_NONE();
+    return !0; /* OK */
 }
 
 static PyObject*
@@ -4866,7 +4893,11 @@ DBEnv_close(DBEnvObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args, "|i:close", &flags))
         return NULL;
-    return DBEnv_close_internal(self, flags);
+    if(!DBEnv_close_internal(self, flags, 0))
+    {
+        return NULL;
+    }
+    RETURN_NONE();
 }
 
 
@@ -5088,12 +5119,25 @@ DBEnv_remove(DBEnvObject* self, PyObject* args)
 {
     int err, flags=0;
     char *db_home;
+    PyObject *db_homeObj;
+    DB_ENV *db_env;
 
-    if (!PyArg_ParseTuple(args, "s|i:remove", &db_home, &flags))
+    if (!PyArg_ParseTuple(args, "O&|i:remove",
+                          PyUnicode_FSConverter, &db_homeObj, &flags))
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
+
+    db_home = PyBytes_AS_STRING(db_homeObj);
+
+    /* DBEnv.remove acts as a DBEnv handle destructor (like close) */
+    db_env = self->db_env;
+    if (!DBEnv_close_internal(self, 0, 1))
+    {
+        return NULL;
+    }
+
     MYDB_BEGIN_ALLOW_THREADS;
-    err = self->db_env->remove(self->db_env, db_home, flags);
+    err = db_env->remove(db_env, db_home, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
     RETURN_NONE();
@@ -5104,17 +5148,21 @@ DBEnv_dbremove(DBEnvObject* self, PyObject* args, PyObject* kwargs)
 {
     int err;
     u_int32_t flags=0;
-    char *file = NULL;
+    char *file;
+    PyObject *fileObj;
     char *database = NULL;
     PyObject *txnobj = NULL;
     DB_TXN *txn = NULL;
     static char* kwnames[] = { "file", "database", "txn", "flags",
                                      NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|zOi:dbremove", kwnames,
-		&file, &database, &txnobj, &flags)) {
-	return NULL;
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|zOi:dbremove", kwnames,
+		    PyUnicode_FSConverter, &fileObj, &database, &txnobj, &flags)) {
+	    return NULL;
     }
+
+    file = PyBytes_AS_STRING(fileObj);
+
     if (!checkTxnObj(txnobj, &txn)) {
         return NULL;
     }
@@ -5131,18 +5179,25 @@ DBEnv_dbrename(DBEnvObject* self, PyObject* args, PyObject* kwargs)
 {
     int err;
     u_int32_t flags=0;
-    char *file = NULL;
-    char *database = NULL;
-    char *newname = NULL;
+    char *file;
+    PyObject *fileObj;
+    char *database;
+    char *newname;
+    PyObject *newnameObj;
     PyObject *txnobj = NULL;
     DB_TXN *txn = NULL;
     static char* kwnames[] = { "file", "database", "newname", "txn",
                                      "flags", NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "szs|Oi:dbrename", kwnames,
-		&file, &database, &newname, &txnobj, &flags)) {
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&zO&|Oi:dbrename", kwnames,
+		PyUnicode_FSConverter, &fileObj, &database,
+        PyUnicode_FSConverter, &newnameObj, &txnobj, &flags)) {
 	return NULL;
     }
+
+    file = PyBytes_AS_STRING(fileObj);
+    newname = PyBytes_AS_STRING(newnameObj);
+
     if (!checkTxnObj(txnobj, &txn)) {
         return NULL;
     }
@@ -6298,13 +6353,16 @@ DBEnv_fileid_reset(DBEnvObject* self, PyObject* args, PyObject* kwargs)
 {
     int err;
     char *file;
+    PyObject *fileObj;
     u_int32_t flags = 0;
     static char* kwnames[] = { "file", "flags", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "z|i:fileid_reset", kwnames,
-                                     &file, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|i:fileid_reset", kwnames,
+                                     PyUnicode_FSConverter, &fileObj, &flags))
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
+
+	file = PyBytes_AS_STRING(fileObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->fileid_reset(self->db_env, file, flags);
@@ -6317,14 +6375,17 @@ static PyObject*
 DBEnv_lsn_reset(DBEnvObject* self, PyObject* args, PyObject* kwargs)
 {
     int err;
+    PyObject *fileObj;
     char *file;
     u_int32_t flags = 0;
     static char* kwnames[] = { "file", "flags", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "z|i:lsn_reset", kwnames,
-                                     &file, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|i:lsn_reset", kwnames,
+                                     PyUnicode_FSConverter, &fileObj, &flags))
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
+
+    file = PyBytes_AS_STRING(fileObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->lsn_reset(self->db_env, file, flags);
@@ -6592,7 +6653,7 @@ DBEnv_log_file(DBEnvObject* self, PyObject* args)
 
     RETURN_IF_ERR();  /* Maybe the size is not the problem */
 
-    retval = Py_BuildValue("s", name);
+    retval = PyUnicode_DecodeFSDefault(name);
     free(name);
     return retval;
 }
@@ -6656,7 +6717,7 @@ DBEnv_log_archive(DBEnvObject* self, PyObject* args)
     if (log_list) {
         char **log_list_start;
         for (log_list_start = log_list; *log_list != NULL; ++log_list) {
-            item = PyBytes_FromString (*log_list);
+            item = PyUnicode_DecodeFSDefault(*log_list);
             if (item == NULL) {
                 Py_DECREF(list);
                 list = NULL;
@@ -8003,8 +8064,7 @@ DBTxn_abort_discard_internal(DBTxnObject* self, int discard)
         Py_XDECREF(dummy);
     }
     while (self->children_dbs) {
-        dummy=DB_close_internal(self->children_dbs, 0, 0);
-        Py_XDECREF(dummy);
+        DB_close_internal(self->children_dbs, 0, 0);
     }
 
     EXTRACT_FROM_DOUBLE_LINKED_LIST(self);

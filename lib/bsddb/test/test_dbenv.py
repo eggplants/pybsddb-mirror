@@ -50,7 +50,9 @@ class DBEnv(unittest.TestCase):
     def tearDown(self):
         self.env.close()
         del self.env
-        test_support.rmtree(self.homeDir)
+        env = db.DBEnv()
+        env.remove(self.homeDir)
+        env.close()
 
 class DBEnv_general(DBEnv) :
     def test_get_open_flags(self) :
@@ -568,6 +570,54 @@ class DBEnv_logcursor(DBEnv):
         for i in logc :
             self.assertRaises(db.DBCursorClosedError, i.next)
 
+class DBEnv_lsn(DBEnv):
+    def setUp(self):
+        super().setUp()
+        self.env.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
+                db.DB_INIT_LOG | db.DB_INIT_TXN)
+        txn = self.env.txn_begin()
+        self.db = db.DB(self.env)
+        self.db.open('test', db.DB_HASH, db.DB_CREATE, 0o660, txn=txn)
+        txn.commit()
+        for i in [b'2', b'8', b'20'] :
+            txn = self.env.txn_begin()
+            self.db.put(key = i, data = i*int(i), txn=txn)
+            txn.commit()
+
+    def tearDown(self):
+        self.db.close()
+        del self.db
+        super().tearDown()
+
+    def test_lsn_reset(self):
+        self.env.lsn_reset('test')
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test_lsn_reset_path(self):
+        import pathlib
+        self.env.lsn_reset(pathlib.Path('test'))
+
+class DBEnv_remove(unittest.TestCase):
+    def _remove(self, homeDir):
+        env = db.DBEnv()
+        env.open(homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
+                 db.DB_INIT_LOG | db.DB_INIT_TXN)
+
+        env.close()
+        env = db.DBEnv()
+        env.remove(homeDir)
+
+    def test_remove(self):
+        homeDir = get_new_environment_path()
+        return self._remove(homeDir)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test_remove_path(self):
+        import pathlib
+        homeDir = pathlib.Path(get_new_environment_path())
+        return self._remove(homeDir)
+
+
 def test_suite():
     suite = unittest.TestSuite()
 
@@ -576,6 +626,8 @@ def test_suite():
     suite.addTest(unittest.makeSuite(DBEnv_logcursor))
     suite.addTest(unittest.makeSuite(DBEnv_log))
     suite.addTest(unittest.makeSuite(DBEnv_log_txn))
+    suite.addTest(unittest.makeSuite(DBEnv_lsn))
+    suite.addTest(unittest.makeSuite(DBEnv_remove))
 
     return suite
 

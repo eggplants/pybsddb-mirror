@@ -47,10 +47,28 @@ TODO: Implement PEP 384 (Stable API)
   * "DBEnv.open()" allows no homedir and a homedir of "None".
   * "DB.set_re_source()" uses local filename encoding.
   * "DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
+  * "DB.verify()" was doing nothing at all. Now actualy do the job.
   * "DB.verify()" accepts path-like objects for "filename" and "outfile" if
     using Python 3.6 or up.
+  * "DB.upgrade()" accepts path-like objects if using Python 3.6 or up.
+  * "DB.remove()" accepts path-like objects if using Python 3.6 or up.
+  * "DB.remove()" could leak objects.
+  * "DB.rename()" accepts path-like objects if using Python 3.6 or up.
+  * "DB.rename()" correctly invalidates the DB handle.
   * "DB.get_re_source()" returns unicode objects with the local
     filename encoding.
+  * "DB_ENV.fileid_reset()" accepts path-like objects if using Python 3.6 or
+    up.
+  * "DB_ENV.log_file()" correctly encode the filename according to the
+    system FS encoding.
+  * "DB_ENV.log_archive()" correctly encode the filenames according to the
+    system FS encoding.
+  * "DB_ENV.lsn_reset()" accepts path-like objects if using Python 3.6 or up.
+  * "DB_ENV.remove()" accepts path-like objects if using Python 3.6 or up.
+  * "DB_ENV.remove()" used to leave the DBENV handle in an unstable state.
+  * "DB_ENV.dbrename()" accepts path-like objects for "filename" and "newname"
+    if using Python 3.6 or up.
+  * "DB_ENV.dbremove()" accepts path-like objects if using Python 3.6 or up.
   * "DB_ENV.set_lg_dir()" uses local filename encoding.
   * "DB_ENV.set_lg_dir()" accepts path-like objects if using Python 3.6 or up.
   * "DB_ENV.get_lg_dir()" returns unicode objects with the local

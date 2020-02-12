@@ -872,7 +872,7 @@ DBEnv Methods
    Displays the transaction subsystem statistical information.
    :OracleAPIC:`More info... <txnstat_print.html>`
 
-.. function:: lsn_reset(file=None,flags=0)
+.. function:: lsn_reset(file, flags=0)
 
    This method allows database files to be moved from one transactional
    database environment to another.
