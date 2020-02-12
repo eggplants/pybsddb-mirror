@@ -3368,18 +3368,33 @@ static PyObject*
 DB_verify(DBObject* self, PyObject* args, PyObject* kwargs)
 {
     int err, flags=0;
+    PyObject *obj=NULL;
+    PyObject *fileNameObj;
     char* fileName;
     char* dbName=NULL;
+    PyObject *outFileNameObj=NULL;
     char* outFileName=NULL;
     FILE* outFile=NULL;
     static char* kwnames[] = { "filename", "dbname", "outfile", "flags",
                                      NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|zzi:verify", kwnames,
-                                     &fileName, &dbName, &outFileName, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|zOi:verify", kwnames,
+                                     PyUnicode_FSConverter, &fileNameObj,
+                                     &dbName, &outFileNameObj, &flags))
         return NULL;
 
     CHECK_DB_NOT_CLOSED(self);
+
+    fileName = PyBytes_AS_STRING(fileNameObj);
+    if ((outFileNameObj != NULL) && (outFileNameObj != Py_None))
+    {
+        if(!PyUnicode_FSConverter(outFileNameObj, &obj))
+        {
+            return NULL;
+        }
+        outFileName = PyBytes_AS_STRING(obj);
+    }
+
     if (outFileName)
         outFile = fopen(outFileName, "w");
 	/* XXX(nnorwitz): it should probably be an exception if outFile
@@ -3390,13 +3405,16 @@ DB_verify(DBObject* self, PyObject* args, PyObject* kwargs)
 
         error=DB_close_internal(self, 0, 1);
         if (error) {
-          return error;
+            Py_XDECREF(obj);
+            return error;
         }
      }
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->verify(self->db, fileName, dbName, outFile, flags);
     MYDB_END_ALLOW_THREADS;
+
+    Py_XDECREF(obj);
 
     self->db = NULL;  /* Implicit close; related objects already released */
 

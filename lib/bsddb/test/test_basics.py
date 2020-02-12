@@ -617,6 +617,34 @@ class BasicTestCase(unittest.TestCase):
         d = db.DB(self.env)
         d.verify(self.filename)
 
+    def test07_verify_outfile(self):
+        self.d.close()
+        d = db.DB(self.env)
+        d.verify(self.filename, outfile=self.filename + '.dump')
+        os.remove(self.filename+'.dump')
+
+    def test07_verify_outfile_none(self):
+        self.d.close()
+        d = db.DB(self.env)
+        d.verify(self.filename, outfile=None)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_verify_path(self):
+        import pathlib
+        self.d.close()
+        d = db.DB(self.env)
+        filename = pathlib.Path(self.filename)
+        d.verify(filename)
+
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
+    def test07_verify_path_outfile(self):
+        import pathlib
+        self.d.close()
+        d = db.DB(self.env)
+        filename = pathlib.Path(self.filename)
+        filename_dump = pathlib.Path(self.filename + '.dump')
+        d.verify(filename, outfile=filename_dump)
+        filename_dump.unlink()
 
     #----------------------------------------
 
