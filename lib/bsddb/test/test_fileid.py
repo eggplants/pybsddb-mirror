@@ -36,7 +36,7 @@ are met:
 """TestCase for reseting File ID.
 """
 
-import os
+import os, sys
 import shutil
 import unittest
 
@@ -84,6 +84,7 @@ class FileidResetTestCase(unittest.TestCase):
     def test_fileid_reset(self):
         return self._fileid_reset(self.db_path_1, self.db_path_2)
 
+    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_fileid_reset_path(self):
         import pathlib
         db_path_1 = pathlib.Path(self.db_path_1)

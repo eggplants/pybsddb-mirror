@@ -162,7 +162,7 @@ typedef struct DBObject {
     struct DBObject *sibling_next_txn;
     PyObject*       associateCallback;
     PyObject*       btCompareCallback;
-    PyObject*       dupCompareCallback;	    
+    PyObject*       dupCompareCallback;
     int             primaryDBType;
     PyObject        *private_obj;
     PyObject        *in_weakreflist; /* List of weak references */
