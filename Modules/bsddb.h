@@ -268,7 +268,7 @@ typedef struct DBSequenceObject {
 */
 
 #define PYBSDDB_API_VERSION 1
-#define PYBSDDB_BASE "bsddb3.db."
+#define PYBSDDB_BASE "bsddb3._pybsddb."
 
 typedef struct {
     unsigned int api_version;

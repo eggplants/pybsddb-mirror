@@ -92,6 +92,7 @@
 #define PY_SSIZE_T_CLEAN
 
 #include <Python.h>
+#include "structmember.h"
 
 #define COMPILING_BSDDB_C
 #include "bsddb.h"
@@ -822,7 +823,7 @@ newDBObject(DBEnvObject* arg, int flags)
     DB_ENV* db_env = NULL;
     int err;
 
-    self = PyObject_New(DBObject, &DB_Type);
+    self = (DBObject *)DB_Type.tp_alloc(&DB_Type, 0);
     if (self == NULL)
         return NULL;
 
@@ -1024,7 +1025,9 @@ static DBEnvObject*
 newDBEnvObject(int flags)
 {
     int err;
-    DBEnvObject* self = PyObject_New(DBEnvObject, &DBEnv_Type);
+    DBEnvObject* self;
+
+    self = (DBEnvObject *)DBEnv_Type.tp_alloc(&DBEnv_Type, 0);
     if (self == NULL)
         return NULL;
 
@@ -1234,7 +1237,9 @@ static DBSequenceObject*
 newDBSequenceObject(DBObject* mydb,  int flags)
 {
     int err;
-    DBSequenceObject* self = PyObject_New(DBSequenceObject, &DBSequence_Type);
+    DBSequenceObject* self;
+
+    self = (DBSequenceObject *)DBSequence_Type.tp_alloc(&DBSequence_Type, 0);
     if (self == NULL)
         return NULL;
     Py_INCREF(mydb);
@@ -8948,277 +8953,8 @@ static PyGetSetDef DBEnv_getsets[] = {
 };
 
 
-static PyTypeObject DB_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DB",               /*tp_name*/
-    sizeof(DBObject),   /*tp_basicsize*/
-    0,                  /*tp_itemsize*/
-    /* methods */
-    (destructor)DB_dealloc, /*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    &DB_sequence,/*tp_as_sequence*/
-    &DB_mapping,/*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,			/* tp_call */
-    0,			/* tp_str */
-    0,  		/* tp_getattro */
-    0,          /* tp_setattro */
-    0,			/* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,		    /* tp_traverse */
-    0,			/* tp_clear */
-    0,			/* tp_richcompare */
-    offsetof(DBObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /*tp_iter*/
-    0,          /*tp_iternext*/
-    DB_methods, /*tp_methods*/
-    0, /*tp_members*/
-};
-
-
-static PyTypeObject DBCursor_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBCursor",         /*tp_name*/
-    sizeof(DBCursorObject),  /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBCursor_dealloc,/*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,          /*tp_call*/
-    0,          /*tp_str*/
-    0,          /*tp_getattro*/
-    0,          /*tp_setattro*/
-    0,          /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,          /* tp_traverse */
-    0,          /* tp_clear */
-    0,          /* tp_richcompare */
-    offsetof(DBCursorObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /*tp_iter*/
-    0,          /*tp_iternext*/
-    DBCursor_methods, /*tp_methods*/
-    0,          /*tp_members*/
-};
-
-
-static PyTypeObject DBLogCursor_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBLogCursor",         /*tp_name*/
-    sizeof(DBLogCursorObject),  /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBLogCursor_dealloc,/*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,          /*tp_call*/
-    0,          /*tp_str*/
-    0,          /*tp_getattro*/
-    0,          /*tp_setattro*/
-    0,          /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,          /* tp_traverse */
-    0,          /* tp_clear */
-    0,          /* tp_richcompare */
-    offsetof(DBLogCursorObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /*tp_iter*/
-    0,          /*tp_iternext*/
-    DBLogCursor_methods, /*tp_methods*/
-    0,          /*tp_members*/
-};
-
-#if (DBVER >= 53)
-static PyTypeObject DBSite_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBSite",         /*tp_name*/
-    sizeof(DBSiteObject),  /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBSite_dealloc,/*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,          /*tp_call*/
-    0,          /*tp_str*/
-    0,          /*tp_getattro*/
-    0,          /*tp_setattro*/
-    0,          /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,          /* tp_traverse */
-    0,          /* tp_clear */
-    0,          /* tp_richcompare */
-    offsetof(DBSiteObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /*tp_iter*/
-    0,          /*tp_iternext*/
-    DBSite_methods, /*tp_methods*/
-    0,          /*tp_members*/
-};
-#endif
-
-static PyTypeObject DBEnv_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBEnv",            /*tp_name*/
-    sizeof(DBEnvObject),    /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBEnv_dealloc, /*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,			/* tp_call */
-    0,			/* tp_str */
-    0,  		/* tp_getattro */
-    0,          /* tp_setattro */
-    0,			/* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,		    /* tp_traverse */
-    0,			/* tp_clear */
-    0,			/* tp_richcompare */
-    offsetof(DBEnvObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /* tp_iter */
-    0,          /* tp_iternext */
-    DBEnv_methods,      /* tp_methods */
-    0,          /* tp_members */
-    DBEnv_getsets,      /* tp_getsets */
-};
-
-static PyTypeObject DBTxn_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBTxn",    /*tp_name*/
-    sizeof(DBTxnObject),  /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBTxn_dealloc, /*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,			/* tp_call */
-    0,			/* tp_str */
-    0,  		/* tp_getattro */
-    0,          /* tp_setattro */
-    0,			/* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,	        /* tp_traverse */
-    0,			/* tp_clear */
-    0,			/* tp_richcompare */
-    offsetof(DBTxnObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /*tp_iter*/
-    0,          /*tp_iternext*/
-    DBTxn_methods, /*tp_methods*/
-    0,          /*tp_members*/
-};
-
-
-static PyTypeObject DBLock_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBLock",   /*tp_name*/
-    sizeof(DBLockObject),  /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBLock_dealloc, /*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,			/* tp_call */
-    0,			/* tp_str */
-    0,  		/* tp_getattro */
-    0,          /* tp_setattro */
-    0,			/* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,		    /* tp_traverse */
-    0,			/* tp_clear */
-    0,			/* tp_richcompare */
-    offsetof(DBLockObject, in_weakreflist),   /* tp_weaklistoffset */
-};
-
-static PyTypeObject DBSequence_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "DBSequence",                   /*tp_name*/
-    sizeof(DBSequenceObject),       /*tp_basicsize*/
-    0,          /*tp_itemsize*/
-    /* methods */
-    (destructor)DBSequence_dealloc, /*tp_dealloc*/
-    0,          /*tp_print*/
-    0,          /*tp_getattr*/
-    0,          /*tp_setattr*/
-    0,          /*tp_compare*/
-    0,          /*tp_repr*/
-    0,          /*tp_as_number*/
-    0,          /*tp_as_sequence*/
-    0,          /*tp_as_mapping*/
-    0,          /*tp_hash*/
-    0,			/* tp_call */
-    0,			/* tp_str */
-    0,  		/* tp_getattro */
-    0,          /* tp_setattro */
-    0,			/* tp_as_buffer */
-    Py_TPFLAGS_DEFAULT,      /* tp_flags */
-    0,          /* tp_doc */
-    0,		    /* tp_traverse */
-    0,			/* tp_clear */
-    0,			/* tp_richcompare */
-    offsetof(DBSequenceObject, in_weakreflist),   /* tp_weaklistoffset */
-    0,          /*tp_iter*/
-    0,          /*tp_iternext*/
-    DBSequence_methods, /*tp_methods*/
-    0,          /*tp_members*/
-};
-
-/* --------------------------------------------------------------------- */
-/* Module-level functions */
-
 static PyObject*
-DB_construct(PyObject* self, PyObject* args, PyObject* kwargs)
+DB_construct(PyTypeObject* type, PyObject* args, PyObject* kwargs)
 {
     PyObject* dbenvobj = NULL;
     int flags = 0;
@@ -9229,7 +8965,7 @@ DB_construct(PyObject* self, PyObject* args, PyObject* kwargs)
         return NULL;
     if (dbenvobj == Py_None)
         dbenvobj = NULL;
-    else if (dbenvobj && !DBEnvObject_Check(dbenvobj)) {
+    else if (dbenvobj && !DBEnvObject_CheckExact(dbenvobj)) {
         makeTypeError("DBEnv", dbenvobj);
         return NULL;
     }
@@ -9237,30 +8973,130 @@ DB_construct(PyObject* self, PyObject* args, PyObject* kwargs)
     return (PyObject* )newDBObject((DBEnvObject*)dbenvobj, flags);
 }
 
-
 static PyObject*
-DBEnv_construct(PyObject* self, PyObject* args)
+DBEnv_construct(PyTypeObject *type, PyObject* args, PyObject *kwargs)
 {
     int flags = 0;
-    if (!PyArg_ParseTuple(args, "|i:DbEnv", &flags)) return NULL;
+    static char* kwnames[] = { "flags", NULL};
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|i:DbEnv", kwnames,
+                                     &flags))
+        return NULL;
+
     return (PyObject* )newDBEnvObject(flags);
 }
 
 static PyObject*
-DBSequence_construct(PyObject* self, PyObject* args, PyObject* kwargs)
+DBSequence_construct(PyTypeObject *type, PyObject* args, PyObject* kwargs)
 {
     PyObject* dbobj;
     int flags = 0;
     static char* kwnames[] = { "db", "flags", NULL};
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i:DBSequence", kwnames, &dbobj, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|i:DBSequence", kwnames,
+                &dbobj, &flags))
         return NULL;
-    if (!DBObject_Check(dbobj)) {
+    if (!DBObject_CheckExact(dbobj)) {
         makeTypeError("DB", dbobj);
         return NULL;
     }
     return (PyObject* )newDBSequenceObject((DBObject*)dbobj, flags);
 }
+
+
+static PyTypeObject DB_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DB",
+    .tp_basicsize = sizeof(DBObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = DB_construct,
+    .tp_dealloc = (destructor)DB_dealloc,
+    .tp_methods = DB_methods,
+    .tp_as_sequence = &DB_sequence,
+    .tp_as_mapping = &DB_mapping,
+    .tp_weaklistoffset = offsetof(DBObject, in_weakreflist),
+};
+
+static PyTypeObject DBCursor_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBCursor",
+    .tp_basicsize = sizeof(DBCursorObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_dealloc = (destructor)DBCursor_dealloc,
+    .tp_methods = DBCursor_methods,
+    .tp_weaklistoffset = offsetof(DBCursorObject, in_weakreflist),
+};
+
+static PyTypeObject DBLogCursor_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBLogCursor",
+    .tp_basicsize = sizeof(DBLogCursorObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_dealloc = (destructor)DBLogCursor_dealloc,
+    .tp_methods = DBLogCursor_methods,
+    .tp_weaklistoffset = offsetof(DBLogCursorObject, in_weakreflist),
+};
+
+#if (DBVER >= 53)
+static PyTypeObject DBSite_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBSite",
+    .tp_basicsize = sizeof(DBSiteObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_dealloc = (destructor)DBSite_dealloc,
+    .tp_methods = DBSite_methods,
+    .tp_weaklistoffset = offsetof(DBSiteObject, in_weakreflist),
+};
+#endif
+
+static PyTypeObject DBEnv_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBEnv",
+    .tp_basicsize = sizeof(DBEnvObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = DBEnv_construct,
+    .tp_dealloc = (destructor)DBEnv_dealloc,
+    .tp_methods = DBEnv_methods,
+    .tp_getset = DBEnv_getsets,
+    .tp_weaklistoffset = offsetof(DBEnvObject, in_weakreflist),
+};
+
+static PyTypeObject DBTxn_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBTxn",
+    .tp_basicsize = sizeof(DBTxnObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_dealloc = (destructor)DBTxn_dealloc,
+    .tp_methods = DBTxn_methods,
+    .tp_weaklistoffset = offsetof(DBTxnObject, in_weakreflist),
+};
+
+static PyTypeObject DBLock_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBLock",
+    .tp_basicsize = sizeof(DBLockObject),
+    .tp_itemsize = 0,
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_dealloc = (destructor)DBLock_dealloc,
+    .tp_weaklistoffset = offsetof(DBLockObject, in_weakreflist),
+};
+
+static PyTypeObject DBSequence_Type = {
+    PyVarObject_HEAD_INIT(NULL, 0)
+    .tp_name = PYBSDDB_BASE "DBSequence",
+    .tp_basicsize = sizeof(DBSequenceObject),
+    .tp_itemsize = 0,          /*tp_itemsize*/
+    .tp_flags = Py_TPFLAGS_DEFAULT,
+    .tp_new = DBSequence_construct,
+    .tp_dealloc = (destructor)DBSequence_dealloc,
+    .tp_methods = DBSequence_methods,
+    .tp_weaklistoffset = offsetof(DBSequenceObject, in_weakreflist),
+};
 
 static char bsddb_version_doc[] =
 "Returns a tuple of major, minor, and patch release numbers of the\n\
@@ -9293,9 +9129,6 @@ bsddb_version_full(PyObject* self)
 
 /* List of functions defined in the module */
 static PyMethodDef bsddb_methods[] = {
-    {"DB",          (PyCFunction)DB_construct,          METH_VARARGS | METH_KEYWORDS },
-    {"DBEnv",       (PyCFunction)DBEnv_construct,       METH_VARARGS},
-    {"DBSequence",  (PyCFunction)DBSequence_construct,  METH_VARARGS | METH_KEYWORDS },
     {"version",     (PyCFunction)bsddb_version,         METH_NOARGS, bsddb_version_doc},
 #if (DBVER >= 53)
     {"full_version", (PyCFunction)bsddb_version_full, METH_NOARGS},
@@ -9829,7 +9662,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
     /* The exception name must be correct for pickled exception *
      * objects to unpickle properly.                            */
-#define PYBSDDB_EXCEPTION_BASE  PYBSDDB_BASE
+#define PYBSDDB_EXCEPTION_BASE  "bsddb3.db."
 
     /* All the rest of the exceptions derive only from DBError */
 #define MAKE_EX(name)   name = PyErr_NewException(PYBSDDB_EXCEPTION_BASE #name, DBError, NULL); \
@@ -9932,6 +9765,31 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
         PyErr_Clear();
     }
 
+    Py_INCREF(&DBEnv_Type);
+    if (PyModule_AddObject(m, "DBEnv", (PyObject *)&DBEnv_Type) < 0)
+    {
+        Py_DECREF(&DBEnv_Type);
+        goto error;
+    }
+
+    Py_INCREF(&DB_Type);
+    if (PyModule_AddObject(m, "DB", (PyObject *)&DB_Type) < 0)
+    {
+        Py_DECREF(&DBEnv_Type);
+        Py_DECREF(&DB_Type);
+        goto error;
+    }
+
+    Py_INCREF(&DBSequence_Type);
+    if (PyModule_AddObject(m, "DBSequence", (PyObject *)&DBSequence_Type) < 0)
+    {
+        Py_DECREF(&DBEnv_Type);
+        Py_DECREF(&DB_Type);
+        Py_DECREF(&DBSequence_Type);
+        goto error;
+    }
+
+error:
     /* Check for errors */
     if (PyErr_Occurred()) {
         PyErr_Print();
