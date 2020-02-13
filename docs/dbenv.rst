@@ -22,12 +22,6 @@ DBEnv Methods
    Constructor.
    :OracleAPIC:`More info... <envcreate.html>`
 
-.. function:: set_rpc_server(host, cl_timeout=0, sv_timeout=0)
-
-   Establishes a connection for this dbenv to a RPC server.
-   This function is not available if linked to Berkeley DB 4.8 or up.
-   :OracleAPIC:`More info... <envset_rpc_server.html>`
-
 .. function:: close(flags=0)
 
    Close the database environment, freeing resources.
