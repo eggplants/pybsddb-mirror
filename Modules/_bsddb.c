@@ -175,15 +175,15 @@ static PyTypeObject DBSequence_Type;
 static PyTypeObject DBSite_Type;
 #endif
 
-#define DBObject_Check(v)           (Py_TYPE(v) == &DB_Type)
-#define DBCursorObject_Check(v)     (Py_TYPE(v) == &DBCursor_Type)
-#define DBLogCursorObject_Check(v)  (Py_TYPE(v) == &DBLogCursor_Type)
-#define DBEnvObject_Check(v)        (Py_TYPE(v) == &DBEnv_Type)
-#define DBTxnObject_Check(v)        (Py_TYPE(v) == &DBTxn_Type)
-#define DBLockObject_Check(v)       (Py_TYPE(v) == &DBLock_Type)
-#define DBSequenceObject_Check(v)   (Py_TYPE(v) == &DBSequence_Type)
+#define DBObject_CheckExact(v)           (Py_TYPE(v) == &DB_Type)
+#define DBCursorObject_CheckExact(v)     (Py_TYPE(v) == &DBCursor_Type)
+#define DBLogCursorObject_CheckExact(v)  (Py_TYPE(v) == &DBLogCursor_Type)
+#define DBEnvObject_CheckExact(v)        (Py_TYPE(v) == &DBEnv_Type)
+#define DBTxnObject_CheckExact(v)        (Py_TYPE(v) == &DBTxn_Type)
+#define DBLockObject_CheckExact(v)       (Py_TYPE(v) == &DBLock_Type)
+#define DBSequenceObject_CheckExact(v)   (Py_TYPE(v) == &DBSequence_Type)
 #if (DBVER >= 53)
-#define DBSiteObject_Check(v)       (Py_TYPE(v) == &DBSite_Type)
+#define DBSiteObject_CheckExact(v)       (Py_TYPE(v) == &DBSite_Type)
 #endif
 
 #define _DBC_close(dbc)           dbc->close(dbc)
@@ -653,7 +653,7 @@ static int checkTxnObj(PyObject* txnobj, DB_TXN** txn)
         *txn = NULL;
         return 1;
     }
-    if (DBTxnObject_Check(txnobj)) {
+    if (DBTxnObject_CheckExact(txnobj)) {
         *txn = ((DBTxnObject*)txnobj)->txn;
         return 1;
     }
@@ -1510,7 +1510,7 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
     if (!checkTxnObj(txnobj, &txn)) return NULL;
 
     CHECK_DB_NOT_CLOSED(self);
-    if (!DBObject_Check(secondaryDB)) {
+    if (!DBObject_CheckExact(secondaryDB)) {
         makeTypeError("DB", (PyObject*)secondaryDB);
         return NULL;
     }
@@ -2183,7 +2183,7 @@ DB_join(DBObject* self, PyObject* args)
             free(cursors);
             return NULL;
         }
-        if (!DBCursorObject_Check(item)) {
+        if (!DBCursorObject_CheckExact(item)) {
             PyErr_SetString(PyExc_TypeError,
                             "Sequence of DBCursor objects expected");
             free(cursors);
