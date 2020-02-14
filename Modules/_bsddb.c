@@ -252,8 +252,6 @@ static PyTypeObject DBSite_Type;
         return NULL;             \
     }
 
-#define RETURN_NONE()  Py_INCREF(Py_None); return Py_None;
-
 #define _CHECK_OBJECT_NOT_CLOSED(nonNull, pyErrObj, name) \
     if ((nonNull) == NULL) {          \
         PyObject *errTuple = NULL;    \
@@ -1546,7 +1544,7 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
     }
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -1607,7 +1605,7 @@ DB_close(DBObject* self, PyObject* args)
     if(!DB_close_internal(self, flags, 0))
         return NULL;
 
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -1730,7 +1728,7 @@ DB_delete(DBObject* self, PyObject* args, PyObject* kwargs)
     }
 
     FREE_DBT(key);
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -2318,7 +2316,7 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
 
     self->flags = flags;
 
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -2397,7 +2395,7 @@ DB_remove(DBObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -2432,7 +2430,7 @@ DB_rename(DBObject* self, PyObject* args)
     err = db->rename(db, filename, database, newname, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -2451,7 +2449,7 @@ DB_set_private(DBObject* self, PyObject* private_obj)
     Py_DECREF(self->private_obj);
     Py_INCREF(private_obj);
     self->private_obj = private_obj;
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2467,7 +2465,7 @@ DB_set_priority(DBObject* self, PyObject* args)
     err = self->db->set_priority(self->db, priority);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2530,7 +2528,7 @@ DB_set_q_extentsize(DBObject* self, PyObject* args)
     err = self->db->set_q_extentsize(self->db, extentsize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2561,7 +2559,7 @@ DB_set_bt_minkey(DBObject* self, PyObject* args)
     err = self->db->set_bt_minkey(self->db, minkey);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2713,7 +2711,7 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
     }
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static int
@@ -2829,7 +2827,7 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
     }
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -2848,7 +2846,7 @@ DB_set_cachesize(DBObject* self, PyObject* args)
     err = self->db->set_cachesize(self->db, gbytes, bytes, ncache);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2884,7 +2882,7 @@ DB_set_flags(DBObject* self, PyObject* args)
     RETURN_IF_ERR();
 
     self->setflags |= flags;
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2943,7 +2941,7 @@ DB_set_h_ffactor(DBObject* self, PyObject* args)
     err = self->db->set_h_ffactor(self->db, ffactor);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -2974,7 +2972,7 @@ DB_set_h_nelem(DBObject* self, PyObject* args)
     err = self->db->set_h_nelem(self->db, nelem);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3005,7 +3003,7 @@ DB_set_lorder(DBObject* self, PyObject* args)
     err = self->db->set_lorder(self->db, lorder);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3036,7 +3034,7 @@ DB_set_pagesize(DBObject* self, PyObject* args)
     err = self->db->set_pagesize(self->db, pagesize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3072,7 +3070,7 @@ DB_set_re_delim(DBObject* self, PyObject* args)
     err = self->db->set_re_delim(self->db, delim);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3104,7 +3102,7 @@ DB_set_re_len(DBObject* self, PyObject* args)
     err = self->db->set_re_len(self->db, len);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3139,7 +3137,7 @@ DB_set_re_pad(DBObject* self, PyObject* args)
     err = self->db->set_re_pad(self->db, pad);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3176,7 +3174,7 @@ DB_set_re_source(DBObject* self, PyObject* args)
     err = self->db->set_re_source(self->db, source);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3317,7 +3315,7 @@ DB_stat_print(DBObject* self, PyObject* args, PyObject *kwargs)
     err = self->db->stat_print(self->db, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -3335,7 +3333,7 @@ DB_sync(DBObject* self, PyObject* args)
     err = self->db->sync(self->db, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -3381,7 +3379,7 @@ DB_upgrade(DBObject* self, PyObject* args)
     err = self->db->upgrade(self->db, filename, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -3440,7 +3438,7 @@ DB_verify(DBObject* self, PyObject* args, PyObject* kwargs)
         fclose(outFile);
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -3481,7 +3479,7 @@ DB_set_encrypt(DBObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3859,7 +3857,7 @@ DBLogCursor_close_internal(DBLogCursorObject* self)
         self->logc = NULL;
     }
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3969,7 +3967,7 @@ DBSite_close_internal(DBSiteObject* self)
         self->site = NULL;
     }
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -3990,7 +3988,7 @@ DBSite_remove(DBSiteObject* self)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -4076,7 +4074,7 @@ DBSite_set_config(DBSiteObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 #endif
 
@@ -4103,7 +4101,7 @@ DBC_close_internal(DBCursorObject* self)
         self->dbc = NULL;
     }
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -4156,7 +4154,7 @@ DBC_delete(DBCursorObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
 
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -4435,7 +4433,7 @@ DBC_put(DBCursorObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
     FREE_DBT(key);  /* 'make_key_dbt' could do a 'malloc' */
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -4812,7 +4810,7 @@ DBC_set_priority(DBCursorObject* self, PyObject* args, PyObject* kwargs)
     err = self->dbc->set_priority(self->dbc, priority);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -4893,7 +4891,7 @@ DBEnv_close(DBEnvObject* self, PyObject* args)
     {
         return NULL;
     }
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -4930,7 +4928,7 @@ DBEnv_open(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     RETURN_IF_ERR();
     self->closed = 0;
     self->flags = flags;
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -5071,7 +5069,7 @@ DBEnv_memp_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->memp_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -5107,7 +5105,7 @@ DBEnv_memp_sync(DBEnvObject* self, PyObject* args)
     err = self->db_env->memp_sync(self->db_env, lsn_p);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5136,7 +5134,7 @@ DBEnv_remove(DBEnvObject* self, PyObject* args)
     err = db_env->remove(db_env, db_home, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5167,7 +5165,7 @@ DBEnv_dbremove(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     err = self->db_env->dbremove(self->db_env, txn, file, database, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5203,7 +5201,7 @@ DBEnv_dbrename(DBEnvObject* self, PyObject* args, PyObject* kwargs)
                                  flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -5226,7 +5224,7 @@ DBEnv_set_encrypt(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5286,7 +5284,7 @@ DBEnv_set_timeout(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5301,7 +5299,7 @@ DBEnv_set_shm_key(DBEnvObject* self, PyObject* args)
 
     err = self->db_env->set_shm_key(self->db_env, shm_key);
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5335,7 +5333,7 @@ DBEnv_set_cache_max(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_cache_max(self->db_env, gbytes, bytes);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5369,7 +5367,7 @@ DBEnv_set_thread_count(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_thread_count(self->db_env, count);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5401,7 +5399,7 @@ DBEnv_set_cachesize(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_cachesize(self->db_env, gbytes, bytes, ncache);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5437,7 +5435,7 @@ DBEnv_set_flags(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_flags(self->db_env, flags, onoff);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5469,7 +5467,7 @@ DBEnv_log_set_config(DBEnvObject* self, PyObject* args)
     err = self->db_env->log_set_config(self->db_env, flags, onoff);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5504,7 +5502,7 @@ DBEnv_mutex_set_max(DBEnvObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5540,7 +5538,7 @@ DBEnv_mutex_set_align(DBEnvObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5576,7 +5574,7 @@ DBEnv_mutex_set_increment(DBEnvObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5612,7 +5610,7 @@ DBEnv_mutex_set_tas_spins(DBEnvObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5650,7 +5648,7 @@ DBEnv_set_data_dir(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_data_dir(self->db_env, dir);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5706,7 +5704,7 @@ DBEnv_set_lg_filemode(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lg_filemode(self->db_env, filemode);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5736,7 +5734,7 @@ DBEnv_set_lg_bsize(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lg_bsize(self->db_env, lg_bsize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5772,7 +5770,7 @@ DBEnv_set_lg_dir(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lg_dir(self->db_env, dir);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5803,7 +5801,7 @@ DBEnv_set_lg_max(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lg_max(self->db_env, lg_max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5834,7 +5832,7 @@ DBEnv_set_lg_regionmax(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lg_regionmax(self->db_env, lg_max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5865,7 +5863,7 @@ DBEnv_set_lk_partitions(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lk_partitions(self->db_env, lk_partitions);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5896,7 +5894,7 @@ DBEnv_set_lk_detect(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lk_detect(self->db_env, lk_detect);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5928,7 +5926,7 @@ DBEnv_set_lk_max_locks(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lk_max_locks(self->db_env, max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5959,7 +5957,7 @@ DBEnv_set_lk_max_lockers(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lk_max_lockers(self->db_env, max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -5990,7 +5988,7 @@ DBEnv_set_lk_max_objects(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_lk_max_objects(self->db_env, max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6036,7 +6034,7 @@ DBEnv_set_mp_mmapsize(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_mp_mmapsize(self->db_env, mp_mmapsize);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6058,7 +6056,7 @@ DBEnv_set_tmp_dir(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_tmp_dir(self->db_env, dir);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6188,7 +6186,7 @@ DBEnv_txn_checkpoint(DBEnvObject* self, PyObject* args)
     err = self->db_env->txn_checkpoint(self->db_env, kbyte, min, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6219,7 +6217,7 @@ DBEnv_set_tx_max(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_tx_max(self->db_env, max);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6252,7 +6250,7 @@ DBEnv_set_tx_timestamp(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_tx_timestamp(self->db_env, &timestamp);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6324,7 +6322,7 @@ DBEnv_lock_id_free(DBEnvObject* self, PyObject* args)
     err = self->db_env->lock_id_free(self->db_env, theID);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6341,7 +6339,7 @@ DBEnv_lock_put(DBEnvObject* self, PyObject* args)
     err = self->db_env->lock_put(self->db_env, &dblockobj->lock);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6364,7 +6362,7 @@ DBEnv_fileid_reset(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     err = self->db_env->fileid_reset(self->db_env, file, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6387,7 +6385,7 @@ DBEnv_lsn_reset(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     err = self->db_env->lsn_reset(self->db_env, file, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6408,7 +6406,7 @@ DBEnv_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6486,7 +6484,7 @@ DBEnv_log_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->log_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6572,7 +6570,7 @@ DBEnv_lock_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->lock_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6604,7 +6602,7 @@ DBEnv_log_flush(DBEnvObject* self)
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6681,7 +6679,7 @@ DBEnv_log_printf(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6839,7 +6837,7 @@ DBEnv_mutex_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->mutex_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6862,7 +6860,7 @@ DBEnv_txn_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->txn_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -6952,7 +6950,7 @@ DBEnv_set_private(DBEnvObject* self, PyObject* private_obj)
     Py_DECREF(self->private_obj);
     Py_INCREF(private_obj);
     self->private_obj = private_obj;
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -6970,7 +6968,7 @@ DBEnv_set_intermediate_dir_mode(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_intermediate_dir_mode(self->db_env, mode);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7017,7 +7015,7 @@ DBEnv_set_mp_max_openfd(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_mp_max_openfd(self->db_env, maxopenfd);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7052,7 +7050,7 @@ DBEnv_set_mp_max_write(DBEnvObject* self, PyObject* args)
             maxwrite_sleep);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7088,7 +7086,7 @@ DBEnv_set_verbose(DBEnvObject* self, PyObject* args)
     err = self->db_env->set_verbose(self->db_env, which, onoff);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7164,7 +7162,7 @@ DBEnv_set_event_notify(DBEnvObject* self, PyObject* notifyFunc)
     }
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -7294,7 +7292,7 @@ DBEnv_rep_set_transport(DBEnvObject* self, PyObject* args)
     Py_DECREF(self->rep_transport);
     Py_INCREF(rep_transport);
     self->rep_transport = rep_transport;
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7311,7 +7309,7 @@ DBEnv_rep_set_request(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_request(self->db_env, minimum, maximum);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7342,7 +7340,7 @@ DBEnv_rep_set_limit(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_limit(self->db_env, 0, limit);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7374,7 +7372,7 @@ DBEnv_rep_set_config(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_config(self->db_env, which, onoff);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7409,7 +7407,7 @@ DBEnv_rep_elect(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_elect(self->db_env, nsites, nvotes, 0);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7436,7 +7434,7 @@ DBEnv_rep_start(DBEnvObject* self, PyObject* args, PyObject* kwargs)
             flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7449,7 +7447,7 @@ DBEnv_rep_sync(DBEnvObject* self)
     err = self->db_env->rep_sync(self->db_env, 0);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -7467,7 +7465,7 @@ DBEnv_rep_set_nsites(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_nsites(self->db_env, nsites);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7498,7 +7496,7 @@ DBEnv_rep_set_priority(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_priority(self->db_env, priority);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7529,7 +7527,7 @@ DBEnv_rep_set_timeout(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_timeout(self->db_env, which, timeout);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7566,7 +7564,7 @@ DBEnv_rep_set_clockskew(DBEnvObject* self, PyObject* args)
     err = self->db_env->rep_set_clockskew(self->db_env, fast, slow);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7600,7 +7598,7 @@ DBEnv_rep_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->rep_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7717,7 +7715,7 @@ DBEnv_repmgr_start(DBEnvObject* self, PyObject* args, PyObject*
     err = self->db_env->repmgr_start(self->db_env, nthreads, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 #if (DBVER < 53)
@@ -7741,7 +7739,7 @@ DBEnv_repmgr_set_local_site(DBEnvObject* self, PyObject* args, PyObject*
     err = self->db_env->repmgr_set_local_site(self->db_env, host, port, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7784,7 +7782,7 @@ DBEnv_repmgr_set_ack_policy(DBEnvObject* self, PyObject* args)
     err = self->db_env->repmgr_set_ack_policy(self->db_env, ack_policy);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7867,7 +7865,7 @@ DBEnv_repmgr_stat_print(DBEnvObject* self, PyObject* args, PyObject *kwargs)
     err = self->db_env->repmgr_stat_print(self->db_env, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -7996,7 +7994,7 @@ DBTxn_commit(DBTxnObject* self, PyObject* args)
     _promote_transaction_dbs_and_sequences(self);
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8030,7 +8028,7 @@ DBTxn_prepare(DBTxnObject* self, PyObject* args)
     err = self->txn->prepare(self->txn, (u_int8_t*)gid);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -8080,7 +8078,7 @@ DBTxn_abort_discard_internal(DBTxnObject* self, int discard)
     }
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8142,7 +8140,7 @@ DBTxn_set_timeout(DBTxnObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -8160,7 +8158,7 @@ DBTxn_set_name(DBTxnObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS;
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 
@@ -8216,7 +8214,7 @@ DBSequence_close_internal(DBSequenceObject* self, int flags, int do_not_close)
         RETURN_IF_ERR();
     }
 
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8310,7 +8308,7 @@ DBSequence_initial_value(DBSequenceObject* self, PyObject* args)
 
     RETURN_IF_ERR();
 
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8344,7 +8342,7 @@ DBSequence_open(DBSequenceObject* self, PyObject* args, PyObject* kwargs)
         self->txn=(DBTxnObject *)txnobj;
     }
 
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8372,7 +8370,7 @@ DBSequence_remove(DBSequenceObject* self, PyObject* args, PyObject* kwargs)
     Py_XDECREF(dummy);
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8399,7 +8397,7 @@ DBSequence_set_cachesize(DBSequenceObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8434,7 +8432,7 @@ DBSequence_set_flags(DBSequenceObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8470,7 +8468,7 @@ DBSequence_set_range(DBSequenceObject* self, PyObject* args)
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8512,7 +8510,7 @@ DBSequence_stat_print(DBSequenceObject* self, PyObject* args, PyObject *kwargs)
     err = self->sequence->stat_print(self->sequence, flags);
     MYDB_END_ALLOW_THREADS;
     RETURN_IF_ERR();
-    RETURN_NONE();
+    Py_RETURN_NONE;
 }
 
 static PyObject*
@@ -8942,7 +8940,7 @@ DBEnv_db_home_get(DBEnvObject* self)
     MYDB_END_ALLOW_THREADS;
 
     if (home == NULL) {
-        RETURN_NONE();
+        Py_RETURN_NONE;
     }
     return PyBytes_FromString(home);
 }
