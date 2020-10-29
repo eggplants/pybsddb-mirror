@@ -41,7 +41,7 @@ import os
 import unittest
 import bsddb3 as bsddb
 
-from bsddb3 import db, dbtables, dbutils, dbshelve, \
+from bsddb3 import db, dbutils, dbshelve, \
         hashopen, btopen, rnopen, dbobj
 
 from test import support as test_support

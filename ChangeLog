@@ -95,6 +95,7 @@ TODO: Implement PEP 384 (Stable API)
     workaround anymore.
   * "db.DB*" objects are created via the native classes, not via 
     factories anymore.
+  * Drop support for "dbtables". If you need it back, let me know.
 
 6.2.7:
   * Update copyright notices.
