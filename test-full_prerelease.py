@@ -54,16 +54,16 @@ import os
 os.environ['YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION'] = ''
 
 def do_matrix_check() :
-  python_versions = ('3.5', '3.6', '3.7', 3.8', '3.9')
+  python_versions = ('3.5', '3.6', '3.7', '3.8', '3.9')
 
-  berkeleydb_versions=('4.8', '5.3', '6.2')
+  berkeleydb_versions=('4.8', '5.3', '6.2', '18.1')
 
   warning_level=("-Wdefault", "-Werror")[1]
 
   for py in python_versions :
     for bdb in berkeleydb_versions :
-      print
-      print "*** Testing bindings for Python %s and Berkeley DB %s" %(py,bdb)
+      print()
+      print("*** Testing bindings for Python %s and Berkeley DB %s" %(py,bdb))
       extra_params = [warning_level, "-tt"]
       # Extra flags for 3.x
       extra_params += [] if float(py)<=2.999 else ["-bb"]
@@ -72,19 +72,19 @@ def do_matrix_check() :
       params = extra_params + ["setup.py", "-q", \
                  "--berkeley-db=/usr/local/BerkeleyDB."+bdb,"build", "-f"]
       params = ["/usr/local/bin/python"+py] + params
-      print "EXECUTING:", " ".join(params)
+      print("EXECUTING:", " ".join(params))
       ret=subprocess.call(params)
       if not ret :
         params = ["/usr/local/bin/python"+py] + extra_params + ["test.py","-p"]
-        print "EXECUTING:", " ".join(params)
+        print("EXECUTING:", " ".join(params))
         ret = subprocess.call(params)
       if ret :
-        print
-        print ">>> WE HAVE A PROBLEM!"
-        print
+        print()
+        print(">>> WE HAVE A PROBLEM!")
+        print()
         sys.exit(1)
 
 if __name__=="__main__" :
-  print info
+  print(info)
   do_matrix_check()
 

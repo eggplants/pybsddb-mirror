@@ -12,6 +12,7 @@ TODO: Implement PEP 384 (Stable API)
   * Support Berkeley DB 18.1.x.
   * Drop support for Berkeley DB 4.7, 5.1 and 6.1.
   * Drop support for Python 2.6, 2.7, 3.3 and 3.4.
+  * Testsuite driver migrated to Python 3.
   * Since Berkeley DB 4.7 is not supported anymore,
     ancient method "DBEnv.set_rpc_server()" is not available anymore.
   * If you try to install this package on Python 2,
