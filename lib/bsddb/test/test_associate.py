@@ -267,7 +267,9 @@ class AssociateTestCase(unittest.TestCase):
         self.assertEqual(vals, None, vals)
 
         vals = secDB.pget(b'Unknown', txn=txn)
-        self.assertTrue(vals[0] == 99 or vals[0] == b'99', vals)
+        k = vals[0]
+        self.assertTrue((isinstance(k, int) and k == 99) or
+                        (isinstance(k, bytes) and k == b'99'), vals)
         vals[1].index(b'Unknown')
         vals[1].index(b'Unnamed')
         vals[1].index(b'unknown')
@@ -296,7 +298,9 @@ class AssociateTestCase(unittest.TestCase):
 
         # test cursor pget
         vals = self.cur.pget(b'Unknown', flags=db.DB_LAST)
-        self.assertTrue(vals[1] == 99 or vals[1] == b'99', vals)
+        k = vals[1]
+        self.assertTrue((isinstance(k, int) and k == 99) or
+                        (isinstance(k, bytes) and k == b'99'), vals)
         self.assertEqual(vals[0], b'Unknown')
         vals[2].index(b'Unknown')
         vals[2].index(b'Unnamed')
