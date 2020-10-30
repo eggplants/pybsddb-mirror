@@ -628,7 +628,6 @@ class BasicTestCase(unittest.TestCase):
         d = db.DB(self.env)
         d.verify(self.filename, outfile=None)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_verify_path(self):
         import pathlib
         self.d.close()
@@ -636,7 +635,6 @@ class BasicTestCase(unittest.TestCase):
         filename = pathlib.Path(self.filename)
         d.verify(filename)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_verify_path_outfile(self):
         import pathlib
         self.d.close()
@@ -651,7 +649,6 @@ class BasicTestCase(unittest.TestCase):
         d = db.DB(self.env)
         d.upgrade(self.filename)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_upgrade_path(self):
         import pathlib
         self.d.close()
@@ -666,7 +663,6 @@ class BasicTestCase(unittest.TestCase):
         d = db.DB(self.env)
         d.rename(self.filename + '.NEW', None, self.filename)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_rename_path(self):
         import pathlib
         self.d.close()
@@ -689,7 +685,6 @@ class BasicTestCase(unittest.TestCase):
         d.remove(self.filename, None)
         open(self.filename, 'w').close()  # Touch
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_remove_path(self):
         import pathlib
         self.d.close()
@@ -698,7 +693,6 @@ class BasicTestCase(unittest.TestCase):
         d.remove(filename)
         filename.touch()
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_remove_path_None(self):
         import pathlib
         self.d.close()
@@ -778,7 +772,6 @@ class BasicWithEnvTestCase(BasicTestCase):
         self.env.dbrename(self.filename, None, newname)
         self.env.dbremove(newname)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test09_EnvRemoveAndRename_path(self):
         import pathlib
         if not self.env:
@@ -1219,7 +1212,6 @@ class DBPrivateObject(PrivateObject) :
 
 
 class open_path(unittest.TestCase):
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test01_open_env_path(self):
         import pathlib
         homeDir = pathlib.Path(get_new_environment_path())
@@ -1244,7 +1236,6 @@ class open_path(unittest.TestCase):
         finally:
             env.close()
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test04_open_db_path(self):
         import pathlib
         filename = pathlib.Path(get_new_database_path())
@@ -1258,7 +1249,6 @@ class open_path(unittest.TestCase):
             database.close()
             os.remove(filename)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test05_open_db_path_keywords(self):
         import pathlib
         filename = pathlib.Path(get_new_database_path())
@@ -1273,7 +1263,6 @@ class open_path(unittest.TestCase):
             database.close()
             os.remove(filename)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test06_open_db_path_no_dbname(self):
         import pathlib
         filename = pathlib.Path(get_new_database_path())
@@ -1286,7 +1275,6 @@ class open_path(unittest.TestCase):
             database.close()
             os.remove(filename)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test07_open_db_path_no_dbname_keywords(self):
         import pathlib
         filename = pathlib.Path(get_new_database_path())

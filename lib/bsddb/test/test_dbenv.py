@@ -132,7 +132,6 @@ class DBEnv_general(DBEnv) :
             self.env.set_tmp_dir(i)
             self.assertEqual(i, self.env.get_tmp_dir())
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_tmp_dir_path(self) :
         import pathlib
         for i in ['a', 'bb', 'ccc'] :
@@ -190,7 +189,6 @@ class DBEnv_general(DBEnv) :
             self.env.set_lg_dir(i)
             self.assertEqual(i, self.env.get_lg_dir())
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_lg_dir_path(self) :
         import pathlib
         for i in ["a", "bb", "ccc", "dddd"] :
@@ -212,7 +210,6 @@ class DBEnv_general(DBEnv) :
             self.env.set_data_dir(i)
         self.assertEqual(dirs, self.env.get_data_dirs())
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_setget_data_dirs_path(self) :
         import pathlib
         dirs = ("a", "b", "c", "d")
@@ -592,7 +589,6 @@ class DBEnv_lsn(DBEnv):
     def test_lsn_reset(self):
         self.env.lsn_reset('test')
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_lsn_reset_path(self):
         import pathlib
         self.env.lsn_reset(pathlib.Path('test'))
@@ -611,7 +607,6 @@ class DBEnv_remove(unittest.TestCase):
         homeDir = get_new_environment_path()
         return self._remove(homeDir)
 
-    @unittest.skipIf(sys.version_info < (3, 6), 'Not tested if Python < 3.6')
     def test_remove_path(self):
         import pathlib
         homeDir = pathlib.Path(get_new_environment_path())

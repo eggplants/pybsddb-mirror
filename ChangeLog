@@ -11,7 +11,7 @@ TODO: Implement PEP 384 (Stable API)
 18.1.0-pre:
   * Support Berkeley DB 18.1.x.
   * Drop support for Berkeley DB 4.7, 5.1 and 6.1.
-  * Drop support for Python 2.6, 2.7, 3.3 and 3.4.
+  * Drop support for Python 2.6, 2.7, 3.3, 3.4 and 3.5.
   * The library name is migrated from "bsddb3" to "bsddb". Reasons:
     - In the old days, "bsddb" module was integrated with Python < 3 . The
       release rate of new Python interpreters was slow, so "bsddb" was
