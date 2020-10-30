@@ -1225,16 +1225,20 @@ class open_path(unittest.TestCase):
     def test02_open_env_None(self):
         env = db.DBEnv()
         try:
-            env.open(None, db.DB_CREATE)
+            os.environ['DB_HOME'] = get_new_environment_path()
+            env.open(None, db.DB_CREATE | db.DB_USE_ENVIRON)
         finally:
             env.close()
+            test_support.rmtree(os.environ['DB_HOME'])
 
     def test03_open_env_None_keywords(self):
         env = db.DBEnv()
         try:
-            env.open(flags=db.DB_CREATE)
+            os.environ['DB_HOME'] = get_new_environment_path()
+            env.open(flags=db.DB_CREATE | db.DB_USE_ENVIRON)
         finally:
             env.close()
+            test_support.rmtree(os.environ['DB_HOME'])
 
     def test04_open_db_path(self):
         import pathlib
