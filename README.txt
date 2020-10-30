@@ -171,5 +171,5 @@ greg@krypto.org
 -- [even later updates by] Barry A. Warsaw
 barry@python.org
 
-Got questions? email pybsddb-users@lists.sf.net
+Got questions? email pybsddb@jcea.es
 

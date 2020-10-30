@@ -1,10 +1,7 @@
 include test-full_prerelease.py
-include setup2.py
 include setup3.py
-include test2.py
-include test3.py
-include make3.py
-recursive-include Lib3 *.py
+include test.py
+recursive-include Lib *.py
 
 include *.txt
 include updatedb.bat
@@ -14,7 +11,7 @@ include setup.cfg
 include ChangeLog
 include test.py
 
-recursive-include bsddb3 *.py
+recursive-include bsddb *.py
 recursive-include docs *.rst *.html *.css *.gif *.jpg *.png *.js *.json *.txt
 recursive-include patches *.txt *.patch
 recursive-include Modules _bsddb.c bsddb.h
@@ -26,5 +23,5 @@ prune docs/tools/sphinx
 prune docs/tools/pygments
 prune old
 prune test/db_home
-prune test/bsddb3
+prune test/bsddb
 

@@ -286,7 +286,7 @@ if os.name == 'posix':
 \aWARNING:
 \tIt appears that the old bsddb module is staticly linked in the
 \tPython executable. This will cause various random problems for
-\tbsddb3, up to and including segfaults. Please rebuild your
+\tbsddb, up to and including segfaults. Please rebuild your
 \tPython either with bsddb disabled, or with it built as a shared
 \tdynamic extension. Watch out for other modules (e.g. dbm) that create
 \tdependencies in the python executable to libdb as a side effect.""")
@@ -313,7 +313,7 @@ if os.name == 'posix':
     if (db_ver2 is not None) and (db_ver != db_ver2) :
         raise AssertionError("Detected Berkeley DB version is inconsistent")
     if db_ver not in db_ver_list:
-        raise AssertionError("pybsddb untested with this Berkeley DB "
+        raise AssertionError("bsddb untested with this Berkeley DB "
                 "version %d.%d" %db_ver)
     print('Detected Berkeley DB version %d.%d from db.h' %db_ver)
 
@@ -352,7 +352,7 @@ elif os.name == 'nt':
         ver = fullverstr.split('.')
         db_ver = (int(ver[0]), int(ver[1]))
     if db_ver not in db_ver_list:
-        raise AssertionError("pybsddb untested with this Berkeley DB "
+        raise AssertionError("bsddb untested with this Berkeley DB "
                 "version %d.%d" %db_ver)
     print('Detected Berkeley DB version %d.%d from db.h' %db_ver)
 
@@ -360,7 +360,7 @@ elif os.name == 'nt':
         libname = ['libdb%ssd' % ver]     # Debug, static
     else:
         libname = ['libdb%ss' % ver]      # Release, static
-    utils = [("bsddb3/utils",
+    utils = [("bsddb/utils",
               ["db/bin/db_archive.exe",
                "db/bin/db_checkpoint.exe",
                "db/bin/db_deadlock.exe",
@@ -373,7 +373,7 @@ elif os.name == 'nt':
                "db/bin/db_verify.exe",
                "db/bin/libdb%s.dll" % ver,
                ]),
-             ("bsddb3/test", glob.glob("test/*.py"))
+             ("bsddb/test", glob.glob("test/*.py"))
              ]
 
 if (db_ver in ((6, 2), (18, 1))) and \
@@ -438,14 +438,14 @@ del config_vars
 # do the actual build, install, whatever...
 
 kw_params = dict(
-      name = 'bsddb3',
+      name = 'bsddb',
       version = VERSION,
       description = 'Python bindings for Oracle Berkeley DB',
       long_description = """\
 This module provides a nearly complete wrapping of the Oracle/Sleepycat C API
 for the Database Environment, Database, Cursor, Log Cursor, Sequence and
 Transaction objects, and each of these is exposed as a Python type in the
-bsddb3.db module. The database objects can use various access methods: btree,
+bsddb.db module. The database objects can use various access methods: btree,
 hash, recno, and queue.  Complete support of Berkeley DB distributed
 transactions. Complete support for Berkeley DB Replication Manager. Complete
 support for Berkeley DB Base Replication. Support for RPC.
@@ -473,10 +473,10 @@ pybsddb_doc/>`__ --
       url = 'https://www.jcea.es/programacion/pybsddb.htm',
       license = "3-clause BSD License",
 
-      packages = ['bsddb3', 'bsddb3/tests'],
-      package_dir = {'bsddb3': 'lib/bsddb',
-                     'bsddb3/tests': 'lib/bsddb/test'},
-      ext_modules = [Extension('bsddb3._pybsddb',
+      packages = ['bsddb', 'bsddb/tests'],
+      package_dir = {'bsddb': 'lib/bsddb',
+                     'bsddb/tests': 'lib/bsddb/test'},
+      ext_modules = [Extension('bsddb._bsddb',
                                sources = ['Modules/_bsddb.c'],
                                depends = ['Modules/bsddb.h'],
                                include_dirs = [ incdir ],

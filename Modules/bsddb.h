@@ -77,7 +77,7 @@
  * Portions of this module, associated unit tests and build scripts are the
  * result of a contract with The Written Word (http://thewrittenword.com/)
  * Many thanks go out to them for causing me to raise the bar on quality and
- * functionality, resulting in a better bsddb3 package for all of us to use.
+ * functionality, resulting in a better bsddb package for all of us to use.
  *
  * --Robin
  */
@@ -249,7 +249,7 @@ typedef struct DBSequenceObject {
      PyObject*  mod;
      PyObject*  cobj;
 
-     mod  = PyImport_ImportModule("bsddb3._pybsddb");
+     mod  = PyImport_ImportModule("bsddb._bsddb");
      cobj = PyObject_GetAttrString(mod, "api");
      bsddb_api  = (BSDDB_api*)PyCObject_AsVoidPtr(cobj);
      Py_DECREF(cobj);
@@ -259,7 +259,7 @@ typedef struct DBSequenceObject {
      // If you are using Python 2.7 or up: (except Python 3.0, unsupported)
      BSDDB_api* bsddb_api;
 
-     bsddb_api = (void **)PyCapsule_Import("bsddb3._pybsddb.api", 1);
+     bsddb_api = (void **)PyCapsule_Import("bsddb._bsddb.api", 1);
 
 
    Check "api_version" number before trying to use the API.
@@ -268,7 +268,7 @@ typedef struct DBSequenceObject {
 */
 
 #define PYBSDDB_API_VERSION 1
-#define PYBSDDB_BASE "bsddb3._pybsddb."
+#define PYBSDDB_BASE "bsddb._bsddb."
 
 typedef struct {
     unsigned int api_version;

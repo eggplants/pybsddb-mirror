@@ -42,16 +42,16 @@ instead.  It mirrors the Oracle Berkeley DB C API.
 import sys
 
 try:
-    from . import _pybsddb
-    from bsddb3.dbutils import DeadlockWrap as _DeadlockWrap
+    from . import _bsddb
+    from bsddb.dbutils import DeadlockWrap as _DeadlockWrap
 except ImportError:
     # Remove ourselves from sys.modules
     import sys
     del sys.modules[__name__]
     raise
 
-# bsddb3 calls it db, but provide _db for backwards compatibility
-db = _db = _pybsddb
+# bsddb calls it db, but provide _db for backwards compatibility
+db = _db = _bsddb
 __version__ = db.__version__
 
 error = db.DBError  # So bsddb.error will mean something...

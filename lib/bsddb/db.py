@@ -39,5 +39,5 @@
 
 import sys
 
-from ._pybsddb import *
-from ._pybsddb import __version__
+from ._bsddb import *
+from ._bsddb import __version__

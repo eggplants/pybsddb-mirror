@@ -39,9 +39,9 @@ are met:
 import sys
 import os
 import unittest
-import bsddb3 as bsddb
+import bsddb
 
-from bsddb3 import db, dbutils, dbshelve, \
+from bsddb import db, dbutils, dbshelve, \
         hashopen, btopen, rnopen, dbobj
 
 from test import support as test_support
@@ -187,7 +187,7 @@ def suite(module_prefix='', timing_check=None):
     for name in test_modules:
         #module = __import__(name)
         # Do it this way so that suite may be called externally via
-        # python's Lib/test/test_bsddb3.
+        # python's Lib/test/test_bsddb.
         module = __import__(module_prefix+name, globals(), locals(), name)
 
         alltests.addTest(module.test_suite())

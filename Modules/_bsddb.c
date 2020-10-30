@@ -77,7 +77,7 @@
  * Portions of this module, associated unit tests and build scripts are the
  * result of a contract with The Written Word (http://thewrittenword.com/)
  * Many thanks go out to them for causing me to raise the bar on quality and
- * functionality, resulting in a better bsddb3 package for all of us to use.
+ * functionality, resulting in a better bsddb package for all of us to use.
  *
  * --Robin
  */
@@ -9178,6 +9178,8 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     PyObject* pybsddb_version_s;
     PyObject* db_version_s;
 
+    strncpy(_bsddbModuleName, "_bsddb", MODULE_NAME_MAX_LEN);
+
     /*
      * Python 3.7 and newer ALWAYS initialize the GIL.
      * https://vstinner.github.io/python37-gil-change.html
@@ -9660,7 +9662,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
     /* The exception name must be correct for pickled exception *
      * objects to unpickle properly.                            */
-#define PYBSDDB_EXCEPTION_BASE  "bsddb3.db."
+#define PYBSDDB_EXCEPTION_BASE  "bsddb.db."
 
     /* All the rest of the exceptions derive only from DBError */
 #define MAKE_EX(name)   name = PyErr_NewException(PYBSDDB_EXCEPTION_BASE #name, DBError, NULL); \
@@ -9757,7 +9759,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     } else { /* Something bad happened! */
         PyErr_WriteUnraisable(m);
         if(PyErr_Warn(PyExc_RuntimeWarning,
-                "_pybsddb C API will be not available")) {
+                "_bsddb C API will be not available")) {
             PyErr_WriteUnraisable(m);
         }
         PyErr_Clear();
@@ -9791,18 +9793,9 @@ error:
     /* Check for errors */
     if (PyErr_Occurred()) {
         PyErr_Print();
-        Py_FatalError("can't initialize module _pybsddb");
+        Py_FatalError("can't initialize module _bsddb");
         Py_DECREF(m);
         m = NULL;
     }
     return m;
-}
-
-/* allow this module to be named _pybsddb so that it can be installed
- * and imported on top of python >= 2.3 that includes its own older
- * copy of the library named _bsddb without importing the old version. */
-PyMODINIT_FUNC PyInit__pybsddb(void)  /* Note the two underscores */
-{
-    strncpy(_bsddbModuleName, "_pybsddb", MODULE_NAME_MAX_LEN);
-    return PyInit__bsddb();   /* Note the two underscores */
 }

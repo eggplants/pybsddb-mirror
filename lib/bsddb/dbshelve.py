@@ -18,7 +18,7 @@
 #               software has been tested, but no warranty is expressed or
 #               implied.
 #
-# 13-Dec-2000:  Updated to be used with the new bsddb3 package.
+# 13-Dec-2000:  Updated to be used with the new bsddb package.
 #               Added DBShelfCursor class.
 #
 #------------------------------------------------------------------------
