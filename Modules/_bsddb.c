@@ -893,9 +893,10 @@ newDBObject(DBEnvObject* arg, int flags)
 
     if (self->myenvobj)
         self->moduleFlags = self->myenvobj->moduleFlags;
-    else
+    else {
         self->moduleFlags.getReturnsNone = DEFAULT_GET_RETURNS_NONE;
         self->moduleFlags.cursorSetReturnsNone = DEFAULT_CURSOR_SET_RETURNS_NONE;
+    }
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = db_create(&self->db, db_env, flags);
