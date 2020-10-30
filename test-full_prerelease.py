@@ -64,11 +64,7 @@ def do_matrix_check() :
     for bdb in berkeleydb_versions :
       print()
       print("*** Testing bindings for Python %s and Berkeley DB %s" %(py,bdb))
-      extra_params = [warning_level, "-tt"]
-      # Extra flags for 3.x
-      extra_params += [] if float(py)<=2.999 else ["-bb"]
-      # Extra flags for >=2.6
-      extra_params += [] if ((float(py)<=2.599) or (float(py)>=2.999)) else ["-3"]
+      extra_params = [warning_level, '-tt', '-bb']
       params = extra_params + ["setup.py", "-q", \
                  "--berkeley-db=/usr/local/BerkeleyDB."+bdb,"build", "-f"]
       params = ["/usr/local/bin/python"+py] + params
