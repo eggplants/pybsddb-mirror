@@ -41,26 +41,35 @@ import os
 import unittest
 
 
-from .test_all import db, verbose, get_new_database_path, printable_bytes
+from .test_all import db, verbose, test_support, get_new_environment_path, \
+        get_new_database_path, printable_bytes
 
 
 #----------------------------------------------------------------------
 
 class GetReturnsNoneTestCase(unittest.TestCase):
+    def _getEnv(self):
+        return None
+
     def setUp(self):
-        self.filename = get_new_database_path()
+        self.Env = self._getEnv()
+        self.filename = "test_db" if self.Env else get_new_database_path()
+        self.db = db.DB(self.Env)
+        self.db.open(self.filename, db.DB_BTREE, db.DB_CREATE)
 
     def tearDown(self):
+        self.db.close()
         try:
             os.remove(self.filename)
         except os.error:
             pass
+        if self.Env:
+            self.Env.close()
+            test_support.rmtree(self.homeDir)
 
 
-    def test01_get_returns_none(self):
-        d = db.DB()
-        d.open(self.filename, db.DB_BTREE, db.DB_CREATE)
-        d.set_get_returns_none(1)
+    def test01_get_returns_none_default(self):
+        d = self.db
 
         for x in printable_bytes:
             d.put(x, x * 40)
@@ -73,21 +82,25 @@ class GetReturnsNoneTestCase(unittest.TestCase):
 
         count = 0
         c = d.cursor()
-        rec = c.first()
-        while rec:
-            count = count + 1
-            rec = c.next()
+        try:
+            rec = c.first()
+            while rec:
+                count = count + 1
+                rec = c.next()
 
-        self.assertEqual(rec, None)
-        self.assertEqual(count, len(printable_bytes))
+            self.assertEqual(rec, None)
+            self.assertEqual(count, len(printable_bytes))
+        finally:
+            c.close()
 
-        c.close()
-        d.close()
+
+    def test02_get_returns_none(self):
+        self.db.set_get_returns_none(1)
+        return self.test01_get_returns_none_default()
 
 
-    def test02_get_raises_exception(self):
-        d = db.DB()
-        d.open(self.filename, db.DB_BTREE, db.DB_CREATE)
+    def test03_get_raises_exception(self):
+        d = self.db
         d.set_get_returns_none(0)
 
         for x in printable_bytes:
@@ -102,26 +115,62 @@ class GetReturnsNoneTestCase(unittest.TestCase):
         count = 0
         exceptionHappened = 0
         c = d.cursor()
-        rec = c.first()
-        while rec:
-            count = count + 1
-            try:
-                rec = c.next()
-            except db.DBNotFoundError:  # end of the records
-                exceptionHappened = 1
-                break
+        try:
+            rec = c.first()
+            while rec:
+                count = count + 1
+                try:
+                    rec = c.next()
+                except db.DBNotFoundError:  # end of the records
+                    exceptionHappened = 1
+                    break
 
-        self.assertNotEqual(rec, None)
-        self.assertTrue(exceptionHappened)
-        self.assertEqual(count, len(printable_bytes))
+            self.assertNotEqual(rec, None)
+            self.assertTrue(exceptionHappened)
+            self.assertEqual(count, len(printable_bytes))
+        finally:
+            c.close()
 
-        c.close()
-        d.close()
+
+class GetEnvReturnsNoneTestCase(GetReturnsNoneTestCase):
+    def _getEnv(self):
+        self.homeDir = get_new_environment_path()
+        dbenv = db.DBEnv()
+        dbenv.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
+                   db.DB_INIT_LOG | db.DB_INIT_LOCK | db.DB_INIT_TXN)
+        return dbenv
+
+
+class GetEnvReturnsNoneBUG(unittest.TestCase):
+    def test01_Env_flags_not_inherited(self):
+        homeDir = get_new_environment_path()
+        dbenv = db.DBEnv()
+        dbenv.open(homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
+                   db.DB_INIT_LOG | db.DB_INIT_LOCK | db.DB_INIT_TXN)
+
+        for flag in (0, 1, 2):
+            dbenv.set_get_returns_none(flag)
+            d = db.DB(dbenv)
+            d.open('test_db', db.DB_BTREE, db.DB_CREATE)
+
+            # The function should return previous value
+            # inherited from the environment.
+            self.assertEqual(flag, d.set_get_returns_none(flag))
+            d.close()
+
+        dbenv.close()
+        test_support.rmtree(homeDir)
+
 
 #----------------------------------------------------------------------
 
 def test_suite():
-    return unittest.makeSuite(GetReturnsNoneTestCase)
+    suite = unittest.TestSuite()
+    suite.addTest(unittest.makeSuite(GetReturnsNoneTestCase))
+    suite.addTest(unittest.makeSuite(GetEnvReturnsNoneTestCase))
+    suite.addTest(unittest.makeSuite(GetEnvReturnsNoneBUG))
+
+    return suite
 
 
 if __name__ == '__main__':
