@@ -141,6 +141,7 @@ TODO: Implement PEP 384 (Stable API)
     the value could not be correctly inherited by the child
     databases. Reported by Patrick Laimbock and modern GCC
     warnings.
+  * Do not leak test files and directories.
 
 6.2.7:
   * Update copyright notices.

@@ -69,10 +69,7 @@ class db_weakrefDBEnv(unittest.TestCase):
         self.db.close()
 
         self.dbenv.close()
-
-        dbenv = db.DBEnv()
-        dbenv.remove(self.homeDir)
-        dbenv.close()
+        test_support.rmtree(self.homeDir)
 
     def _test(self, obj, *args, **kwargs):
         obj = obj(*args, **kwargs)

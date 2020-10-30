@@ -49,10 +49,7 @@ class DBEnv(unittest.TestCase):
 
     def tearDown(self):
         self.env.close()
-        del self.env
-        env = db.DBEnv()
-        env.remove(self.homeDir)
-        env.close()
+        test_support.rmtree(self.homeDir)
 
 class DBEnv_general(DBEnv) :
     def test_get_open_flags(self) :
@@ -602,6 +599,11 @@ class DBEnv_remove(unittest.TestCase):
         env.close()
         env = db.DBEnv()
         env.remove(homeDir)
+
+        # "env.remove()" deletes directory content, but not
+        # the directory. "os.rmdir()" will fail if
+        # the directory is not empty.
+        os.rmdir(homeDir)
 
     def test_remove(self):
         homeDir = get_new_environment_path()
