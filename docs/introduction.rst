@@ -5,7 +5,7 @@ Berkeley DB 4.8, 5.3, 6.2 and 18.1 Python Extension Package
 Introduction
 ------------
 
-This is a simple bit of documentation for the bsddb3.db Python extension
+This is a simple bit of documentation for the bsddb.db Python extension
 module which wraps the Berkeley DB C library. The extension
 module is located in a Python package along with a few pure python
 modules.
@@ -26,7 +26,7 @@ needed by the complex cases.
    similar methods available, (specifically, first(), last(), next(),
    and prev() will need to be available without the user needing to
    explicitly use a cursor.)  All of these have been implemented in
-   Python code in the bsddb3.__init__.py module.
+   Python code in the bsddb.__init__.py module.
 
 2. **Simple persistent dictionary:** One small step beyond the above.
    The programmer may be aware of and use the new DB object type
@@ -38,7 +38,7 @@ needed by the complex cases.
    simultaneously have one writer and multiple readers of a DB (either
    in multiple threads or processes) and is implemented simply by
    creating a DBEnv with certain flags. No extra work is required to
-   allow this access mode in bsddb3.
+   allow this access mode in bsddb.
 
 4. **Advanced transactional data store:** This mode of use is where the
    full capabilities of the Berkeley DB library are called into action.
@@ -52,7 +52,7 @@ needed by the complex cases.
 Types Provided
 --------------
 
-The bsddb3.db extension module provides the following object types:
+The bsddb.db extension module provides the following object types:
 
 - **DB:** The basic database object, capable of Hash, BTree, Recno, and
   Queue access methods.
@@ -95,7 +95,7 @@ Exceptions Provided
 -------------------
 
 The Berkeley DB C API uses function return codes to signal various
-errors. The bsddb3.db module checks for these error codes and turns them
+errors. The bsddb.db module checks for these error codes and turns them
 into Python exceptions, allowing you to use familiar try:... except:...
 constructs and not have to bother with checking every method's return
 value.
@@ -181,7 +181,7 @@ Other Package Modules
 ---------------------
 
 - **dbshelve.py:** This is an implementation of the standard Python
-  shelve concept for storing objects that uses bsddb3 specifically, and
+  shelve concept for storing objects that uses bsddb specifically, and
   also exposes some of the more advanced methods and capabilities of the
   underlying DB.
 

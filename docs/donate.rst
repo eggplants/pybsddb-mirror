@@ -10,7 +10,7 @@ spare time. If you appreciate this software or if you want to sponsor a
 currently not translated API feature, please consider donation to the
 project.
 
-PyBSDDB/BSDDB3 needs your help.
+BSDDB needs your help.
 
 You can donate using BitCoins_. The destination address is
 16avqyUK4vDqBdpUy365PPW44zNqVHLZSC.
