@@ -39,6 +39,7 @@ are met:
 import os
 import time
 import unittest
+import sys
 
 from .test_all import db, test_support, have_threads, verbose, \
         get_new_environment_path, get_new_database_path
@@ -112,8 +113,13 @@ class DBReplicationManager(DBReplication) :
             self.dbenvClient.rep_set_config(db.DB_REPMGR_CONF_DISABLE_SSL, 1)
 
     def test01_basic_replication(self) :
-        master_port = test_support.find_unused_port()
-        client_port = test_support.find_unused_port()
+        if sys.version_info < (3, 9):
+            find_unused_port = test_support.find_unused_port
+        else:
+            from test.support.socket_helper import find_unused_port
+        master_port = find_unused_port()
+        client_port = find_unused_port()
+
         if db.version() >= (5, 3) :
             self.site = self.dbenvMaster.repmgr_site("127.0.0.1", master_port)
             self.site.set_config(db.DB_GROUP_CREATOR, True)

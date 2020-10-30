@@ -135,6 +135,8 @@ TODO: Implement PEP 384 (Stable API)
   * "db.DB*" objects are created via the native classes, not via 
     factories anymore.
   * Drop support for "dbtables". If you need it back, let me know.
+  * In Python 3.9, "find_unused_port" has moved to
+    "test.support.socket_helper".
 
 6.2.7:
   * Update copyright notices.
