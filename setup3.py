@@ -51,7 +51,7 @@ import distutils.ccompiler
 
 # read the module version number out of the .c file
 VERSION = None
-_ver_re = re.compile('^#\s*define\s+PY_BSDDB_VERSION\s+"(\d+\.\d+\.\d+.*)"')
+_ver_re = re.compile(r'^#\s*define\s+PY_BSDDB_VERSION\s+"(\d+\.\d+\.\d+.*)"')
 try:
     _srcFile = open('Modules/bsddb.h', 'r')
 except IOError:
