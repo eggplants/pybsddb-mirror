@@ -9,6 +9,10 @@ Pkgsrc 19.4.0 has BDB 4.8, 5,3 and 6.2.
 TODO: Implement PEP 384 (Stable API)
 
 
+6.2.8:
+  * In Python 3.9, "find_unused_port" has been moved to
+  "test.support.socket_helper". Reported by Michał Górny.
+
 6.2.7:
   * Update copyright notices.
   * https links.
