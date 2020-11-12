@@ -70,31 +70,31 @@ License of Python files
     * test2.py, test3.py: Zope Public License, version 2.0.
       Zope Corporation and contributors.
 
-    * Lib*/bsddb/dbrecio.py:
+    * src/berkeleydb/dbrecio.py:
       Itamar Shtull-Trauring <itamar@maxnm.com>.
 
-    * Lib*/bsddb/__init__.py: 3-clause BSD license.
+    * src/berkeleydb/__init__.py: 3-clause BSD license.
       Digital Creations and Andrew Kuchling.
 
-    * Lib*/bsddb/db.py: 3-clause BSD license.
+    * src/berkeleydb/db.py: 3-clause BSD license.
       Digital Creations and Andrew Kuchling.
 
-    * Lib*/bsddb/dbobj.py, dbutils.py: Free software.
+    * src/berkeleydb/dbobj.py, dbutils.py: Free software.
       Autonomous Zone Industries, Gregory P. Smith.
 
-    * Lib*/bsddb/dbtables.py: Free software.
+    * src/berkeleydb/dbtables.py: Free software.
       Autonomous Zone Industries, Gregory P. Smith.
 
-    * Lib*/bsddb/test/test_dbtables.py: Free software.
+    * src/berkeleydb/test/test_dbtables.py: Free software.
       Autonomous Zone Industries, Gregory P. Smith.
 
-    * Lib*/bsddb/dbshelve.py: Free software.
+    * src/berkeleydb/dbshelve.py: Free software.
       Total Control Software.
 
 License of C files
 ++++++++++++++++++
 
-    * Modules/bsddb.h, _bsddb.c: 3-clause BSD license.
+    * src/Modules/berkeleydb.h, _berkeleydb.c: 3-clause BSD license.
       Digital Creations, Andrew Kuchling, Robin Dunn,
       Gregory P. Smith, Duncan Grisby, Jesus Cea Avion.
 

@@ -57,7 +57,7 @@ extlinks = {
         }
 
 # General substitutions.
-project = 'BSDDB'
+project = 'BERKELEYDB'
 # I can't use tildes because my ZOPE configuration.
 # Something to fix in the future.
 copyright = '2008-2020 Jesus Cea Avion'
