@@ -9155,7 +9155,7 @@ static BERKELEYDB_api berkeleydb_api;
 ** must be big enough, and any use of the name must use this particular
 ** string.
 */
-#define MODULE_NAME_MAX_LEN     11
+#define MODULE_NAME_MAX_LEN     32
 static char _berkeleydbModuleName[MODULE_NAME_MAX_LEN+1] = "_berkeleydb";
 
 static struct PyModuleDef berkeleydbmodule = {
