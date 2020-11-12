@@ -22,7 +22,7 @@
 
 #
 # import the time.sleep function in a namespace safe way to allow
-# "from bsddb.dbutils import *"
+# "from berkeleydb.dbutils import *"
 #
 from time import sleep as _sleep
 

@@ -51,9 +51,10 @@ import distutils.ccompiler
 
 # read the module version number out of the .c file
 VERSION = None
-_ver_re = re.compile(r'^#\s*define\s+PY_BSDDB_VERSION\s+"(\d+\.\d+\.\d+.*)"')
+_ver_re = re.compile(r'^#\s*define\s+PY_BERKELEYDB_VERSION\s+'
+                     r'"(\d+\.\d+\.\d+.*)"')
 try:
-    _srcFile = open('Modules/bsddb.h', 'r')
+    _srcFile = open('src/Modules/berkeleydb.h', 'r')
 except IOError:
     print("Could not open module source to read the version number.")
     raise
@@ -69,7 +70,8 @@ del _srcFile
 del _ver_re
 del m
 if not VERSION:
-    raise RuntimeError("could not find PY_BSDDB_VERSION in Modules/bsddb.h")
+    raise RuntimeError('could not find PY_BERKELEYDB_VERSION '
+                       'in src/Modules/berkeleydb.h')
 
 #----------------------------------------------------------------------
 
@@ -248,7 +250,7 @@ if os.name == 'posix':
 
     if not BERKELEYDB_DIR and not incdir and not libdir:
         print("Can't find a local Berkeley DB installation.")
-        print("(suggestion: try the --berkeley-db=/path/to/bsddb option)")
+        print("(suggestion: try the --berkeley-db=/path/to/berkeleydb option)")
         sys.exit(1)
 
     # figure out from the base setting where the lib and .h are
@@ -313,8 +315,8 @@ if os.name == 'posix':
     if (db_ver2 is not None) and (db_ver != db_ver2) :
         raise AssertionError("Detected Berkeley DB version is inconsistent")
     if db_ver not in db_ver_list:
-        raise AssertionError("bsddb untested with this Berkeley DB "
-                "version %d.%d" %db_ver)
+        raise AssertionError('berkeleydb module untested with this Berkeley DB '
+                             'version %d.%d' %db_ver)
     print('Detected Berkeley DB version %d.%d from db.h' %db_ver)
 
 elif os.name == 'nt':
@@ -352,15 +354,15 @@ elif os.name == 'nt':
         ver = fullverstr.split('.')
         db_ver = (int(ver[0]), int(ver[1]))
     if db_ver not in db_ver_list:
-        raise AssertionError("bsddb untested with this Berkeley DB "
-                "version %d.%d" %db_ver)
+        raise AssertionError('berkeleydb untested with this Berkeley DB '
+                             'version %d.%d' %db_ver)
     print('Detected Berkeley DB version %d.%d from db.h' %db_ver)
 
     if debug:
         libname = ['libdb%ssd' % ver]     # Debug, static
     else:
         libname = ['libdb%ss' % ver]      # Release, static
-    utils = [("bsddb/utils",
+    utils = [("berkeleydb/utils",
               ["db/bin/db_archive.exe",
                "db/bin/db_checkpoint.exe",
                "db/bin/db_deadlock.exe",
@@ -373,7 +375,7 @@ elif os.name == 'nt':
                "db/bin/db_verify.exe",
                "db/bin/libdb%s.dll" % ver,
                ]),
-             ("bsddb/test", glob.glob("test/*.py"))
+             ("berkeleydb/test", glob.glob("test/*.py"))
              ]
 
 if (db_ver in ((6, 2), (18, 1))) and \
@@ -438,15 +440,15 @@ del config_vars
 # do the actual build, install, whatever...
 
 kw_params = dict(
-      name = 'bsddb',
+      name = 'berkeleydb',
       version = VERSION,
       description = 'Python bindings for Oracle Berkeley DB',
       long_description = """\
 This module provides a nearly complete wrapping of the Oracle/Sleepycat C API
 for the Database Environment, Database, Cursor, Log Cursor, Sequence and
 Transaction objects, and each of these is exposed as a Python type in the
-bsddb.db module. The database objects can use various access methods: btree,
-hash, recno, and queue.  Complete support of Berkeley DB distributed
+berkeleydb.db module. The database objects can use various access methods:
+btree, hash, recno, and queue.  Complete support of Berkeley DB distributed
 transactions. Complete support for Berkeley DB Replication Manager. Complete
 support for Berkeley DB Base Replication. Support for RPC.
 
@@ -473,19 +475,19 @@ pybsddb_doc/>`__ --
       url = 'https://www.jcea.es/programacion/pybsddb.htm',
       license = "3-clause BSD License",
 
-      packages = ['bsddb', 'bsddb/tests'],
-      package_dir = {'bsddb': 'lib/bsddb',
-                     'bsddb/tests': 'lib/bsddb/test'},
-      ext_modules = [Extension('bsddb._bsddb',
-                               sources = ['Modules/_bsddb.c'],
-                               depends = ['Modules/bsddb.h'],
+      packages = ['berkeleydb', 'berkeleydb/tests'],
+      package_dir = {'berkeleydb': 'src/berkeleydb',
+                     'berkeleydb/tests': 'src/berkeleydb/test'},
+      ext_modules = [Extension('berkeleydb._berkeleydb',
+                               sources = ['src/Modules/_berkeleydb.c'],
+                               depends = ['src/Modules/berkeleydb.h'],
                                include_dirs = [ incdir ],
                                library_dirs = [ libdir ],
                                runtime_library_dirs = [ libdir ],
                                libraries = libname,
                                extra_link_args = lflags_arg,
                                )],
-      headers = ['Modules/bsddb.h'],
+      headers = ['src/Modules/berkeleydb.h'],
       data_files = utils,
       classifiers = [
                     'License :: OSI Approved :: BSD License',

@@ -40,7 +40,7 @@ This program checks all the matrix formed by
 several Python and Berkeley DB versions.
 
 This code is only intented to be used by the
-maintainer, just before a pybsddb release, to
+maintainer, just before a berkeleydb release, to
 verify compatibility and regresions. It contains
 local details only applicable to maintainer. If
 you try it as is, it would fail.

@@ -77,7 +77,7 @@
  * Portions of this module, associated unit tests and build scripts are the
  * result of a contract with The Written Word (http://thewrittenword.com/)
  * Many thanks go out to them for causing me to raise the bar on quality and
- * functionality, resulting in a better bsddb package for all of us to use.
+ * functionality, resulting in a better berkeleydb package for all of us to use.
  *
  * --Robin
  */
@@ -94,9 +94,9 @@
 #include <Python.h>
 #include "structmember.h"
 
-#define COMPILING_BSDDB_C
-#include "bsddb.h"
-#undef COMPILING_BSDDB_C
+#define COMPILING_BERKELEYDB_C
+#include "berkeleydb.h"
+#undef COMPILING_BERKELEYDB_C
 
 /* --------------------------------------------------------------------- */
 /* Various macro definitions */
@@ -9004,7 +9004,7 @@ DBSequence_construct(PyTypeObject *type, PyObject* args, PyObject* kwargs)
 
 static PyTypeObject DB_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DB",
+    .tp_name = PY_BERKELEYDB_BASE "DB",
     .tp_basicsize = sizeof(DBObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9018,7 +9018,7 @@ static PyTypeObject DB_Type = {
 
 static PyTypeObject DBCursor_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBCursor",
+    .tp_name = PY_BERKELEYDB_BASE "DBCursor",
     .tp_basicsize = sizeof(DBCursorObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9029,7 +9029,7 @@ static PyTypeObject DBCursor_Type = {
 
 static PyTypeObject DBLogCursor_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBLogCursor",
+    .tp_name = PY_BERKELEYDB_BASE "DBLogCursor",
     .tp_basicsize = sizeof(DBLogCursorObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9041,7 +9041,7 @@ static PyTypeObject DBLogCursor_Type = {
 #if (DBVER >= 53)
 static PyTypeObject DBSite_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBSite",
+    .tp_name = PY_BERKELEYDB_BASE "DBSite",
     .tp_basicsize = sizeof(DBSiteObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9053,7 +9053,7 @@ static PyTypeObject DBSite_Type = {
 
 static PyTypeObject DBEnv_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBEnv",
+    .tp_name = PY_BERKELEYDB_BASE "DBEnv",
     .tp_basicsize = sizeof(DBEnvObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9066,7 +9066,7 @@ static PyTypeObject DBEnv_Type = {
 
 static PyTypeObject DBTxn_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBTxn",
+    .tp_name = PY_BERKELEYDB_BASE "DBTxn",
     .tp_basicsize = sizeof(DBTxnObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9077,7 +9077,7 @@ static PyTypeObject DBTxn_Type = {
 
 static PyTypeObject DBLock_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBLock",
+    .tp_name = PY_BERKELEYDB_BASE "DBLock",
     .tp_basicsize = sizeof(DBLockObject),
     .tp_itemsize = 0,
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9087,7 +9087,7 @@ static PyTypeObject DBLock_Type = {
 
 static PyTypeObject DBSequence_Type = {
     PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PYBSDDB_BASE "DBSequence",
+    .tp_name = PY_BERKELEYDB_BASE "DBSequence",
     .tp_basicsize = sizeof(DBSequenceObject),
     .tp_itemsize = 0,          /*tp_itemsize*/
     .tp_flags = Py_TPFLAGS_DEFAULT,
@@ -9097,12 +9097,12 @@ static PyTypeObject DBSequence_Type = {
     .tp_weaklistoffset = offsetof(DBSequenceObject, in_weakreflist),
 };
 
-static char bsddb_version_doc[] =
+static char berkeleydb_version_doc[] =
 "Returns a tuple of major, minor, and patch release numbers of the\n\
 underlying DB library.";
 
 static PyObject*
-bsddb_version(PyObject* self)
+berkeleydb_version(PyObject* self)
 {
     int major, minor, patch;
 
@@ -9113,7 +9113,7 @@ bsddb_version(PyObject* self)
 
 #if (DBVER >= 53)
 static PyObject*
-bsddb_version_full(PyObject* self)
+berkeleydb_version_full(PyObject* self)
 {
     char *version_string;
     int family, release, major, minor, patch;
@@ -9127,17 +9127,18 @@ bsddb_version_full(PyObject* self)
 
 
 /* List of functions defined in the module */
-static PyMethodDef bsddb_methods[] = {
-    {"version",     (PyCFunction)bsddb_version,         METH_NOARGS, bsddb_version_doc},
+static PyMethodDef berkeleydb_methods[] = {
+    {"version",     (PyCFunction)berkeleydb_version,         METH_NOARGS,
+        berkeleydb_version_doc},
 #if (DBVER >= 53)
-    {"full_version", (PyCFunction)bsddb_version_full, METH_NOARGS},
+    {"full_version", (PyCFunction)berkeleydb_version_full, METH_NOARGS},
 #endif
     {NULL,      NULL}       /* sentinel */
 };
 
 
 /* API structure */
-static BSDDB_api bsddb_api;
+static BERKELEYDB_api berkeleydb_api;
 
 
 /* --------------------------------------------------------------------- */
@@ -9155,15 +9156,15 @@ static BSDDB_api bsddb_api;
 ** string.
 */
 #define MODULE_NAME_MAX_LEN     11
-static char _bsddbModuleName[MODULE_NAME_MAX_LEN+1] = "_bsddb";
+static char _berkeleydbModuleName[MODULE_NAME_MAX_LEN+1] = "_berkeleydb";
 
-static struct PyModuleDef bsddbmodule = {
+static struct PyModuleDef berkeleydbmodule = {
     PyModuleDef_HEAD_INIT,
-    _bsddbModuleName,   /* Name of module */
+    _berkeleydbModuleName,   /* Name of module */
     NULL,               /* module documentation, may be NULL */
     -1,                 /* size of per-interpreter state of the module,
                             or -1 if the module keeps state in global variables. */
-    bsddb_methods,
+    berkeleydb_methods,
     NULL,   /* Reload */
     NULL,   /* Traverse */
     NULL,   /* Clear */
@@ -9171,15 +9172,15 @@ static struct PyModuleDef bsddbmodule = {
 };
 
 
-PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
+PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
 {
     PyObject* m;
     PyObject* d;
     PyObject* py_api;
-    PyObject* pybsddb_version_s;
+    PyObject* py_berkeleydb_version_s;
     PyObject* db_version_s;
 
-    strncpy(_bsddbModuleName, "_bsddb", MODULE_NAME_MAX_LEN);
+    strncpy(_berkeleydbModuleName, "_berkeleydb", MODULE_NAME_MAX_LEN);
 
     /*
      * Python 3.7 and newer ALWAYS initialize the GIL.
@@ -9202,7 +9203,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 #endif
 
     /* This data should be ascii, so UTF-8 conversion is fine */
-    pybsddb_version_s = PyUnicode_FromString(PY_BSDDB_VERSION);
+    py_berkeleydb_version_s = PyUnicode_FromString(PY_BERKELEYDB_VERSION);
     db_version_s = PyUnicode_FromString(DB_VERSION_STRING);
 
     /* Initialize object types */
@@ -9221,17 +9222,17 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     }
 
     /* Create the module and add the functions */
-    m=PyModule_Create(&bsddbmodule);
+    m=PyModule_Create(&berkeleydbmodule);
     if (m == NULL) {
     	return NULL;
     }
 
     /* Add some symbolic constants to the module */
     d = PyModule_GetDict(m);
-    PyDict_SetItemString(d, "__version__", pybsddb_version_s);
+    PyDict_SetItemString(d, "__version__", py_berkeleydb_version_s);
     PyDict_SetItemString(d, "DB_VERSION_STRING", db_version_s);
-    Py_DECREF(pybsddb_version_s);
-    pybsddb_version_s = NULL;
+    Py_DECREF(py_berkeleydb_version_s);
+    py_berkeleydb_version_s = NULL;
     Py_DECREF(db_version_s);
     db_version_s = NULL;
 
@@ -9663,10 +9664,10 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
     /* The exception name must be correct for pickled exception *
      * objects to unpickle properly.                            */
-#define PYBSDDB_EXCEPTION_BASE  "bsddb.db."
+#define PY_BERKELEYDB_EXCEPTION_BASE  "berkeleydb.db."
 
     /* All the rest of the exceptions derive only from DBError */
-#define MAKE_EX(name)   name = PyErr_NewException(PYBSDDB_EXCEPTION_BASE #name, DBError, NULL); \
+#define MAKE_EX(name)   name = PyErr_NewException(PY_BERKELEYDB_EXCEPTION_BASE #name, DBError, NULL); \
                         PyDict_SetItemString(d, #name, name)
 
     /* The base exception class is DBError */
@@ -9678,7 +9679,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 
         bases = PyTuple_Pack(2, DBError, PyExc_KeyError);
 
-#define MAKE_EX2(name)   name = PyErr_NewException(PYBSDDB_EXCEPTION_BASE #name, bases, NULL); \
+#define MAKE_EX2(name)   name = PyErr_NewException(PY_BERKELEYDB_EXCEPTION_BASE #name, bases, NULL); \
                          PyDict_SetItemString(d, #name, name)
         MAKE_EX2(DBNotFoundError);
         MAKE_EX2(DBKeyEmptyError);
@@ -9725,15 +9726,15 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
 #undef MAKE_EX
 
     /* Initialise the C API structure and add it to the module */
-    bsddb_api.api_version      = PYBSDDB_API_VERSION;
-    bsddb_api.db_type          = &DB_Type;
-    bsddb_api.dbcursor_type    = &DBCursor_Type;
-    bsddb_api.dblogcursor_type = &DBLogCursor_Type;
-    bsddb_api.dbenv_type       = &DBEnv_Type;
-    bsddb_api.dbtxn_type       = &DBTxn_Type;
-    bsddb_api.dblock_type      = &DBLock_Type;
-    bsddb_api.dbsequence_type  = &DBSequence_Type;
-    bsddb_api.makeDBError      = makeDBError;
+    berkeleydb_api.api_version      = PY_BERKELEYDB_API_VERSION;
+    berkeleydb_api.db_type          = &DB_Type;
+    berkeleydb_api.dbcursor_type    = &DBCursor_Type;
+    berkeleydb_api.dblogcursor_type = &DBLogCursor_Type;
+    berkeleydb_api.dbenv_type       = &DBEnv_Type;
+    berkeleydb_api.dbtxn_type       = &DBTxn_Type;
+    berkeleydb_api.dblock_type      = &DBLock_Type;
+    berkeleydb_api.dbsequence_type  = &DBSequence_Type;
+    berkeleydb_api.makeDBError      = makeDBError;
 
     {
         /*
@@ -9742,10 +9743,10 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
         */
         static char py_api_name[MODULE_NAME_MAX_LEN+10];
 
-        strcpy(py_api_name, _bsddbModuleName);
+        strcpy(py_api_name, _berkeleydbModuleName);
         strcat(py_api_name, ".api");
 
-        py_api = PyCapsule_New((void*)&bsddb_api, py_api_name, NULL);
+        py_api = PyCapsule_New((void*)&berkeleydb_api, py_api_name, NULL);
     }
 
     /* Check error control */
@@ -9760,7 +9761,7 @@ PyMODINIT_FUNC  PyInit__bsddb(void)    /* Note the two underscores */
     } else { /* Something bad happened! */
         PyErr_WriteUnraisable(m);
         if(PyErr_Warn(PyExc_RuntimeWarning,
-                "_bsddb C API will be not available")) {
+                "_berkeleydb C API will be not available")) {
             PyErr_WriteUnraisable(m);
         }
         PyErr_Clear();
@@ -9794,7 +9795,7 @@ error:
     /* Check for errors */
     if (PyErr_Occurred()) {
         PyErr_Print();
-        Py_FatalError("can't initialize module _bsddb");
+        Py_FatalError("can't initialize module _berkeleydb");
         Py_DECREF(m);
         m = NULL;
     }

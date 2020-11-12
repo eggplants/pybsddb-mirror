@@ -77,7 +77,7 @@
  * Portions of this module, associated unit tests and build scripts are the
  * result of a contract with The Written Word (http://thewrittenword.com/)
  * Many thanks go out to them for causing me to raise the bar on quality and
- * functionality, resulting in a better bsddb package for all of us to use.
+ * functionality, resulting in a better berkeleydb package for all of us to use.
  *
  * --Robin
  */
@@ -92,8 +92,8 @@
 
 /* --------------------------------------------------------------------- */
 
-#ifndef _BSDDB_H_
-#define _BSDDB_H_
+#ifndef _BERKELEYDB_H_
+#define _BERKELEYDB_H_
 
 #include <db.h>
 
@@ -104,7 +104,7 @@
 #error "eek! DBVER can't handle minor versions > 9"
 #endif
 
-#define PY_BSDDB_VERSION "18.1.0"
+#define PY_BERKELEYDB_VERSION "18.1.0"
 
 /* Python object definitions */
 
@@ -245,21 +245,22 @@ typedef struct DBSequenceObject {
    following (error checking missed out for clarity):
 
      // If you are using Python before 2.7:
-     BSDDB_api* bsddb_api;
+     BERKELEYDB_api* berkeleydb_api;
      PyObject*  mod;
      PyObject*  cobj;
 
-     mod  = PyImport_ImportModule("bsddb._bsddb");
+     mod  = PyImport_ImportModule("berkeleydb._berkeleydb");
      cobj = PyObject_GetAttrString(mod, "api");
-     bsddb_api  = (BSDDB_api*)PyCObject_AsVoidPtr(cobj);
+     berkeleydb_api  = (BERKELEYDB_api*)PyCObject_AsVoidPtr(cobj);
      Py_DECREF(cobj);
      Py_DECREF(mod);
 
 
      // If you are using Python 2.7 or up: (except Python 3.0, unsupported)
-     BSDDB_api* bsddb_api;
+     BERKELEYDB_api* berkeleydb_api;
 
-     bsddb_api = (void **)PyCapsule_Import("bsddb._bsddb.api", 1);
+     berkeleydb_api = (void **)PyCapsule_Import("berkeleydb._berkeleydb.api",
+                                                1);
 
 
    Check "api_version" number before trying to use the API.
@@ -267,8 +268,8 @@ typedef struct DBSequenceObject {
    The structure's members must not be changed.
 */
 
-#define PYBSDDB_API_VERSION 1
-#define PYBSDDB_BASE "bsddb._bsddb."
+#define PY_BERKELEYDB_API_VERSION 1
+#define PY_BERKELEYDB_BASE "berkeleydb._berkeleydb."
 
 typedef struct {
     unsigned int api_version;
@@ -283,26 +284,26 @@ typedef struct {
 
     /* Functions */
     int (*makeDBError)(int err);
-} BSDDB_api;
+} BERKELEYDB_api;
 
 
-#ifndef COMPILING_BSDDB_C
+#ifndef COMPILING_BERKELEYDB_C
 
-/* If not inside _bsddb.c, define type check macros that use the api
-   structure.  The calling code must have a value named bsddb_api
+/* If not inside _berkeleydb.c, define type check macros that use the api
+   structure.  The calling code must have a value named berkeleydb_api
    pointing to the api structure.
 */
 
-#define DBObject_Check(v)       ((v)->ob_type == bsddb_api->db_type)
-#define DBCursorObject_Check(v) ((v)->ob_type == bsddb_api->dbcursor_type)
-#define DBEnvObject_Check(v)    ((v)->ob_type == bsddb_api->dbenv_type)
-#define DBTxnObject_Check(v)    ((v)->ob_type == bsddb_api->dbtxn_type)
-#define DBLockObject_Check(v)   ((v)->ob_type == bsddb_api->dblock_type)
+#define DBObject_Check(v)       ((v)->ob_type == berkeleydb_api->db_type)
+#define DBCursorObject_Check(v) ((v)->ob_type == berkeleydb_api->dbcursor_type)
+#define DBEnvObject_Check(v)    ((v)->ob_type == berkeleydb_api->dbenv_type)
+#define DBTxnObject_Check(v)    ((v)->ob_type == berkeleydb_api->dbtxn_type)
+#define DBLockObject_Check(v)   ((v)->ob_type == berkeleydb_api->dblock_type)
 #define DBSequenceObject_Check(v)  \
-    ((bsddb_api->dbsequence_type) && \
-        ((v)->ob_type == bsddb_api->dbsequence_type))
+    ((berkeleydb_api->dbsequence_type) && \
+        ((v)->ob_type == berkeleydb_api->dbsequence_type))
 
-#endif /* COMPILING_BSDDB_C */
+#endif /* COMPILING_BERKELEYDB_C */
 
 
-#endif /* _BSDDB_H_ */
+#endif /* _BERKELEYDB_H_ */

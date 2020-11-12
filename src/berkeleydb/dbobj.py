@@ -18,7 +18,7 @@
 #
 # TODO it would be *really nice* to have an automatic shadow class populator
 # so that new methods don't need to be added  here manually after being
-# added to _bsddb.c.
+# added to _berkeleydb.c.
 #
 
 import sys

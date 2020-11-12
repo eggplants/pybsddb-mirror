@@ -39,5 +39,5 @@
 
 import sys
 
-from ._bsddb import *
-from ._bsddb import __version__
+from ._berkeleydb import *
+from ._berkeleydb import __version__

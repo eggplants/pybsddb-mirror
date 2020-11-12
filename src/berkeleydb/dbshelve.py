@@ -23,7 +23,7 @@
 #
 #------------------------------------------------------------------------
 
-"""Manage shelves of pickled objects using bsddb database files for the
+"""Manage shelves of pickled objects using berkeleydb database files for the
 storage.
 """
 
@@ -50,7 +50,7 @@ def open(filename, flags=db.DB_CREATE, mode=0o660, filetype=db.DB_HASH,
     shelve.py module.  It can be used like this, where key is a string
     and data is a pickleable object:
 
-        from bsddb import dbshelve
+        from berkeleydb import dbshelve
         db = dbshelve.open(filename)
 
         db[key] = data
@@ -70,7 +70,8 @@ def open(filename, flags=db.DB_CREATE, mode=0o660, filetype=db.DB_HASH,
         elif sflag == 'n':
             flags = db.DB_TRUNCATE | db.DB_CREATE
         else:
-            raise db.DBError("flags should be one of 'r', 'w', 'c' or 'n' or use the bsddb.db.DB_* flags")
+            raise db.DBError("flags should be one of 'r', 'w', 'c' or 'n' or "
+                             "use the berkeleydb.db.DB_* flags")
 
     d = DBShelf(dbenv)
     d.open(filename, dbname, filetype, flags, mode)
@@ -82,7 +83,7 @@ class DBShelveError(db.DBError): pass
 
 
 class DBShelf(MutableMapping):
-    """A shelf to hold pickled objects, built upon a bsddb DB object.  It
+    """A shelf to hold pickled objects, built upon a berkeleydb DB object.  It
     automatically pickles/unpickles data objects going to/from the DB.
     """
     def __init__(self, dbenv=None):

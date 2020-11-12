@@ -33,7 +33,7 @@ are met:
     SUCH DAMAGE.
     """
 
-"""Miscellaneous bsddb module test cases
+"""Miscellaneous berkeleydb module test cases
 """
 
 import os, sys

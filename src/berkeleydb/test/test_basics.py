@@ -59,7 +59,7 @@ class VersionTestCase(unittest.TestCase):
         info = db.version()
         if verbose:
             print('\n', '-=' * 20)
-            print('bsddb.db.version(): %s' % (info, ))
+            print('berkeleydb.db.version(): %s' % (info, ))
             print(db.DB_VERSION_STRING)
             print('-=' * 20)
         self.assertEqual(info, (db.DB_VERSION_MAJOR, db.DB_VERSION_MINOR,

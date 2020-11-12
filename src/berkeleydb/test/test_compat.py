@@ -34,7 +34,7 @@ are met:
     """
 
 """
-Test cases adapted from the test_bsddb.py module in Python's
+Test cases adapted from the test_berkeleydb.py module in Python's
 regression test suite.
 """
 

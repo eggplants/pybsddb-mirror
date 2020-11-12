@@ -39,9 +39,9 @@ are met:
 import sys
 import os
 import unittest
-import bsddb
+import berkeleydb
 
-from bsddb import db, dbutils, dbshelve, \
+from berkeleydb import db, dbutils, dbshelve, \
         hashopen, btopen, rnopen, dbobj
 
 from test import support as test_support
@@ -68,15 +68,15 @@ def print_versions():
     print()
     print('-=' * 38)
     print(db.DB_VERSION_STRING)
-    print('bsddb.db.version():   %s' % (db.version(), ))
+    print('berkeleydb.db.version():   %s' % (db.version(), ))
     if db.version() >= (5, 3) :
-        print('bsddb.db.full_version(): %s' %repr(db.full_version()))
-    print('bsddb.db.__version__: %s' % db.__version__)
+        print('berkeleydb.db.full_version(): %s' %repr(db.full_version()))
+    print('berkeleydb.db.__version__: %s' % db.__version__)
 
     # Workaround for allowing generating an EGGs as a ZIP files.
     suffix="__"
-    print('py module:            %s' % getattr(bsddb, "__file"+suffix))
-    print('extension module:     %s' % getattr(bsddb, "__file"+suffix))
+    print('py module:            %s' % getattr(berkeleydb, "__file"+suffix))
+    print('extension module:     %s' % getattr(berkeleydb, "__file"+suffix))
 
     print('Test working dir:     %s' % get_test_path_prefix())
     import platform
@@ -187,7 +187,7 @@ def suite(module_prefix='', timing_check=None):
     for name in test_modules:
         #module = __import__(name)
         # Do it this way so that suite may be called externally via
-        # python's Lib/test/test_bsddb.
+        # python's Lib/test/test_berkeleydb.
         module = __import__(module_prefix+name, globals(), locals(), name)
 
         alltests.addTest(module.test_suite())

@@ -7,6 +7,14 @@ Ubuntu 18.04: Python 2.7, Python 3.6. BDB 5.3. Supported until 2023.
 Pkgsrc 19.4.0 has BDB 4.8, 5,3 and 6.2.
 
 TODO: Implement PEP 384 (Stable API)
+TODO: Implement promises done in 18.1.0-pre changelog.
+
+
+18.1.0:
+
+  * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".
+
+  PENDING: Documentation, website, mailing list update.
 
 18.1.0-pre:
   * Support Berkeley DB 18.1.x.

@@ -35,26 +35,26 @@
 
 """Support for Berkeley DB 4.3 through 5.3 with a simple interface.
 
-For the full featured object oriented interface use the bsddb.db module
+For the full featured object oriented interface use the berkeleydb.db module
 instead.  It mirrors the Oracle Berkeley DB C API.
 """
 
 import sys
 
 try:
-    from . import _bsddb
-    from bsddb.dbutils import DeadlockWrap as _DeadlockWrap
+    from . import _berkeleydb
+    from berkeleydb.dbutils import DeadlockWrap as _DeadlockWrap
 except ImportError:
     # Remove ourselves from sys.modules
     import sys
     del sys.modules[__name__]
     raise
 
-# bsddb calls it db, but provide _db for backwards compatibility
-db = _db = _bsddb
+# berkeleydb calls it db, but provide _db for backwards compatibility
+db = _db = _berkeleydb
 __version__ = db.__version__
 
-error = db.DBError  # So bsddb.error will mean something...
+error = db.DBError  # So berkeleydb.error will mean something...
 
 #----------------------------------------------------------------------
 
@@ -156,7 +156,7 @@ class _iter_mixin(MutableMapping):
 
 class _DBWithCursor(_iter_mixin):
     """
-    A simple wrapper around DB that makes it look like the bsddbobject in
+    A simple wrapper around DB that makes it look like the berkeleydbobject in
     the old module.  It uses a cursor as needed to provide DB traversal.
     """
     def __init__(self, db):
