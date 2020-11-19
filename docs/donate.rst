@@ -10,7 +10,7 @@ spare time. If you appreciate this software or if you want to sponsor a
 currently not translated API feature, please consider donation to the
 project.
 
-BSDDB needs your help.
+Python Berkeley DB bindings needs your help.
 
 You can donate using BitCoins_. The destination address is
 16avqyUK4vDqBdpUy365PPW44zNqVHLZSC.
@@ -35,19 +35,20 @@ for a third party). You can verify it in two diffent ways:
      -----BEGIN PGP SIGNED MESSAGE-----
      Hash: SHA256
 
-     The BitCoin address for donating to PyBSDDB/BSDDB3 project
+     The BitCoin address for donations to
+     PyBSDDB/BSDDB3/BERKELEYDB project
      is "16avqyUK4vDqBdpUy365PPW44zNqVHLZSC".
 
      -----BEGIN PGP SIGNATURE-----
-     Version: GnuPG v1
-
-     iQEcBAEBCAAGBQJT0AKrAAoJEGjgN61Khv5DK1kH/3JctpZUr+h8iFCfpRCaHsX8
-     +6dmncm3ebAWt9kCRqZZ74Eq8h9918C4UwxLLPrskAIqQw3g2IyTdaPOHomM23XH
-     Ru1ok5fhCjNMCw4+dnnO/AXxEY6cIf2PjsQlkUznCe0zz1ndZQ33XbdI/1ItUEhy
-     nZVWblnCCAQnO69Nhf6vPxfRDol1oDTh0bginhflmS01P2r8m9Mzx9h7Rrx7oKwG
-     meNIVIzwdA+Tbex0GvQGorPSwEuid/mVYuDp9jSLp8XgeXBQfeqPWv+PO2tkijYE
-     Zs1A1YuFA3S8uDnZhe9P7u4w7PGlCNIrDvTyippXiYB9fnSHu6mPmCw3wv+SWkM=
-     =9xWm
+     
+     iQEzBAEBCAAdFiEEjwz+sGozagScNtuNaOA3rUqG/kMFAl+2584ACgkQaOA3rUqG
+     /kPqOwgAj4HwcPPVT2nwjwR6+jlCRvz1Qkn4HWXyQmUifcaWfYcX2yxw1AK8EJfI
+     u84xBgdLjsrNZLra5BJ+VKvVEHLjm72/avsBB77Wt7ZmipQAoseTTyUoIPwSbznS
+     UenkLLYoXGJ8P+cR3VLS06e8BmDiL7H//yNrdC5B/jWl3vgyPmOsUCUuTty/cOq4
+     Xqo/N/RyUeoqprQcxw+pKkNyTyfPt4NW3bwdDPJc6Sc8svaDNQiqwtP4di0/zSrT
+     rsbH6hpmPytqURUD/foapkxI9tDGgRK8AB1x7aRAc0VnhB8JS0E0jY7yU+iq/dT2
+     NMbJH8p5YWsQTZax8HHqRjm7xm8xfg==
+     =tyk9
      -----END PGP SIGNATURE-----
 
    Doing something like :kbd:`gpg --verify` and pasting this block, your
