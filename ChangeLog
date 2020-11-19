@@ -16,6 +16,9 @@ TODO: Implement PEP 384 (Stable API)
     the value could not be correctly inherited by the child
     databases. Reported by Patrick Laimbock and modern GCC
     warnings.
+  * If you install this library under Python 3 >= 3.6, let
+    you know this is a legacy library and points you to
+    "berkeleydb" library.
 
 6.2.7:
   * Update copyright notices.

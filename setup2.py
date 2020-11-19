@@ -559,3 +559,24 @@ pybsddb_doc/>`__ --
                     ],
       )
 
+if sys.version_info >= (3, 6):
+    print(
+          "\n"
+          "\n"
+          "\n"
+          "******* WARNING *******\n"
+          "\n"
+          "This library (bsddb3) is legacy. Please, upgrade to "
+          "'berkeleydb' library. Check details at:\n"
+          "\n"
+          "https://www.jcea.es/programacion/pybsddb.htm\n"
+          "\n"
+          "Take note that upgrading to 'berkeleydb' is easy but not "
+          "transparent. Notably, keys and values are *bytes* in "
+          "'berkeleydb' lib, while in 'bsddb3' they are *strings*. "
+          "You would only need to change your code to add or remove type "
+          "encoding/decoding, depending of how you use the library. The "
+          "process should be simple.\n"
+          "\n"
+          )
+
