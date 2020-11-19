@@ -17,20 +17,20 @@ TODO: Implement promises done in 18.1.0-pre changelog.
   PENDING: Documentation, website, mailing list update.
 
 18.1.0-pre:
-  * Support Berkeley DB 18.1.x.
-  * Drop support for Berkeley DB 4.7, 5.1 and 6.1.
+  * Support Oracle Berkeley DB 18.1.x.
+  * Drop support for Oracle Berkeley DB 4.7, 5.1 and 6.1.
   * Drop support for Python 2.6, 2.7, 3.3, 3.4 and 3.5.
   * The library name is migrated from "bsddb3" to "bsddb". Reasons:
     - In the old days, "bsddb" module was integrated with Python < 3 . The
       release rate of new Python interpreters was slow, so "bsddb" was
       also distributed as an external package for faster deployment of
-      improvements and support of new Berkeley DB releases. In order to
+      improvements and support of new Oracle Berkeley DB releases. In order to
       be able to install a new version of this package without conflicting
       with the internal python "bsddb", a new package name was required.
       At the time, the chosen name was "bsddb3" because it was the major
-      release version of the supported Berkeley DB library.
+      release version of the supported Oracle Berkeley DB library.
 
-      After Berkeley DB released major versions 4, 5, 6 and 18, "bsddb3"
+      After Oracle released Berkeley DB major versions 4, 5, 6 and 18, "bsddb3"
       name was retained for compatibility, although it didn't make sense
       anymore.
 
@@ -53,19 +53,19 @@ TODO: Implement promises done in 18.1.0-pre changelog.
 
           import bsddb3 as bsddb
 
-      Now you can change thst to:
+      Now you can change that to:
 
           import bsddb
 
   * This library was usually know as "bsddb", "bsddb3" or "pybsddb".
     From now on, it is "bsddb" everywhere.
   * Testsuite driver migrated to Python 3.
-  * Since Berkeley DB 4.7 is not supported anymore,
+  * Since Oracle Berkeley DB 4.7 is not supported anymore,
     ancient method "DBEnv.set_rpc_server()" is not available anymore.
   * If you try to install this package on Python 2,
     an appropriate error is raised and directions are provided.
   * Remove dead code for unsupported Python releases.
-  * Remove dead code for unsupported Berkeley DB releases.
+  * Remove dead code for unsupported Oracle Berkeley DB releases.
   * *WARNING:* Now *ALL* keys and values must be bytes (or ints when
     appropriate). Previous releases did mostly transparent encoding. This
     is not the case anymore. All needed encoding must be explicit in
@@ -78,13 +78,13 @@ TODO: Implement promises done in 18.1.0-pre changelog.
     iterable anymore. This will be improved in a future release.
   * Support for DB_REPMGR_CONF_DISABLE_SSL flag in
     "DB_ENV.rep_set_config()".
-  * *WARNING:* In Berkeley DB 18.1 and up, Replication Manager uses SSL by
-    default.
+  * *WARNING:* In Oracle Berkeley DB 18.1 and up, Replication Manager uses
+    SSL by default.
 
     This configuration is currently unsupported.
 
-    If you use Berkeley DB 18.1 and up and Replication Manager, you *MUST*
-    configure the DB environment to not use SSL. You must do
+    If you use Oracle Berkeley DB 18.1 and up and Replication Manager,
+    you *MUST* configure the DB environment to not use SSL. You must do
 
         DB_ENV.rep_set_config(db.DB_REPMGR_CONF_DISABLE_SSL, 1)
 
@@ -139,7 +139,7 @@ TODO: Implement promises done in 18.1.0-pre changelog.
   * "DB_ENV.set_re_delim()" param must be bytes or integer.
   * "DB_ENV.get_re_delim()" returns bytes.
   * In the C code we don't need "statichere" neither "staticforward"
-    workaround anymore.
+    workarounds anymore.
   * "db.DB*" objects are created via the native classes, not via 
     factories anymore.
   * Drop support for "dbtables". If you need it back, let me know.
