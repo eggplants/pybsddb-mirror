@@ -28,7 +28,7 @@ use correctly. :Oracle:`Oracle documentation <toc.htm>` is very
 complete. Please, review it.
 
 Since June 2013 (release 6.0.0), this project accepts donations. Please,
-contribute if you can. Details.
+contribute if you can. :doc:`Details <donate>`.
 
 Documentation Index
 -------------------
