@@ -41,16 +41,18 @@ from __future__ import print_function
 import sys
 
 
-if sys.version_info[0] == 2:
+if sys.version_info < (3, 6):
     print()
     print('******* COMPILATION ABORTED *******')
     print()
-    print("Since release 18, this project doesn't support Python 2.7 anymore.")
+    print("Since release 18, this project doesn't support Python 2.7 ")
+    print("neither Python 3 < 3.6 anymore.")
     print()
-    print('You can try to install a release supporting Python 2.7')
-    print('running the following command: (with the quotes)')
+    print('You can try to install legacy "bsddb3" library, ')
+    print('supporting Python 2.7 and Python 3.3-3.5, ')
+    print('running the following command:')
     print()
-    print('    pip install "bsddb3<7"')
+    print('    pip install bsddb3')
     print()
     sys.exit(1)
 
