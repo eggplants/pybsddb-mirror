@@ -382,7 +382,7 @@ elif os.name == 'nt':
              ("berkeleydb/test", glob.glob("test/*.py"))
              ]
 
-if (db_ver in ((6, 2), (18, 1))) and \
+if (db_ver >= (6, 0)) and \
   ("YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION" not in os.environ) :
     print (
         "\n"
