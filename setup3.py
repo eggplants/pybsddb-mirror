@@ -113,7 +113,7 @@ if os.name == 'posix':
     if LFLAGS or LIBS:
         lflags_arg = LFLAGS + LIBS
 
-    # Supported Berkeley DB versions, in order of preference.
+    # Supported Oracle Berkeley DB versions, in order of preference.
     db_ver_list = ((18, 1), (6, 2), (5, 3), (4, 8))
     db_ver = None
 
@@ -232,7 +232,7 @@ if os.name == 'posix':
                     else:
                         if debug: print("db lib: ", dblib, "not found")
         except db_found:
-            print("Found Berkeley DB %d.%d installation." % db_ver)
+            print("Found Oracle Berkeley DB %d.%d installation." % db_ver)
             print("  include files in", db_incdir)
             print("  library files in", db_libdir)
             print("  library name is lib"+dblib)
@@ -241,7 +241,7 @@ if os.name == 'posix':
             incdir  = db_incdir
             libdir  = db_libdir
         else:
-            # this means Berkeley DB could not be found
+            # this means Oracle Berkeley DB could not be found
             pass
 
     if BERKELEYDB_LIBDIR or BERKELEYDB_INCDIR:
@@ -249,7 +249,7 @@ if os.name == 'posix':
         incdir = BERKELEYDB_INCDIR or None
 
     if not BERKELEYDB_DIR and not incdir and not libdir:
-        print("Can't find a local Berkeley DB installation.")
+        print("Can't find a local Oracle Berkeley DB installation.")
         print("(suggestion: try the --berkeley-db=/path/to/berkeleydb option)")
         sys.exit(1)
 
@@ -296,7 +296,7 @@ if os.name == 'posix':
         if st != "yes":
             sys.exit(1)
 
-    # read db.h to figure out what version of Berkeley DB this is
+    # read db.h to figure out what version of Oracle Berkeley DB this is
     ver = None
     with open(os.path.join(incdir, 'db.h'), 'r') as f :
         db_h_lines = f.readlines()
@@ -304,7 +304,7 @@ if os.name == 'posix':
         r'^#define\s+DB_VERSION_STRING\s.*Berkeley DB (\d+\.\d+).*')
     db_ver2 = db_ver
     if db_ver is None :
-        print("Trying to use the Berkeley DB you specified...")
+        print("Trying to use the Oracle Berkeley DB you specified...")
     for line in db_h_lines:
         match = db_ver_re.match(line)
         if not match:
@@ -313,15 +313,17 @@ if os.name == 'posix':
         ver = fullverstr.split('.')
         db_ver = (int(ver[0]), int(ver[1]))
     if (db_ver2 is not None) and (db_ver != db_ver2) :
-        raise AssertionError("Detected Berkeley DB version is inconsistent")
+        raise AssertionError(
+                "Detected Oracle Berkeley DB version is inconsistent")
     if db_ver not in db_ver_list:
-        raise AssertionError('berkeleydb module untested with this Berkeley DB '
-                             'version %d.%d' %db_ver)
-    print('Detected Berkeley DB version %d.%d from db.h' %db_ver)
+        raise AssertionError(
+                'berkeleydb module untested with this Oracle Berkeley DB '
+                'version %d.%d' %db_ver)
+    print('Detected Oracle Berkeley DB version %d.%d from db.h' %db_ver)
 
 elif os.name == 'nt':
 
-    # The default build of Berkeley DB for windows just leaves
+    # The default build of Oracle Berkeley DB for windows just leaves
     # everything in the build dirs in the db source tree. That means
     # that we either have to hunt around to find it, (which would be
     # even more difficult than the mess above for Unix...) or we make
@@ -333,14 +335,15 @@ elif os.name == 'nt':
     # has been moved to the ./db directory. There's an updatedb.bat file to
     # help.
     #
-    # You'll need to edit the project file that comes with Berkeley DB so it
-    # uses "Multithreaded DLL" and "Debug Multithreaded DLL"  (/MD and /MDd)
-    # settings as appropriate to build .lib file (the db_static project).
+    # You'll need to edit the project file that comes with Oracle Berkeley DB
+    # so it uses "Multithreaded DLL" and "Debug Multithreaded DLL"  (/MD and
+    # /MDd) settings as appropriate to build .lib file (the db_static
+    # project).
 
     incdir = 'db/include'
     libdir = 'db/lib'
 
-    # read db.h to figure out what version of Berkeley DB this is
+    # read db.h to figure out what version of Oracle Berkeley DB this is
     ver = None
     with open(os.path.join(incdir, 'db.h'), 'r') as f :
         db_h_lines = f.readlines()
@@ -354,9 +357,10 @@ elif os.name == 'nt':
         ver = fullverstr.split('.')
         db_ver = (int(ver[0]), int(ver[1]))
     if db_ver not in db_ver_list:
-        raise AssertionError('berkeleydb untested with this Berkeley DB '
-                             'version %d.%d' %db_ver)
-    print('Detected Berkeley DB version %d.%d from db.h' %db_ver)
+        raise AssertionError(
+                'berkeleydb untested with this Oracle Berkeley DB '
+                'version %d.%d' %db_ver)
+    print('Detected Oracle Berkeley DB version %d.%d from db.h' %db_ver)
 
     if debug:
         libname = ['libdb%ssd' % ver]     # Debug, static
@@ -384,7 +388,7 @@ if (db_ver in ((6, 2), (18, 1))) and \
         "\n"
         "******* COMPILATION ABORTED *******\n"
         "\n"
-        "You are linking a Berkeley DB version licensed under "
+        "You are linking a Oracle Berkeley DB version licensed under "
         "AGPL3 or have a commercial license.\n"
         "\n"
         "AGPL3 is a strong copyleft license and derivative "
@@ -398,12 +402,13 @@ if (db_ver in ((6, 2), (18, 1))) and \
         "any value, and try to install this python library again.\n"
         "\n"
         "  2. In any other case, you have to link to a previous version "
-        "of Berkeley DB. Remove Berlekey DB version 6.x and let this "
+        "of Oracle Berkeley DB. Remove Oracle Berkeley DB versions >=6.x "
+        "and let this "
         "python library try to locate an older version of the "
-        "Berkeley DB library in your system. Alternatively, you can "
+        "Oracle Berkeley DB library in your system. Alternatively, you can "
         "define the environment variable 'BERKELEYDB_DIR', or "
         "'BERKELEYDB_INCDIR' and 'BERKELEYDB_LIBDIR', with the path of "
-        "the Berkeley DB you want to use and try to install this "
+        "the Oracle Berkeley DB you want to use and try to install this "
         "python library again.\n"
         "\n"
         "Sorry for the inconvenience. I am trying to protect you.\n"
@@ -448,18 +453,18 @@ This module provides a nearly complete wrapping of the Oracle/Sleepycat C API
 for the Database Environment, Database, Cursor, Log Cursor, Sequence and
 Transaction objects, and each of these is exposed as a Python type in the
 berkeleydb.db module. The database objects can use various access methods:
-btree, hash, recno, and queue.  Complete support of Berkeley DB distributed
-transactions. Complete support for Berkeley DB Replication Manager. Complete
-support for Berkeley DB Base Replication. Support for RPC.
+btree, hash, recno, and queue.  Complete support of Oracle Berkeley DB
+distributed transactions. Complete support for Oracle Berkeley DB Replication
+Manager. Complete support for Oracle Berkeley DB Base Replication. Support for
+RPC.
 
 Please see the documents in the docs directory of the source distribution or at
 the website for more details on the types and methods provided. The goal is to
-mirror most of the real Berkeley DB API so fall back to the Oracle Berkeley DB
-documentation as appropriate.
+mirror most of the real Oracle Berkeley DB API so fall back to the Oracle
+Berkeley DB documentation as appropriate.
 
-If you need to support ancient versions of Python and/or Berkeley DB , you can
-use old releases of this bindings.
-
+If you need to support ancient versions of Python and/or Oracle Berkeley DB ,
+you can use legacy `bsddb3 <https://pypi.org/project/bsddb3/>`__ library.
 
 `Homepage <https://www.jcea.es/programacion/
 pybsddb.htm>`__ --
