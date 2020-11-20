@@ -168,7 +168,9 @@ static PyObject* DBRepUnavailError;     /* DB_REP_UNAVAIL */
 #define DEFAULT_GET_RETURNS_NONE                1
 #define DEFAULT_CURSOR_SET_RETURNS_NONE         1
 
-static PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type;
+static PyTypeObject DB_Type;
+static PyTypeObject *DBCursor_Type = NULL;
+static PyTypeObject *DBEnv_Type = NULL;
 static PyTypeObject *DBTxn_Type = NULL;
 static PyTypeObject *DBLock_Type = NULL;
 static PyTypeObject *DBSequence_Type = NULL;
@@ -178,9 +180,9 @@ static PyTypeObject *DBSite_Type = NULL;
 #endif
 
 #define DBObject_CheckExact(v)           (Py_TYPE(v) == &DB_Type)
-#define DBCursorObject_CheckExact(v)     (Py_TYPE(v) == &DBCursor_Type)
+#define DBCursorObject_CheckExact(v)     (Py_TYPE(v) == DBCursor_Type)
 #define DBLogCursorObject_CheckExact(v)  (Py_TYPE(v) == DBLogCursor_Type)
-#define DBEnvObject_CheckExact(v)        (Py_TYPE(v) == &DBEnv_Type)
+#define DBEnvObject_CheckExact(v)        (Py_TYPE(v) == DBEnv_Type)
 #define DBTxnObject_CheckExact(v)        (Py_TYPE(v) == DBTxn_Type)
 #define DBLockObject_CheckExact(v)       (Py_TYPE(v) == DBLock_Type)
 #define DBSequenceObject_CheckExact(v)   (Py_TYPE(v) == DBSequence_Type)
@@ -926,7 +928,7 @@ DB_dealloc(DBObject* self)
 static DBCursorObject*
 newDBCursorObject(DBC* dbc, DBTxnObject *txn, DBObject* db)
 {
-    DBCursorObject* self = PyObject_New(DBCursorObject, &DBCursor_Type);
+    DBCursorObject* self = PyObject_New(DBCursorObject, DBCursor_Type);
     if (self == NULL)
         return NULL;
 
@@ -1028,7 +1030,7 @@ newDBEnvObject(int flags)
     int err;
     DBEnvObject* self;
 
-    self = (DBEnvObject *)DBEnv_Type.tp_alloc(&DBEnv_Type, 0);
+    self = (DBEnvObject *)DBEnv_Type->tp_alloc(DBEnv_Type, 0);
     if (self == NULL)
         return NULL;
 
@@ -9018,15 +9020,27 @@ static PyTypeObject DB_Type = {
     .tp_weaklistoffset = offsetof(DBObject, in_weakreflist),
 };
 
-static PyTypeObject DBCursor_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PY_BERKELEYDB_BASE "DBCursor",
-    .tp_basicsize = sizeof(DBCursorObject),
-    .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc = (destructor)DBCursor_dealloc,
-    .tp_methods = DBCursor_methods,
-    .tp_weaklistoffset = offsetof(DBCursorObject, in_weakreflist),
+static PyMemberDef DBCursor_Type_members[] = {
+#if (PY_VERSION_HEX >= 0x03090000)
+    {"__weaklistoffset__", T_PYSSIZET,
+        offsetof(DBCursorObject, in_weakreflist), READONLY},
+#endif
+    {NULL},
+};
+
+static PyType_Slot DBCursor_Type_slots[] = {
+    {Py_tp_dealloc, DBCursor_dealloc},
+    {Py_tp_methods, DBCursor_methods},
+    {Py_tp_members, DBCursor_Type_members},
+    {0, NULL},
+};
+
+static PyType_Spec DBCursor_Type_spec = {
+    .name = PY_BERKELEYDB_BASE "DBCursor",
+    .basicsize = sizeof(DBCursorObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = DBCursor_Type_slots,
 };
 
 static PyMemberDef DBLogCursor_Type_members[] = {
@@ -9077,17 +9091,29 @@ static PyType_Spec DBSite_Type_spec = {
 };
 #endif
 
-static PyTypeObject DBEnv_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PY_BERKELEYDB_BASE "DBEnv",
-    .tp_basicsize = sizeof(DBEnvObject),
-    .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_new = DBEnv_construct,
-    .tp_dealloc = (destructor)DBEnv_dealloc,
-    .tp_methods = DBEnv_methods,
-    .tp_getset = DBEnv_getsets,
-    .tp_weaklistoffset = offsetof(DBEnvObject, in_weakreflist),
+static PyMemberDef DBEnv_Type_members[] = {
+#if (PY_VERSION_HEX >= 0x03090000)
+    {"__weaklistoffset__", T_PYSSIZET,
+        offsetof(DBEnvObject, in_weakreflist), READONLY},
+#endif
+    {NULL},
+};
+
+static PyType_Slot DBEnv_Type_slots[] = {
+    {Py_tp_dealloc, DBEnv_dealloc},
+    {Py_tp_methods, DBEnv_methods},
+    {Py_tp_new, DBEnv_construct},
+    {Py_tp_getset, DBEnv_getsets},
+    {Py_tp_members, DBEnv_Type_members},
+    {0, NULL},
+};
+
+static PyType_Spec DBEnv_Type_spec = {
+    .name = PY_BERKELEYDB_BASE "DBEnv",
+    .basicsize = sizeof(DBEnvObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = DBEnv_Type_slots,
 };
 
 static PyMemberDef DBTxn_Type_members[] = {
@@ -9271,18 +9297,28 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
 
     /* Initialize object types */
     if ((PyType_Ready(&DB_Type) < 0)
-        || (PyType_Ready(&DBCursor_Type) < 0)
-        || (PyType_Ready(&DBEnv_Type) < 0)
         ) {
         return NULL;
     }
 
     /* Initialize object types */
+    type = (PyTypeObject *)PyType_FromSpec(&DBEnv_Type_spec);
+    if (type == NULL)
+        return NULL;
+    /* tp_new is used in this type */
+    DBEnv_Type = type;
+
     type = (PyTypeObject *)PyType_FromSpec(&DBTxn_Type_spec);
     if (type == NULL)
         return NULL;
     type->tp_new = NULL;
     DBTxn_Type = type;
+
+    type = (PyTypeObject *)PyType_FromSpec(&DBCursor_Type_spec);
+    if (type == NULL)
+        return NULL;
+    type->tp_new = NULL;
+    DBCursor_Type = type;
 
     type = (PyTypeObject *)PyType_FromSpec(&DBLogCursor_Type_spec);
     if (type == NULL)
@@ -9299,7 +9335,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     type = (PyTypeObject *)PyType_FromSpec(&DBSequence_Type_spec);
     if (type == NULL)
         return NULL;
-    /* tp_new is used, in this type */
+    /* tp_new is used in this type */
     DBSequence_Type = type;
 
 #if (DBVER >= 53)
@@ -9817,9 +9853,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     /* Initialise the C API structure and add it to the module */
     berkeleydb_api.api_version      = PY_BERKELEYDB_API_VERSION;
     berkeleydb_api.db_type          = &DB_Type;
-    berkeleydb_api.dbcursor_type    = &DBCursor_Type;
+    berkeleydb_api.dbcursor_type    = DBCursor_Type;
     berkeleydb_api.dblogcursor_type = DBLogCursor_Type;
-    berkeleydb_api.dbenv_type       = &DBEnv_Type;
+    berkeleydb_api.dbenv_type       = DBEnv_Type;
     berkeleydb_api.dbtxn_type       = DBTxn_Type;
     berkeleydb_api.dblock_type      = DBLock_Type;
     berkeleydb_api.dbsequence_type  = DBSequence_Type;
@@ -9859,17 +9895,17 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         PyErr_Clear();
     }
 
-    Py_INCREF(&DBEnv_Type);
-    if (PyModule_AddObject(m, "DBEnv", (PyObject *)&DBEnv_Type) < 0)
+    Py_INCREF(DBEnv_Type);
+    if (PyModule_AddObject(m, "DBEnv", (PyObject *)DBEnv_Type) < 0)
     {
-        Py_DECREF(&DBEnv_Type);
+        Py_DECREF(DBEnv_Type);
         goto error;
     }
 
     Py_INCREF(&DB_Type);
     if (PyModule_AddObject(m, "DB", (PyObject *)&DB_Type) < 0)
     {
-        Py_DECREF(&DBEnv_Type);
+        Py_DECREF(DBEnv_Type);
         Py_DECREF(&DB_Type);
         goto error;
     }
@@ -9877,7 +9913,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     Py_INCREF(DBSequence_Type);
     if (PyModule_AddObject(m, "DBSequence", (PyObject *)DBSequence_Type) < 0)
     {
-        Py_DECREF(&DBEnv_Type);
+        Py_DECREF(DBEnv_Type);
         Py_DECREF(&DB_Type);
         Py_DECREF(DBSequence_Type);
         goto error;

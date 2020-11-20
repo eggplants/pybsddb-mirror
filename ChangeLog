@@ -31,6 +31,10 @@ PENDING: Documentation, website, mailing list update.
     bpo-38140: Make dict and weakref offsets opaque for C heap types (#16076)
     https://github.com/python/cpython/commit/3368f3c6ae4140a0883e19350e672fd09c9db616
 
+  * "_iter_mixin" and "_DBWithCursor" classes have been rewritten to avoid the
+    need of getting a weak reference to "DBCursor" objects, since now it is
+    problematic in Python < 3.9.
+
 18.1.0:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

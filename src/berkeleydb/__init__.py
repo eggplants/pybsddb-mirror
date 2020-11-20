@@ -60,22 +60,17 @@ error = db.DBError  # So berkeleydb.error will mean something...
 
 import sys, os
 
-from weakref import ref
-
 from collections.abc import MutableMapping
 
 class _iter_mixin(MutableMapping):
     def _make_iter_cursor(self):
         cur = _DeadlockWrap(self.db.cursor)
-        key = id(cur)
-        self._cursor_refs[key] = ref(cur, self._gen_cref_cleaner(key))
+        self._cursor_refs[id(cur)] = cur
         return cur
 
-    def _gen_cref_cleaner(self, key):
-        # use generate the function for the weakref callback here
-        # to ensure that we do not hold a strict reference to cur
-        # in the callback.
-        return lambda ref: self._cursor_refs.pop(key, None)
+    def _free_cursor(self, cur):
+        _DeadlockWrap(cur.close)
+        del self._cursor_refs[id(cur)]
 
     def __iter__(self):
         self._kill_iteration = False
@@ -89,28 +84,29 @@ class _iter_mixin(MutableMapping):
 
                 # since we're only returning keys, we call the cursor
                 # methods with flags=0, dlen=0, dofs=0
-                key = _DeadlockWrap(cur.first, 0,0,0)[0]
+                key = _DeadlockWrap(cur.first, 0, 0, 0)[0]
                 yield key
 
-                next = getattr(cur, "next")
-                while 1:
+                while True:
                     try:
-                        key = _DeadlockWrap(next, 0,0,0)[0]
+                        key = _DeadlockWrap(cur.next, 0, 0, 0)[0]
                         yield key
                     except _db.DBCursorClosedError:
                         if self._kill_iteration:
                             raise RuntimeError('Database changed size '
                                                'during iteration.')
+                        self._free_cursor(cur)
                         cur = self._make_iter_cursor()
                         # FIXME-20031101-greg: race condition.  cursor could
                         # be closed by another thread before this call.
-                        _DeadlockWrap(cur.set, key,0,0,0)
-                        next = getattr(cur, "next")
+                        _DeadlockWrap(cur.set, key, 0, 0, 0)
             except _db.DBNotFoundError:
                 pass
             except _db.DBCursorClosedError:
                 # the database was modified during iteration.  abort.
                 pass
+            finally:
+                self._free_cursor(cur)
         finally :
             self._in_iter -= 1
 
@@ -130,26 +126,27 @@ class _iter_mixin(MutableMapping):
                 key = kv[0]
                 yield kv
 
-                next = getattr(cur, "next")
-                while 1:
+                while True:
                     try:
-                        kv = _DeadlockWrap(next)
+                        kv = _DeadlockWrap(cur.next)
                         key = kv[0]
                         yield kv
                     except _db.DBCursorClosedError:
                         if self._kill_iteration:
                             raise RuntimeError('Database changed size '
                                                'during iteration.')
+                        self._free_cursor(cur)
                         cur = self._make_iter_cursor()
                         # FIXME-20031101-greg: race condition.  cursor could
                         # be closed by another thread before this call.
-                        _DeadlockWrap(cur.set, key,0,0,0)
-                        next = getattr(cur, "next")
+                        _DeadlockWrap(cur.set, key, 0, 0, 0)
             except _db.DBNotFoundError:
                 pass
             except _db.DBCursorClosedError:
                 # the database was modified during iteration.  abort.
                 pass
+            finally:
+                self._free_cursor(cur)
         finally :
             self._in_iter -= 1
 
@@ -203,19 +200,17 @@ class _DBWithCursor(_iter_mixin):
             self.dbc = None
             if save:
                 try:
-                    self.saved_dbc_key = _DeadlockWrap(c.current, 0,0,0)[0]
+                    self.saved_dbc_key = _DeadlockWrap(c.current, 0, 0, 0)[0]
                 except db.DBError:
                     pass
             _DeadlockWrap(c.close)
             del c
-        for cref in list(self._cursor_refs.values()):
-            c = cref()
-            if c is not None:
-                _DeadlockWrap(c.close)
+        for cursor in list(self._cursor_refs.values()):
+            self._free_cursor(cursor)
 
     def _checkOpen(self):
         if self.db is None:
-            raise error("BSDDB object has already been closed")
+            raise error("berkeleydb object has already been closed")
 
     def isOpen(self):
         return self.db is not None
