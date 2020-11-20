@@ -34,6 +34,7 @@ are met:
     """
 
 
+import sys
 import weakref
 import unittest
 
@@ -50,9 +51,13 @@ class db_weakref(unittest.TestCase):
         del obj
         self.assertEqual(None, ref())
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DBEnv(self):
         return self._test(db.DBEnv)
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DB(self):
         return self._test(db.DB)
 
@@ -78,15 +83,23 @@ class db_weakrefDBEnv(unittest.TestCase):
         del obj
         self.assertEqual(None, ref())
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DBCursor(self):
         self._test(self.db.cursor)
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DBLogCursor(self):
         self._test(self.dbenv.log_cursor)
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DBSequence(self):
         self._test(db.DBSequence, self.db)
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DBTxn(self):
         txn = self.dbenv.txn_begin()
         ref = weakref.ref(txn)
@@ -95,6 +108,8 @@ class db_weakrefDBEnv(unittest.TestCase):
         del txn
         self.assertEqual(None, ref())
 
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
     def test_DBLock(self):
         lock_id = self.dbenv.lock_id()
         try:

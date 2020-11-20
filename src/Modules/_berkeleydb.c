@@ -169,15 +169,15 @@ static PyObject* DBRepUnavailError;     /* DB_REP_UNAVAIL */
 #define DEFAULT_CURSOR_SET_RETURNS_NONE         1
 
 static PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type, DBTxn_Type,
-       DBLock_Type, DBLogCursor_Type;
-static PyTypeObject DBSequence_Type;
+       DBLock_Type, DBSequence_Type;
+static PyTypeObject *DBLogCursor_Type;
 #if (DBVER >= 53)
 static PyTypeObject DBSite_Type;
 #endif
 
 #define DBObject_CheckExact(v)           (Py_TYPE(v) == &DB_Type)
 #define DBCursorObject_CheckExact(v)     (Py_TYPE(v) == &DBCursor_Type)
-#define DBLogCursorObject_CheckExact(v)  (Py_TYPE(v) == &DBLogCursor_Type)
+#define DBLogCursorObject_CheckExact(v)  (Py_TYPE(v) == DBLogCursor_Type)
 #define DBEnvObject_CheckExact(v)        (Py_TYPE(v) == &DBEnv_Type)
 #define DBTxnObject_CheckExact(v)        (Py_TYPE(v) == &DBTxn_Type)
 #define DBLockObject_CheckExact(v)       (Py_TYPE(v) == &DBLock_Type)
@@ -977,7 +977,7 @@ newDBLogCursorObject(DB_LOGC* dblogc, DBEnvObject* env)
 {
     DBLogCursorObject* self;
 
-    self = PyObject_New(DBLogCursorObject, &DBLogCursor_Type);
+    self = PyObject_New(DBLogCursorObject, DBLogCursor_Type);
 
     if (self == NULL)
         return NULL;
@@ -9027,16 +9027,30 @@ static PyTypeObject DBCursor_Type = {
     .tp_weaklistoffset = offsetof(DBCursorObject, in_weakreflist),
 };
 
-static PyTypeObject DBLogCursor_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PY_BERKELEYDB_BASE "DBLogCursor",
-    .tp_basicsize = sizeof(DBLogCursorObject),
-    .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc = (destructor)DBLogCursor_dealloc,
-    .tp_methods = DBLogCursor_methods,
-    .tp_weaklistoffset = offsetof(DBLogCursorObject, in_weakreflist),
+static PyMemberDef DBLogCursor_Type_members[] = {
+#if (PY_VERSION_HEX >= 0x03090000)
+    {"__weaklistoffset__", T_PYSSIZET,
+        offsetof(DBLogCursorObject, in_weakreflist), READONLY},
+#endif
+    {NULL},
 };
+
+static PyType_Slot DBLogCursor_Type_slots[] = {
+    {Py_tp_dealloc, DBLogCursor_dealloc},
+    {Py_tp_methods, DBLogCursor_methods},
+    {Py_tp_members, DBLogCursor_Type_members},
+    {0, NULL},
+};
+
+static PyType_Spec DBLogCursor_Type_spec = {
+    .name = PY_BERKELEYDB_BASE "DBLogCursor",
+    .basicsize = sizeof(DBLogCursorObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = DBLogCursor_Type_slots,
+};
+
+static PyTypeObject *DBLogCursor_Type = NULL;
 
 #if (DBVER >= 53)
 static PyTypeObject DBSite_Type = {
@@ -9176,6 +9190,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
 {
     PyObject* m;
     PyObject* d;
+    PyTypeObject* type;
     PyObject* py_api;
     PyObject* py_berkeleydb_version_s;
     PyObject* db_version_s;
@@ -9209,7 +9224,6 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     /* Initialize object types */
     if ((PyType_Ready(&DB_Type) < 0)
         || (PyType_Ready(&DBCursor_Type) < 0)
-        || (PyType_Ready(&DBLogCursor_Type) < 0)
         || (PyType_Ready(&DBEnv_Type) < 0)
         || (PyType_Ready(&DBTxn_Type) < 0)
         || (PyType_Ready(&DBLock_Type) < 0)
@@ -9220,6 +9234,13 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         ) {
         return NULL;
     }
+
+    /* Initialize object types */
+    type = (PyTypeObject *)PyType_FromSpec(&DBLogCursor_Type_spec);
+    if (type == NULL)
+        return NULL;
+    type->tp_new = NULL;
+    DBLogCursor_Type = type;
 
     /* Create the module and add the functions */
     m=PyModule_Create(&berkeleydbmodule);
@@ -9729,7 +9750,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     berkeleydb_api.api_version      = PY_BERKELEYDB_API_VERSION;
     berkeleydb_api.db_type          = &DB_Type;
     berkeleydb_api.dbcursor_type    = &DBCursor_Type;
-    berkeleydb_api.dblogcursor_type = &DBLogCursor_Type;
+    berkeleydb_api.dblogcursor_type = DBLogCursor_Type;
     berkeleydb_api.dbenv_type       = &DBEnv_Type;
     berkeleydb_api.dbtxn_type       = &DBTxn_Type;
     berkeleydb_api.dblock_type      = &DBLock_Type;
