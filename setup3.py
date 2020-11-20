@@ -511,6 +511,18 @@ pybsddb.htm#Releases>`__ --
 pybsddb_doc/>`__ --
 `Mailing List <https://mailman.jcea.es/listinfo/pybsddb>`__ --
 `Donation <https://www.jcea.es/programacion/pybsddb_doc/donate.html>`__
+
+.. warning::
+
+   This library is deprecated. If you are running Python 3 >= 3.6, please
+   upgrade to `berkeleydb <https://pypi.org/project/berkeleydb/>`_ library.
+   Check `details <https://www.jcea.es/programacion/pybsddb.htm>`__.
+
+   Take note that upgrading to `berkeleydb`_ is easy but not transparent.
+   Notably, keys and values are **bytes** in `berkeleydb`_ lib, while in
+   'bsddb3' they are **strings**. You would only need to change your code to
+   add or remove type encoding/decoding, depending of how you use the library.
+   The process should be simple, nevertheless.
 """,
       long_description_content_type = 'text/x-rst',
 
@@ -569,14 +581,14 @@ if sys.version_info >= (3, 6):
           "This library (bsddb3) is legacy. Please, upgrade to "
           "'berkeleydb' library. Check details at:\n"
           "\n"
-          "https://www.jcea.es/programacion/pybsddb.htm\n"
+          "    https://www.jcea.es/programacion/pybsddb.htm\n"
           "\n"
           "Take note that upgrading to 'berkeleydb' is easy but not "
           "transparent. Notably, keys and values are *bytes* in "
           "'berkeleydb' lib, while in 'bsddb3' they are *strings*. "
           "You would only need to change your code to add or remove type "
           "encoding/decoding, depending of how you use the library. The "
-          "process should be simple.\n"
+          "process should be simple, nevertheless.\n"
           "\n"
           )
 
