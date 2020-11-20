@@ -169,8 +169,8 @@ static PyObject* DBRepUnavailError;     /* DB_REP_UNAVAIL */
 #define DEFAULT_CURSOR_SET_RETURNS_NONE         1
 
 static PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type, DBTxn_Type,
-       DBLock_Type, DBSequence_Type;
-static PyTypeObject *DBLogCursor_Type;
+       DBLock_Type;
+static PyTypeObject *DBSequence_Type, *DBLogCursor_Type;
 #if (DBVER >= 53)
 static PyTypeObject *DBSite_Type;
 #endif
@@ -181,7 +181,7 @@ static PyTypeObject *DBSite_Type;
 #define DBEnvObject_CheckExact(v)        (Py_TYPE(v) == &DBEnv_Type)
 #define DBTxnObject_CheckExact(v)        (Py_TYPE(v) == &DBTxn_Type)
 #define DBLockObject_CheckExact(v)       (Py_TYPE(v) == &DBLock_Type)
-#define DBSequenceObject_CheckExact(v)   (Py_TYPE(v) == &DBSequence_Type)
+#define DBSequenceObject_CheckExact(v)   (Py_TYPE(v) == DBSequence_Type)
 #if (DBVER >= 53)
 #define DBSiteObject_CheckExact(v)       (Py_TYPE(v) == DBSite_Type)
 #endif
@@ -1238,7 +1238,7 @@ newDBSequenceObject(DBObject* mydb,  int flags)
     int err;
     DBSequenceObject* self;
 
-    self = (DBSequenceObject *)DBSequence_Type.tp_alloc(&DBSequence_Type, 0);
+    self = (DBSequenceObject *)DBSequence_Type->tp_alloc(DBSequence_Type, 0);
     if (self == NULL)
         return NULL;
     Py_INCREF(mydb);
@@ -9111,16 +9111,28 @@ static PyTypeObject DBLock_Type = {
     .tp_weaklistoffset = offsetof(DBLockObject, in_weakreflist),
 };
 
-static PyTypeObject DBSequence_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PY_BERKELEYDB_BASE "DBSequence",
-    .tp_basicsize = sizeof(DBSequenceObject),
-    .tp_itemsize = 0,          /*tp_itemsize*/
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_new = DBSequence_construct,
-    .tp_dealloc = (destructor)DBSequence_dealloc,
-    .tp_methods = DBSequence_methods,
-    .tp_weaklistoffset = offsetof(DBSequenceObject, in_weakreflist),
+static PyMemberDef DBSequence_Type_members[] = {
+#if (PY_VERSION_HEX >= 0x03090000)
+    {"__weaklistoffset__", T_PYSSIZET,
+        offsetof(DBSequenceObject, in_weakreflist), READONLY},
+#endif
+    {NULL},
+};
+
+static PyType_Slot DBSequence_Type_slots[] = {
+    {Py_tp_dealloc, DBSequence_dealloc},
+    {Py_tp_methods, DBSequence_methods},
+    {Py_tp_members, DBSequence_Type_members},
+    {Py_tp_new, DBSequence_construct},
+    {0, NULL},
+};
+
+static PyType_Spec DBSequence_Type_spec = {
+    .name = PY_BERKELEYDB_BASE "DBSequence",
+    .basicsize = sizeof(DBSequenceObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = DBSequence_Type_slots,
 };
 
 static char berkeleydb_version_doc[] =
@@ -9239,7 +9251,6 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         || (PyType_Ready(&DBEnv_Type) < 0)
         || (PyType_Ready(&DBTxn_Type) < 0)
         || (PyType_Ready(&DBLock_Type) < 0)
-        || (PyType_Ready(&DBSequence_Type) < 0)
         ) {
         return NULL;
     }
@@ -9250,6 +9261,12 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         return NULL;
     type->tp_new = NULL;
     DBLogCursor_Type = type;
+
+    type = (PyTypeObject *)PyType_FromSpec(&DBSequence_Type_spec);
+    if (type == NULL)
+        return NULL;
+    /* tp_new is used, in this type */
+    DBSequence_Type = type;
 
 #if (DBVER >= 53)
     type = (PyTypeObject *)PyType_FromSpec(&DBSite_Type_spec);
@@ -9771,7 +9788,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     berkeleydb_api.dbenv_type       = &DBEnv_Type;
     berkeleydb_api.dbtxn_type       = &DBTxn_Type;
     berkeleydb_api.dblock_type      = &DBLock_Type;
-    berkeleydb_api.dbsequence_type  = &DBSequence_Type;
+    berkeleydb_api.dbsequence_type  = DBSequence_Type;
 #if (DBVER >= 53)
     berkeleydb_api.dbsite_type      = DBSite_Type;
 #endif
@@ -9823,12 +9840,12 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         goto error;
     }
 
-    Py_INCREF(&DBSequence_Type);
-    if (PyModule_AddObject(m, "DBSequence", (PyObject *)&DBSequence_Type) < 0)
+    Py_INCREF(DBSequence_Type);
+    if (PyModule_AddObject(m, "DBSequence", (PyObject *)DBSequence_Type) < 0)
     {
         Py_DECREF(&DBEnv_Type);
         Py_DECREF(&DB_Type);
-        Py_DECREF(&DBSequence_Type);
+        Py_DECREF(DBSequence_Type);
         goto error;
     }
 
