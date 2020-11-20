@@ -11,7 +11,7 @@ TODO: Implement PEP 384 (Stable API)
 
 6.2.8:
   * In Python 3.9, "find_unused_port" has been moved to
-  "test.support.socket_helper". Reported by Michał Górny.
+    "test.support.socket_helper". Reported by Michał Górny.
   * If we use "set_get_returns_none()" in the environment,
     the value could not be correctly inherited by the child
     databases. Reported by Patrick Laimbock and modern GCC
