@@ -17,6 +17,18 @@ PENDING: Documentation, website, mailing list update.
 
   * Expose DBSite object in the C API. Increase C API version.
 
+  * WARNING - BREAKING CHANGE: Ancient release 4.2.8 added weakref support to
+    all bsddb.db objects, but from now on this feature requires at least Python
+    3.9 because I have migrated from static types to heap types. Let me know if
+    this is a problem for you.
+
+    Details:
+
+    Py_tp_dictoffset / Py_tp_finalize are unsettable in stable API
+    https://bugs.python.org/issue38140
+
+    bpo-38140: Make dict and weakref offsets opaque for C heap types (#16076)
+    https://github.com/python/cpython/commit/3368f3c6ae4140a0883e19350e672fd09c9db616
 
 18.1.0:
 
