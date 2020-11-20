@@ -168,11 +168,12 @@ static PyObject* DBRepUnavailError;     /* DB_REP_UNAVAIL */
 #define DEFAULT_GET_RETURNS_NONE                1
 #define DEFAULT_CURSOR_SET_RETURNS_NONE         1
 
-static PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type, DBTxn_Type,
-       DBLock_Type;
-static PyTypeObject *DBSequence_Type, *DBLogCursor_Type;
+static PyTypeObject DB_Type, DBCursor_Type, DBEnv_Type, DBTxn_Type;
+static PyTypeObject *DBLock_Type = NULL;
+static PyTypeObject *DBSequence_Type = NULL;
+static PyTypeObject *DBLogCursor_Type = NULL;
 #if (DBVER >= 53)
-static PyTypeObject *DBSite_Type;
+static PyTypeObject *DBSite_Type = NULL;
 #endif
 
 #define DBObject_CheckExact(v)           (Py_TYPE(v) == &DB_Type)
@@ -180,7 +181,7 @@ static PyTypeObject *DBSite_Type;
 #define DBLogCursorObject_CheckExact(v)  (Py_TYPE(v) == DBLogCursor_Type)
 #define DBEnvObject_CheckExact(v)        (Py_TYPE(v) == &DBEnv_Type)
 #define DBTxnObject_CheckExact(v)        (Py_TYPE(v) == &DBTxn_Type)
-#define DBLockObject_CheckExact(v)       (Py_TYPE(v) == &DBLock_Type)
+#define DBLockObject_CheckExact(v)       (Py_TYPE(v) == DBLock_Type)
 #define DBSequenceObject_CheckExact(v)   (Py_TYPE(v) == DBSequence_Type)
 #if (DBVER >= 53)
 #define DBSiteObject_CheckExact(v)       (Py_TYPE(v) == DBSite_Type)
@@ -1198,7 +1199,7 @@ newDBLockObject(DBEnvObject* myenv, u_int32_t locker, DBT* obj,
                 db_lockmode_t lock_mode, int flags)
 {
     int err;
-    DBLockObject* self = PyObject_New(DBLockObject, &DBLock_Type);
+    DBLockObject* self = PyObject_New(DBLockObject, DBLock_Type);
     if (self == NULL)
         return NULL;
     self->in_weakreflist = NULL;
@@ -6332,7 +6333,7 @@ DBEnv_lock_put(DBEnvObject* self, PyObject* args)
     int err;
     DBLockObject* dblockobj;
 
-    if (!PyArg_ParseTuple(args, "O!:lock_put", &DBLock_Type, &dblockobj))
+    if (!PyArg_ParseTuple(args, "O!:lock_put", DBLock_Type, &dblockobj))
         return NULL;
 
     CHECK_ENV_NOT_CLOSED(self);
@@ -9050,8 +9051,6 @@ static PyType_Spec DBLogCursor_Type_spec = {
     .slots = DBLogCursor_Type_slots,
 };
 
-static PyTypeObject *DBLogCursor_Type = NULL;
-
 #if (DBVER >= 53)
 static PyMemberDef DBSite_Type_members[] = {
 #if (PY_VERSION_HEX >= 0x03090000)
@@ -9101,14 +9100,26 @@ static PyTypeObject DBTxn_Type = {
     .tp_weaklistoffset = offsetof(DBTxnObject, in_weakreflist),
 };
 
-static PyTypeObject DBLock_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    .tp_name = PY_BERKELEYDB_BASE "DBLock",
-    .tp_basicsize = sizeof(DBLockObject),
-    .tp_itemsize = 0,
-    .tp_flags = Py_TPFLAGS_DEFAULT,
-    .tp_dealloc = (destructor)DBLock_dealloc,
-    .tp_weaklistoffset = offsetof(DBLockObject, in_weakreflist),
+static PyMemberDef DBLock_Type_members[] = {
+#if (PY_VERSION_HEX >= 0x03090000)
+    {"__weaklistoffset__", T_PYSSIZET,
+        offsetof(DBLockObject, in_weakreflist), READONLY},
+#endif
+    {NULL},
+};
+
+static PyType_Slot DBLock_Type_slots[] = {
+    {Py_tp_dealloc, DBLock_dealloc},
+    {Py_tp_members, DBLock_Type_members},
+    {0, NULL},
+};
+
+static PyType_Spec DBLock_Type_spec = {
+    .name = PY_BERKELEYDB_BASE "DBLock",
+    .basicsize = sizeof(DBLockObject),
+    .itemsize = 0,
+    .flags = Py_TPFLAGS_DEFAULT,
+    .slots = DBLock_Type_slots,
 };
 
 static PyMemberDef DBSequence_Type_members[] = {
@@ -9250,7 +9261,6 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         || (PyType_Ready(&DBCursor_Type) < 0)
         || (PyType_Ready(&DBEnv_Type) < 0)
         || (PyType_Ready(&DBTxn_Type) < 0)
-        || (PyType_Ready(&DBLock_Type) < 0)
         ) {
         return NULL;
     }
@@ -9261,6 +9271,12 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
         return NULL;
     type->tp_new = NULL;
     DBLogCursor_Type = type;
+
+    type = (PyTypeObject *)PyType_FromSpec(&DBLock_Type_spec);
+    if (type == NULL)
+        return NULL;
+    type->tp_new = NULL;
+    DBLock_Type = type;
 
     type = (PyTypeObject *)PyType_FromSpec(&DBSequence_Type_spec);
     if (type == NULL)
@@ -9787,7 +9803,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     berkeleydb_api.dblogcursor_type = DBLogCursor_Type;
     berkeleydb_api.dbenv_type       = &DBEnv_Type;
     berkeleydb_api.dbtxn_type       = &DBTxn_Type;
-    berkeleydb_api.dblock_type      = &DBLock_Type;
+    berkeleydb_api.dblock_type      = DBLock_Type;
     berkeleydb_api.dbsequence_type  = DBSequence_Type;
 #if (DBVER >= 53)
     berkeleydb_api.dbsite_type      = DBSite_Type;
