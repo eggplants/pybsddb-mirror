@@ -268,7 +268,7 @@ typedef struct DBSequenceObject {
    The structure's members must not be changed.
 */
 
-#define PY_BERKELEYDB_API_VERSION 1
+#define PY_BERKELEYDB_API_VERSION 2
 #define PY_BERKELEYDB_BASE "berkeleydb._berkeleydb."
 
 typedef struct {
@@ -281,6 +281,9 @@ typedef struct {
     PyTypeObject* dbtxn_type;
     PyTypeObject* dblock_type;
     PyTypeObject* dbsequence_type;
+#if (DBVER >= 53)
+    PyTypeObject* dbsite_type;
+#endif
 
     /* Functions */
     int (*makeDBError)(int err);
@@ -302,6 +305,9 @@ typedef struct {
 #define DBSequenceObject_Check(v)  \
     ((berkeleydb_api->dbsequence_type) && \
         ((v)->ob_type == berkeleydb_api->dbsequence_type))
+#if (DBVER >= 53)
+#define DBSiteObject_Check(v)   ((v)->ob_type == berkeleydb_api->dbsite_type)
+#endif
 
 #endif /* COMPILING_BERKELEYDB_C */
 

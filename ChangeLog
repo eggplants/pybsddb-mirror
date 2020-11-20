@@ -12,8 +12,11 @@ PENDING: Documentation, website, mailing list update.
 
 18.1.1:
   * If you try to install this library in an unsupported Python
-    environment, instruct the user about how to install
-    legacy "bsddb3" library.
+    environment, instruct the user about how to install legacy "bsddb3"
+    library.
+
+  * Expose DBSite object in the C API. Increase C API version.
+
 
 18.1.0:
 

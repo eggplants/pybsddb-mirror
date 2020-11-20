@@ -9755,6 +9755,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     berkeleydb_api.dbtxn_type       = &DBTxn_Type;
     berkeleydb_api.dblock_type      = &DBLock_Type;
     berkeleydb_api.dbsequence_type  = &DBSequence_Type;
+#if (DBVER >= 53)
+    berkeleydb_api.dbsite_type      = &DBSite_Type;
+#endif
     berkeleydb_api.makeDBError      = makeDBError;
 
     {
