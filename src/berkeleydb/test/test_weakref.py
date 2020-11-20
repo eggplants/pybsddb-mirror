@@ -51,30 +51,36 @@ class db_weakref(unittest.TestCase):
         del obj
         self.assertEqual(None, ref())
 
+
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
     def test_DBEnv(self):
         return self._test(db.DBEnv)
+
 
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
     def test_DB(self):
         return self._test(db.DB)
 
+
 class db_weakrefDBEnv(unittest.TestCase):
     def setUp(self):
         self.homeDir = get_new_environment_path()
         self.dbenv = db.DBEnv()
         self.dbenv.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
-                        db.DB_INIT_LOG | db.DB_INIT_LOCK | db.DB_INIT_TXN)
+                        db.DB_INIT_LOG | db.DB_INIT_LOCK | db.DB_INIT_TXN |
+                        db.DB_INIT_REP)
         self.db = db.DB(self.dbenv)
         self.db.open(None, None, db.DB_HASH, db.DB_CREATE)
+
 
     def tearDown(self):
         self.db.close()
 
         self.dbenv.close()
         test_support.rmtree(self.homeDir)
+
 
     def _test(self, obj, *args, **kwargs):
         obj = obj(*args, **kwargs)
@@ -83,20 +89,24 @@ class db_weakrefDBEnv(unittest.TestCase):
         del obj
         self.assertEqual(None, ref())
 
+
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
     def test_DBCursor(self):
         self._test(self.db.cursor)
+
 
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
     def test_DBLogCursor(self):
         self._test(self.dbenv.log_cursor)
 
+
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
     def test_DBSequence(self):
         self._test(db.DBSequence, self.db)
+
 
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
@@ -107,6 +117,7 @@ class db_weakrefDBEnv(unittest.TestCase):
         txn.abort()
         del txn
         self.assertEqual(None, ref())
+
 
     @unittest.skipIf(sys.version_info < (3, 9),
                      'No weakref support for heaptypes')
@@ -121,6 +132,19 @@ class db_weakrefDBEnv(unittest.TestCase):
             self.assertEqual(None, ref())
         finally:
             self.dbenv.lock_id_free(lock_id)
+
+
+    @unittest.skipIf(sys.version_info < (3, 9),
+                     'No weakref support for heaptypes')
+    @unittest.skipIf(db.version() < (5, 3),
+                     f'Oracle Berkeley DB {db.version()} has no support '
+                     'for DBSite')
+    def test_DBSite(self):
+        dbsite = self.dbenv.repmgr_site('0.0.0.0', 1234)
+        ref = weakref.ref(dbsite)
+        self.assertEqual(dbsite, ref())
+        del dbsite
+        self.assertEqual(None, ref())
 
 
 #----------------------------------------------------------------------
