@@ -20,7 +20,8 @@ PENDING: Documentation, website, mailing list update.
   * WARNING - BREAKING CHANGE: Ancient release 4.2.8 added weakref support to
     all bsddb.db objects, but from now on this feature requires at least Python
     3.9 because I have migrated from static types to heap types. Let me know if
-    this is a problem for you.
+    this is a problem for you. I could, for example, keep the old types in
+    Python < 3.9, if needed.
 
     Details:
 
