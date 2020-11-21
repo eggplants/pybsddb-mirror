@@ -10,7 +10,7 @@ TODO: Oracle has examples and multiple documentation. Link to them.
 PENDING: Documentation, website, mailing list update.
 
 
-18.1.1:
+18.1.1 - :
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"
     library.
@@ -33,9 +33,9 @@ PENDING: Documentation, website, mailing list update.
 
   * "_iter_mixin" and "_DBWithCursor" classes have been rewritten to avoid the
     need of getting a weak reference to "DBCursor" objects, since now it is
-    problematic in Python < 3.9.
+    problematic if Python < 3.9.
 
-18.1.0:
+18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".
 
@@ -120,7 +120,7 @@ PENDING: Documentation, website, mailing list update.
   * "DBEnv.open()" allows no homedir and a homedir of "None".
   * "DB.set_re_source()" uses local filename encoding.
   * "DB.set_re_source()" accepts path-like objects if using Python 3.6 or up.
-  * "DB.verify()" was doing nothing at all. Now actualy do the job.
+  * "DB.verify()" was doing nothing at all. Now actually do the job.
   * "DB.verify()" accepts path-like objects for "filename" and "outfile" if
     using Python 3.6 or up.
   * "DB.upgrade()" accepts path-like objects if using Python 3.6 or up.
@@ -174,7 +174,7 @@ PENDING: Documentation, website, mailing list update.
     warnings.
   * Do not leak test files and directories.
 
-6.2.8:
+6.2.8 - 2020-11-20:
   * In Python 3.9, "find_unused_port" has been moved to
     "test.support.socket_helper". Reported by Michał Górny.
   * If we use "set_get_returns_none()" in the environment,
