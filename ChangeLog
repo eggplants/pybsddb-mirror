@@ -35,6 +35,10 @@ PENDING: Documentation, website, mailing list update.
     need of getting a weak reference to "DBCursor" objects, since now it is
     problematic if Python < 3.9.
 
+  * Wai Keen Woon sent some weeks ago a patch to solve a problem with
+    "DB.verify()" always succeeding. Refactoring in that area in 18.1.0 made
+    that patch unneeded, but I added the test case provided to the test suite.
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

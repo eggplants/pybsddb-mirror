@@ -617,6 +617,20 @@ class BasicTestCase(unittest.TestCase):
         d = db.DB(self.env)
         d.verify(self.filename)
 
+    def test07_verify_must_fail(self):
+        # truncate the database file. verify() must fail.
+        self.d.close()
+        d = db.DB(self.env)
+
+        if self.env:
+            db_filename = os.path.join(self.homeDir, self.filename)
+        else:
+            db_filename = self.filename
+        open(db_filename, "w").close()
+
+        with self.assertRaises(db.DBVerifyBadError):
+            d.verify(db_filename)
+
     def test07_verify_outfile(self):
         self.d.close()
         d = db.DB(self.env)
