@@ -66,3 +66,12 @@ DBTxn Methods
    Associates the specified string with the transaction.
    :OracleAPIC:`More info... <txnset_name.html>`
 
+.. function:: get_priority()
+
+   Gets the priority value of the transaction.
+   :OracleAPIC:`More info... <txnget_priority.html>`
+
+.. function:: set_priority(priority)
+
+   Sets the priority for the transaction.
+   :OracleAPIC:`More info... <txnset_priority.html>`
