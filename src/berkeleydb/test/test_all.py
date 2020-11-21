@@ -170,6 +170,7 @@ def suite(module_prefix='', timing_check=None):
         'test_dbtables',
         'test_distributed_transactions',
         'test_early_close',
+        'test_concurrent_data_store',
         'test_fileid',
         'test_get_none',
         'test_join',

@@ -39,6 +39,8 @@ PENDING: Documentation, website, mailing list update.
     "DB.verify()" always succeeding. Refactoring in that area in 18.1.0 made
     that patch unneeded, but I added the test case provided to the test suite.
 
+  * Implement "DBEnv.cdsgroup_begin()".
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

@@ -6195,6 +6195,22 @@ DBEnv_txn_checkpoint(DBEnvObject* self, PyObject* args)
 }
 
 static PyObject*
+DBEnv_cdsgroup_begin(DBEnvObject* self)
+{
+    int err;
+    DB_TXN *tid;
+
+    CHECK_ENV_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db_env->cdsgroup_begin(self->db_env, &tid);
+    MYDB_END_ALLOW_THREADS;
+    RETURN_IF_ERR();
+
+    return (PyObject *)newDBTxnObject(self, NULL, tid, 0);
+}
+
+static PyObject*
 DBEnv_get_tx_max(DBEnvObject* self)
 {
     int err;
@@ -8779,6 +8795,7 @@ static PyMethodDef DBEnv_methods[] = {
     {"get_mp_mmapsize", (PyCFunction)DBEnv_get_mp_mmapsize, METH_NOARGS},
     {"set_tmp_dir",     (PyCFunction)DBEnv_set_tmp_dir,     METH_VARARGS},
     {"get_tmp_dir",     (PyCFunction)DBEnv_get_tmp_dir,     METH_NOARGS},
+    {"cdsgroup_begin",  (PyCFunction)DBEnv_cdsgroup_begin,  METH_NOARGS},
     {"txn_begin",       (PyCFunction)DBEnv_txn_begin,       METH_VARARGS|METH_KEYWORDS},
     {"txn_checkpoint",  (PyCFunction)DBEnv_txn_checkpoint,  METH_VARARGS},
     {"txn_stat",        (PyCFunction)DBEnv_txn_stat,        METH_VARARGS},

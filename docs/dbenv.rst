@@ -776,6 +776,13 @@ DBEnv Methods
    Displays the locking subsystem statistical information.
    :OracleAPIC:`More info... <lockstat_print.html>`
 
+.. function:: cdsgroup_begin()
+
+   Returns a DBTxn object referring to a new Berkeley DB
+   Concurrent Data Store group. This creates a locker ID that is
+   shared by all cursors opened in the group.
+   :OracleAPIC:`More info... <envcdsgroup_begin.html>`
+
 .. function:: get_tx_max()
 
    Returns the number of active transactions.
