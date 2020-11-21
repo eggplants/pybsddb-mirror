@@ -973,6 +973,23 @@ class BasicTransactionTestCase(BasicTestCase):
     def test_get_tx_timestamp(self) :
         self.assertEqual(self.env.get_tx_timestamp(), self._t)
 
+    #----------------------------------------
+
+    @unittest.skipIf(db.version() < (5, 3),
+                     'Requires Oracle Berkeley DB >= 5.3')
+    def test_txn_get_priority(self):
+        txn = self.env.txn_begin()
+        self.assertEqual(100, txn.get_priority())
+        txn.abort()
+
+    @unittest.skipIf(db.version() < (5, 3),
+                     'Requires Oracle Berkeley DB >= 5.3')
+    def test_txn_set_priority(self):
+        txn = self.env.txn_begin()
+        txn.set_priority(12345)
+        self.assertEqual(12345, txn.get_priority())
+        txn.abort()
+
 
 
 class BTreeTransactionTestCase(BasicTransactionTestCase):

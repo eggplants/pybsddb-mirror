@@ -41,6 +41,9 @@ PENDING: Documentation, website, mailing list update.
 
   * Implement "DBEnv.cdsgroup_begin()".
 
+  * Implement "DBTxn.set_priority()" and "DBTxn.get_priority()". You need to
+    link against Oracle Berkeley DB >= 5.3.
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

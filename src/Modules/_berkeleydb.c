@@ -8200,6 +8200,37 @@ DBTxn_get_name(DBTxnObject* self)
     return PyUnicode_FromString(name);
 }
 
+#if (DBVER >= 53)
+static PyObject*
+DBTxn_get_priority(DBTxnObject* self)
+{
+    int err;
+    u_int32_t priority;
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->txn->get_priority(self->txn, &priority);
+    MYDB_END_ALLOW_THREADS;
+    RETURN_IF_ERR();
+    return PyLong_FromLong(priority);
+}
+
+static PyObject*
+DBTxn_set_priority(DBTxnObject* self, PyObject* args)
+{
+    int err;
+    u_int32_t priority;
+
+    if (!PyArg_ParseTuple(args,"i:set_priority", &priority))
+        return NULL;
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->txn->set_priority(self->txn, priority);
+    MYDB_END_ALLOW_THREADS;
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
+#endif
+
 
 /* --------------------------------------------------------------------- */
 /* DBSequence methods */
@@ -8904,6 +8935,10 @@ static PyMethodDef DBTxn_methods[] = {
         METH_VARARGS|METH_KEYWORDS},
     {"set_name",        (PyCFunction)DBTxn_set_name, METH_VARARGS},
     {"get_name",        (PyCFunction)DBTxn_get_name, METH_NOARGS},
+#if (DBVER >= 53)
+    {"get_priority",    (PyCFunction)DBTxn_get_priority, METH_NOARGS},
+    {"set_priority",    (PyCFunction)DBTxn_set_priority, METH_VARARGS},
+#endif
     {NULL,      NULL}       /* sentinel */
 };
 
