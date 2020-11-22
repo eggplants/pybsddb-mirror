@@ -1850,12 +1850,7 @@ DB_exists(DBObject* self, PyObject* args, PyObject* kwargs)
         return Py_False;
     }
 
-    /*
-    ** If we reach there, there was an error. The
-    ** "return" should be unreachable.
-    */
-    RETURN_IF_ERR();
-    assert(0);  /* This coude SHOULD be unreachable */
+    makeDBError(err);
     return NULL;
 }
 
@@ -3643,12 +3638,7 @@ _DB_has_key(DBObject* self, PyObject* keyobj, PyObject* txnobj)
 
     FREE_DBT(key);
 
-    /*
-    ** DB_BUFFER_SMALL is only used if we use "get".
-    ** We can drop it when we only use "exists",
-    ** when we drop suport for Berkeley DB < 4.6.
-    */
-    if (err == DB_BUFFER_SMALL || err == 0) {
+    if (!err) {
         Py_INCREF(Py_True);
         return Py_True;
     } else if (err == DB_NOTFOUND || err == DB_KEYEMPTY) {
