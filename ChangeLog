@@ -39,10 +39,10 @@ PENDING: Documentation, website, mailing list update.
     "DB.verify()" always succeeding. Refactoring in that area in 18.1.0 made
     that patch unneeded, but I added the test case provided to the test suite.
 
-  * Implement "DBEnv.cdsgroup_begin()".
+  * "DBEnv.cdsgroup_begin()" implemented.
 
-  * Implement "DBTxn.set_priority()" and "DBTxn.get_priority()". You need to
-    link against Oracle Berkeley DB >= 5.3.
+  * "DBTxn.set_priority()" and "DBTxn.get_priority()" implemented. You need to
+    link this library against Oracle Berkeley DB >= 5.3.
 
 18.1.0 - 2020-11-12:
 
