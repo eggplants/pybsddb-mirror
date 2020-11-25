@@ -489,7 +489,7 @@ pybsddb_doc/>`__ --
       package_dir = {'berkeleydb': 'src/berkeleydb',
                      'berkeleydb/tests': 'src/berkeleydb/test'},
       ext_modules = [Extension('berkeleydb._berkeleydb',
-                               sources = ['src/Modules/_berkeleydb.c'],
+                               sources = ['src/Modules/berkeleydb.c'],
                                depends = ['src/Modules/berkeleydb.h'],
                                include_dirs = [ incdir ],
                                library_dirs = [ libdir ],
