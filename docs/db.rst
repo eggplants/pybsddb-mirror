@@ -43,7 +43,29 @@ DB Methods
    returns unused Btree, Hash or Recno database pages to the underlying
    filesystem.
 
-   The method returns the number of pages returned to the filesystem.
+   The method returns a dictionary with the following content:
+
+   +-----------------+-------------------------------------------+
+   | deadlock        | If no txnid parameter was specified, the  |
+   |                 | number of deadlocks which occurred        |
+   +-----------------+-------------------------------------------+
+   | pages_examine   | The number of database pages reviewed     |
+   |                 | during the compaction phase               |
+   +-----------------+-------------------------------------------+
+   | empty_buckets   | The number of empty hash buckets that     |
+   |                 | were found the compaction phase           |
+   +-----------------+-------------------------------------------+
+   | pages_free      | The number of database pages freed during |
+   |                 | the compaction phase                      |
+   +-----------------+-------------------------------------------+
+   | levels          | The number of levels removed from the     |
+   |                 | Btree or Recno database during the        |
+   |                 | compaction phase                          |
+   +-----------------+-------------------------------------------+
+   | pages_truncated | Tthe number of database pages returned to |
+   |                 | the filesystem                            |
+   +-----------------+-------------------------------------------+
+
    :OracleAPIC:`More info... <dbcompact.html>`
 
 .. function:: consume(txn=None, flags=0)

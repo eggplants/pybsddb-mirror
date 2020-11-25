@@ -767,7 +767,6 @@ static void _addIntToDict(PyObject* dict, char *name, int value)
     Py_XDECREF(v);
 }
 
-#if (DBVER >= 62)
 /* add an unsigned integer to a dictionary using the given name as a key */
 static void _addUnsignedIntToDict(PyObject* dict, char *name, unsigned int value)
 {
@@ -777,7 +776,6 @@ static void _addUnsignedIntToDict(PyObject* dict, char *name, unsigned int value
 
     Py_XDECREF(v);
 }
-#endif
 
 /* The same, when the value is a time_t */
 static void _addTimeTToDict(PyObject* dict, char *name, time_t value)
@@ -1748,6 +1746,7 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
     DBT start, stop;
     int err;
     DB_COMPACT c_data = { 0 };
+    PyObject *dict_compact;
     static char* kwnames[] = { "txn", "start", "stop", "flags",
                                "compact_fillpercent", "compact_pages",
                                "compact_timeout", NULL };
@@ -1793,7 +1792,22 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
 
     RETURN_IF_ERR();
 
-    return PyLong_FromUnsignedLong(c_data.compact_pages_truncated);
+    if ((dict_compact = PyDict_New()) == NULL) {
+        return NULL;
+    }
+#define MAKE_UNSIGNED_INT_ENTRY(name)   _addUnsignedIntToDict(dict_compact, #name, c_data.compact_##name)
+
+    MAKE_UNSIGNED_INT_ENTRY(deadlock);
+    MAKE_UNSIGNED_INT_ENTRY(pages_examine);
+#if (DBVER >= 53)
+    MAKE_UNSIGNED_INT_ENTRY(empty_buckets);
+#endif
+    MAKE_UNSIGNED_INT_ENTRY(pages_free);
+    MAKE_UNSIGNED_INT_ENTRY(levels);
+    MAKE_UNSIGNED_INT_ENTRY(pages_truncated);
+#undef MAKE_UNSIGNED_INT_ENTRY
+
+    return dict_compact;
 }
 
 

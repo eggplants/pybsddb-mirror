@@ -48,6 +48,10 @@ PENDING: Documentation, website, mailing list update.
   * "DBEnv.set_lk_max()" was deprecated and deleted long time ago. Time
     to delete it from documentation too.
 
+  * WARNING - BREAKING CHANGE: "DB.compact()" used to return a number, but now
+    it returns a dictionary. If you need access to the old return value, you
+    can do "DB.compact()['pages_truncated']".
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

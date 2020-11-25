@@ -728,8 +728,13 @@ class BasicTestCase(unittest.TestCase):
 
     def test_compact(self) :
         d = self.d
-        self.assertEqual(0, d.compact(flags=db.DB_FREELIST_ONLY))
-        self.assertEqual(0, d.compact(flags=db.DB_FREELIST_ONLY))
+        keys = {'deadlock', 'pages_examine', 'pages_free',
+                'levels', 'pages_truncated'}
+        if db.version() >= (5, 3):
+            keys.add('empty_buckets')
+        ret = d.compact(flags=db.DB_FREELIST_ONLY)
+        self.assertEqual(0, ret['pages_truncated'])
+        self.assertEqual(keys, set(ret.keys()))
         d.put(b'abcde', b'ABCDE');
         d.put(b'bcde', b'BCDE');
         d.put(b'abc', b'ABC');
@@ -739,7 +744,7 @@ class BasicTestCase(unittest.TestCase):
         d.compact(start=b'abcde', stop=b'monty', txn=None,
                 compact_fillpercent=42, compact_pages=1,
                 compact_timeout=50000000,
-                flags=db.DB_FREELIST_ONLY|db.DB_FREE_SPACE)
+                flags=db.DB_FREELIST_ONLY | db.DB_FREE_SPACE)
 
     #----------------------------------------
 
