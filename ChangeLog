@@ -62,6 +62,8 @@ PENDING: Documentation, website, mailing list update.
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".
+    This has been a long trip:
+    http://mailman.jcea.es/pipermail/pybsddb/2008-March/000019.html
 
 18.1.0-pre:
   * Support Oracle Berkeley DB 18.1.x.
