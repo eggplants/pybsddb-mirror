@@ -55,6 +55,10 @@ PENDING: Documentation, website, mailing list update.
   * "DB.compact()" has been supported "txn" parameter for a long time, but it
     was not documented.
 
+  * The dictionary returned by "DB.compact()" has an "end" entry marking
+    the database key/page number where the compaction stopped. You could use it
+    to do partial/incremental database compaction.
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

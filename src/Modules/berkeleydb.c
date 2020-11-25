@@ -1743,10 +1743,10 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
     int flags = 0;
     DB_TXN *txn = NULL;
     DBT *start_p = NULL, *stop_p = NULL;
-    DBT start, stop;
+    DBT start, stop, end;
     int err;
     DB_COMPACT c_data = { 0 };
-    PyObject *dict_compact;
+    PyObject *dict_compact, *v;
     static char* kwnames[] = { "txn", "start", "stop", "flags",
                                "compact_fillpercent", "compact_pages",
                                "compact_timeout", NULL };
@@ -1780,9 +1780,11 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
         stop_p = &stop;
     }
 
+    CLEAR_DBT(end);
+    end.flags = DB_DBT_MALLOC;
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->compact(self->db, txn, start_p, stop_p, &c_data,
-                            flags, NULL);
+                            flags, &end);
     MYDB_END_ALLOW_THREADS;
 
     if (startobj)
@@ -1790,7 +1792,10 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
     if (stopobj)
         FREE_DBT(stop);
 
-    RETURN_IF_ERR();
+    if (err) {
+        FREE_DBT(end);
+        RETURN_IF_ERR();  /* Always returns here */
+    }
 
     if ((dict_compact = PyDict_New()) == NULL) {
         return NULL;
@@ -1805,7 +1810,15 @@ DB_compact(DBObject* self, PyObject* args, PyObject* kwargs)
     MAKE_UNSIGNED_INT_ENTRY(pages_free);
     MAKE_UNSIGNED_INT_ENTRY(levels);
     MAKE_UNSIGNED_INT_ENTRY(pages_truncated);
+
+    v = PyBytes_FromStringAndSize(end.data, end.size);
+    if (!v || PyDict_SetItemString(dict_compact, "end", v))
+        PyErr_Clear();
+    Py_XDECREF(v);
+
 #undef MAKE_UNSIGNED_INT_ENTRY
+
+    FREE_DBT(end);
 
     return dict_compact;
 }

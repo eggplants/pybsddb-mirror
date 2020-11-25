@@ -729,7 +729,7 @@ class BasicTestCase(unittest.TestCase):
     def test_compact(self) :
         d = self.d
         keys = {'deadlock', 'pages_examine', 'pages_free',
-                'levels', 'pages_truncated'}
+                'levels', 'pages_truncated', 'end'}
         if db.version() >= (5, 3):
             keys.add('empty_buckets')
         ret = d.compact(flags=db.DB_FREELIST_ONLY)
@@ -762,6 +762,7 @@ class BasicTestCase(unittest.TestCase):
         self.assertNotEqual(0, ret['pages_examine'])
         self.assertNotEqual(0, ret['pages_free'])
         self.assertNotEqual(0, ret['pages_truncated'])
+        self.assertNotEqual(b'', ret['end'])
         if db.version() >= (5, 3):
             self.assertEqual(0, ret['empty_buckets'])
 

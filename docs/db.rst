@@ -65,6 +65,10 @@ DB Methods
    | pages_truncated | The number of database pages returned to  |
    |                 | the filesystem                            |
    +-----------------+-------------------------------------------+
+   | end             | Will be filled with the database key/page |
+   |                 | marking the end of the compaction         |
+   |                 | operation                                 |
+   +-----------------+-------------------------------------------+
 
    :OracleAPIC:`More info... <dbcompact.html>`
 
