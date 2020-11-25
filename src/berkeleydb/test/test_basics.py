@@ -746,6 +746,26 @@ class BasicTestCase(unittest.TestCase):
                 compact_timeout=50000000,
                 flags=db.DB_FREELIST_ONLY | db.DB_FREE_SPACE)
 
+    def test_compact_really_do_something(self):
+        for i in range(1024):
+            self.d.put(repr(i).encode('ascii'), b'1234' * 256)
+
+        for i in range(256, 512):
+            self.d.delete(repr(i).encode('ascii'))
+        for i in range(768, 1024):
+            self.d.delete(repr(i).encode('ascii'))
+
+        ret = self.d.compact(flags=db.DB_FREE_SPACE)
+
+        self.assertEqual(0, ret['deadlock'])
+        self.assertEqual(0, ret['levels'])
+        self.assertNotEqual(0, ret['pages_examine'])
+        self.assertNotEqual(0, ret['pages_free'])
+        self.assertNotEqual(0, ret['pages_truncated'])
+        if db.version() >= (5, 3):
+            self.assertEqual(0, ret['empty_buckets'])
+
+
     #----------------------------------------
 
 #----------------------------------------------------------------------
