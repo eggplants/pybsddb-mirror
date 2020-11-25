@@ -52,6 +52,9 @@ PENDING: Documentation, website, mailing list update.
     it returns a dictionary. If you need access to the old return value, you
     can do "DB.compact()['pages_truncated']".
 
+  * "DB.compact()" has been supported "txn" parameter for a long time, but it
+    was not documented.
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

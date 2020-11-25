@@ -37,7 +37,7 @@ DB Methods
    Flushes cached data and closes the database.
    :OracleAPIC:`More info... <dbclose.html>`
 
-.. function:: compact(start=None, stop=None, flags=0, compact_fillpercent=0, compact_pages=0, compact_timeout=0)
+.. function:: compact(txn=None, start=None, stop=None, flags=0, compact_fillpercent=0, compact_pages=0, compact_timeout=0)
 
    Compacts Btree and Recno access method databases, and optionally
    returns unused Btree, Hash or Recno database pages to the underlying
@@ -62,7 +62,7 @@ DB Methods
    |                 | Btree or Recno database during the        |
    |                 | compaction phase                          |
    +-----------------+-------------------------------------------+
-   | pages_truncated | Tthe number of database pages returned to |
+   | pages_truncated | The number of database pages returned to  |
    |                 | the filesystem                            |
    +-----------------+-------------------------------------------+
 
