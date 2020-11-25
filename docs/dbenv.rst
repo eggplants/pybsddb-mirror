@@ -537,11 +537,6 @@ DBEnv Methods
    Set the automatic deadlock detection mode.
    :OracleAPIC:`More info... <envset_lk_detect.html>`
 
-.. function:: set_lk_max(max)
-
-   Set the maximum number of locks. (This method is deprecated.)
-   :OracleAPIC:`More info... <envset_lk_max.html>`
-
 .. function:: get_lk_max_locks()
 
    Returns the maximum number of potential locks.

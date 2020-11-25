@@ -45,6 +45,9 @@ PENDING: Documentation, website, mailing list update.
   * "DBTxn.set_priority()" and "DBTxn.get_priority()" implemented. You need to
     link this library against Oracle Berkeley DB >= 5.3.
 
+  * "DBEnv.set_lk_max()" was deprecated and deleted long time ago. Time
+    to delete it from documentation too.
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".
