@@ -6629,14 +6629,22 @@ DBEnv_log_cursor(DBEnvObject* self)
 
 
 static PyObject*
-DBEnv_log_flush(DBEnvObject* self)
+DBEnv_log_flush(DBEnvObject* self, PyObject* args)
 {
     int err;
+    DB_LSN lsn = {0, 0};
+    DB_LSN *lsn_p = NULL;
+
+    if (!PyArg_ParseTuple(args, "|(ii):log_flush", &lsn.file, &lsn.offset))
+        return NULL;
+    if ((lsn.file!=0) || (lsn.offset!=0)) {
+        lsn_p = &lsn;
+    }
 
     CHECK_ENV_NOT_CLOSED(self);
 
     MYDB_BEGIN_ALLOW_THREADS
-    err = self->db_env->log_flush(self->db_env, NULL);
+    err = self->db_env->log_flush(self->db_env, lsn_p);
     MYDB_END_ALLOW_THREADS
 
     RETURN_IF_ERR();
@@ -8866,7 +8874,7 @@ static PyMethodDef DBEnv_methods[] = {
     {"log_printf",      (PyCFunction)DBEnv_log_printf,
         METH_VARARGS|METH_KEYWORDS},
     {"log_archive",     (PyCFunction)DBEnv_log_archive,     METH_VARARGS},
-    {"log_flush",       (PyCFunction)DBEnv_log_flush,       METH_NOARGS},
+    {"log_flush",       (PyCFunction)DBEnv_log_flush,       METH_VARARGS},
     {"log_stat",        (PyCFunction)DBEnv_log_stat,        METH_VARARGS},
     {"log_stat_print",  (PyCFunction)DBEnv_log_stat_print,
         METH_VARARGS|METH_KEYWORDS},

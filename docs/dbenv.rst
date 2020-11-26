@@ -619,11 +619,12 @@ DBEnv Methods
    removed from the system.
    :OracleAPIC:`More info... <logarchive.html>`
 
-.. function:: log_flush()
+.. function:: log_flush(lsn=None)
 
-   Force log records to disk. Useful if the environment, database or
-   transactions are used as ACI, instead of ACID. For example, if the
-   environment is opened as DB_TXN_NOSYNC.
+   Force log records to disk. Useful if the environment, database
+   or transactions are used as ACI, instead of ACID. For example,
+   if the environment is opened as DB_TXN_NOSYNC. If provided, lsn
+   is a tuple: (file, offset)
    :OracleAPIC:`More info... <logflush.html>`
 
 .. function:: log_get_config(which)

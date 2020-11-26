@@ -59,6 +59,8 @@ PENDING: Documentation, website, mailing list update.
     the database key/page number where the compaction stopped. You could use it
     to do partial/incremental database compaction.
 
+  * Add an optional parameter to "DBEnv.log_flush()".
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

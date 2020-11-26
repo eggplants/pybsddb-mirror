@@ -845,7 +845,7 @@ class BasicTransactionTestCase(BasicTestCase):
     dbopenflags = db.DB_THREAD | db.DB_AUTO_COMMIT
     useEnv = 1
     envflags = (db.DB_THREAD | db.DB_INIT_MPOOL | db.DB_INIT_LOCK |
-                db.DB_INIT_TXN)
+                db.DB_INIT_LOG | db.DB_INIT_TXN)
     envsetflags = db.DB_AUTO_COMMIT
 
 
@@ -1016,6 +1016,47 @@ class BasicTransactionTestCase(BasicTestCase):
         self.assertEqual(12345, txn.get_priority())
         txn.abort()
 
+    def test_log_flush(self):
+        txn = self.env.txn_begin(flags=db.DB_TXN_NOSYNC)
+        self.d.put(b'test', b'result', txn=txn)
+        txn.commit()
+        log_stat = self.env.log_stat()
+        pos_mem = (log_stat['cur_file'], log_stat['cur_offset'])
+        pos_disk = (log_stat['disk_file'], log_stat['disk_offset'])
+        self.assertGreater(pos_mem, pos_disk)
+        self.env.log_flush()
+        log_stat = self.env.log_stat()
+        pos_mem2 = (log_stat['cur_file'], log_stat['cur_offset'])
+        pos_disk2 = (log_stat['disk_file'], log_stat['disk_offset'])
+        self.assertEqual(pos_mem2, pos_disk2)
+        self.assertEqual(pos_mem, pos_disk2)
+
+        # (cur_file, cur_lsn) says what offset will be used to write
+        # the next transaction. Oracle Berkeley DB should allow to
+        # flush up to that, but it doesn't work. So we create two
+        # quite a few ACI transactions and flush only the first one.
+        #
+        # Oracle Berkeley DB will actually flush more than required,
+        # probably as an optimization.
+
+        txn = self.env.txn_begin(flags=db.DB_TXN_NOSYNC)
+        self.d.put(b'test2', b'result2', txn=txn)
+        txn.commit()
+        log_stat = self.env.log_stat()
+        pos_mem = (log_stat['cur_file'], log_stat['cur_offset'])
+        pos_disk = (log_stat['disk_file'], log_stat['disk_offset'])
+        self.assertGreater(pos_mem, pos_disk)
+        for i in range(1000):
+            txn = self.env.txn_begin(flags=db.DB_TXN_NOSYNC)
+            self.d.put(f'test_{i}'.encode('ascii'),
+                       f'result_{i}'.encode('ascii'), txn=txn)
+            txn.commit()
+        self.env.log_flush(pos_mem)
+        log_stat = self.env.log_stat()
+        pos_mem2 = (log_stat['cur_file'], log_stat['cur_offset'])
+        pos_disk2 = (log_stat['disk_file'], log_stat['disk_offset'])
+        self.assertLess(pos_mem, pos_disk2)
+        self.assertGreaterEqual(pos_mem2, pos_disk2)
 
 
 class BTreeTransactionTestCase(BasicTransactionTestCase):
