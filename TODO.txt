@@ -1,3 +1,5 @@
+- 20201126: Move the readme published in PYPI to "markdown", for more power.
+
 * 20161120: Document how to install with alternative Berkeley DB paths
   using PIP.
 
