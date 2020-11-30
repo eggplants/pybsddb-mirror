@@ -746,6 +746,8 @@ class BasicTestCase(unittest.TestCase):
                 compact_timeout=50000000,
                 flags=db.DB_FREELIST_ONLY | db.DB_FREE_SPACE)
 
+    @unittest.skipIf(db.version() < (5, 3),
+                     'Oracle Berkeley DB 4.8 is ancient and quirky. Move on')
     def test_compact_really_do_something(self):
         for i in range(1024):
             self.d.put(repr(i).encode('ascii'), b'1234' * 256)
