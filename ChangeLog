@@ -61,6 +61,12 @@ PENDING: Documentation, website, mailing list update.
 
   * Add an optional parameter to "DBEnv.log_flush()".
 
+  * You can override the directory where the tests are run with TMPDIR
+    environment variable. If that environment variable is not defined, test
+    will run in "/tmp/ram/" if exists and in "/tmp" if "/tmp/ram/" doesn't
+    exists or it is not a directory. The idea is that "/tmp/ram/" is a ramdisk
+    and the test will run faster.
+
 18.1.0 - 2020-11-12:
 
   * "bsddb" name is reserved in PYPI, so we rename the project to "berkeleydb".

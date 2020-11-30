@@ -137,6 +137,7 @@ import getopt
 import unittest
 import linecache
 import traceback
+import pathlib
 
 from distutils.util import get_platform
 
@@ -505,6 +506,11 @@ def process_args(argv=None):
     gcthresh = None
     gcflags = []
     progress = False
+
+    # If we have a ramdisk, use it
+    ramdisk = pathlib.Path('/tmp/ram/')
+    if ('TMPDIR' not in os.environ) and ramdisk.is_dir():
+        os.environ['TMPDIR'] = str(ramdisk)
 
     try:
         opts, args = getopt.getopt(argv[1:],
