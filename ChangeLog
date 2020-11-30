@@ -10,7 +10,7 @@ TODO: Oracle has examples and multiple documentation. Link to them.
 PENDING: Documentation, website, mailing list update.
 
 
-18.1.1 - :
+18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"
     library.
