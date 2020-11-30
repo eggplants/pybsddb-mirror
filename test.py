@@ -139,6 +139,8 @@ import linecache
 import traceback
 import pathlib
 
+from unittest import _TextTestResult
+
 from distutils.util import get_platform
 
 # We need to be able to test BDB releases, even if the license is incompatible
@@ -151,12 +153,6 @@ PLAT_SPEC = "%s-%s" % (get_platform(), sys.version[0:3])
 # doesn't export its build/ directory naming scheme as a library function.
 if hasattr(sys, 'gettotalrefcount'):
     PLAT_SPEC += '-pydebug'
-
-try :  # Check in the future if this still necessary
-    # Python 2.7 and 3.2
-    from unittest.runner import _TextTestResult
-except ImportError :
-    from unittest import _TextTestResult
 
 class ImmediateTestResult(_TextTestResult):
 
