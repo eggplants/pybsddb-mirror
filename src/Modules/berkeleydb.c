@@ -733,7 +733,8 @@ static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
         switch (self->mydb->dbtype) {
         case DB_RECNO:
         case DB_QUEUE:
-            retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            retval = BuildValue_IS(*((db_recno_t*)key.data),
+                                   data.data, data.size);
             break;
         case DB_HASH:
         case DB_BTREE:
@@ -1385,9 +1386,11 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
         MYDB_BEGIN_BLOCK_THREADS;
 
         if (dbtype == DB_RECNO || dbtype == DB_QUEUE)
-            args = BuildValue_LS(*((db_recno_t*)priKey->data), priData->data, priData->size);
+            args = BuildValue_LS(*((db_recno_t*)priKey->data),
+                                 priData->data, priData->size);
         else
-            args = BuildValue_SS(priKey->data, priKey->size, priData->data, priData->size);
+            args = BuildValue_SS(priKey->data, priKey->size,
+                                 priData->data, priData->size);
         if (args != NULL) {
                 result = PyObject_CallObject(callback, args);
         }
@@ -3316,10 +3319,14 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
         return NULL;
     }
 
-#define MAKE_HASH_ENTRY(name)  _addIntToDict(d, #name, ((DB_HASH_STAT*)sp)->hash_##name)
-#define MAKE_BT_ENTRY(name)    _addIntToDict(d, #name, ((DB_BTREE_STAT*)sp)->bt_##name)
-#define MAKE_QUEUE_ENTRY(name) _addIntToDict(d, #name, ((DB_QUEUE_STAT*)sp)->qs_##name)
-#define MAKE_HEAP_ENTRY(name) _addIntToDict(d, #name, ((DB_HEAP_STAT*)sp)->heap_##name)
+#define MAKE_HASH_ENTRY(name)  _addIntToDict(d, #name, \
+                                             ((DB_HASH_STAT*)sp)->hash_##name)
+#define MAKE_BT_ENTRY(name)    _addIntToDict(d, #name, \
+                                             ((DB_BTREE_STAT*)sp)->bt_##name)
+#define MAKE_QUEUE_ENTRY(name) _addIntToDict(d, #name, \
+                                             ((DB_QUEUE_STAT*)sp)->qs_##name)
+#define MAKE_HEAP_ENTRY(name) _addIntToDict(d, #name, \
+                                            ((DB_HEAP_STAT*)sp)->heap_##name)
 
     switch (dbtype) {
     case DB_HASH:
