@@ -54,8 +54,8 @@ Types Provided
 
 The berkeleydb.db extension module provides the following object types:
 
-- **DB:** The basic database object, capable of Hash, BTree, Recno, and
-  Queue access methods.
+- **DB:** The basic database object, capable of Hash, BTree, Recno,
+  Queue and Heap access methods.
 
 - **DBEnv:** Provides a Database Environment for more advanced database
   use. Apps using transactions, logging, concurrent access, etc. will

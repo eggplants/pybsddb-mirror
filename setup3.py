@@ -458,7 +458,7 @@ This module provides a nearly complete wrapping of the Oracle/Sleepycat C API
 for the Database Environment, Database, Cursor, Log Cursor, Sequence and
 Transaction objects, and each of these is exposed as a Python type in the
 berkeleydb.db module. The database objects can use various access methods:
-btree, hash, recno, and queue.  Complete support of Oracle Berkeley DB
+btree, hash, recno, queue and heap.  Complete support of Oracle Berkeley DB
 distributed transactions. Complete support for Oracle Berkeley DB Replication
 Manager. Complete support for Oracle Berkeley DB Base Replication.
 

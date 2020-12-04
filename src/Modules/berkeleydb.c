@@ -2906,6 +2906,79 @@ DB_get_cachesize(DBObject* self)
     return Py_BuildValue("(iii)", gbytes, bytes, ncache);
 }
 
+#if (DBVER >= 53)
+static PyObject*
+DB_set_heapsize(DBObject* self, PyObject* args)
+{
+    int err;
+    int gbytes = 0, bytes = 0;
+
+    if (!PyArg_ParseTuple(args,"ii:set_heapsize",
+                          &gbytes, &bytes))
+        return NULL;
+
+    CHECK_DB_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db->set_heapsize(self->db, gbytes, bytes, 0);
+    MYDB_END_ALLOW_THREADS;
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+DB_get_heapsize(DBObject* self)
+{
+    int err;
+    u_int32_t gbytes, bytes;
+
+    CHECK_DB_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db->get_heapsize(self->db, &gbytes, &bytes);
+    MYDB_END_ALLOW_THREADS;
+
+    RETURN_IF_ERR();
+
+    return Py_BuildValue("(ii)", gbytes, bytes);
+}
+
+static PyObject*
+DB_set_heap_regionsize(DBObject* self, PyObject* args)
+{
+    int err;
+    int npages = 0;
+
+    if (!PyArg_ParseTuple(args,"i:set_heap_regionsize", &npages))
+        return NULL;
+
+    CHECK_DB_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db->set_heap_regionsize(self->db, npages);
+    MYDB_END_ALLOW_THREADS;
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+DB_get_heap_regionsize(DBObject* self)
+{
+    int err;
+    u_int32_t npages;
+
+    CHECK_DB_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db->get_heap_regionsize(self->db, &npages);
+    MYDB_END_ALLOW_THREADS;
+
+    RETURN_IF_ERR();
+
+    return PyLong_FromUnsignedLong(npages);
+}
+#endif
+
 static PyObject*
 DB_set_flags(DBObject* self, PyObject* args)
 {
@@ -8718,6 +8791,12 @@ static PyMethodDef DB_methods[] = {
     {"get_priority",    (PyCFunction)DB_get_priority,   METH_NOARGS},
     {"get_dbname",      (PyCFunction)DB_get_dbname,     METH_NOARGS},
     {"get_open_flags",  (PyCFunction)DB_get_open_flags, METH_NOARGS},
+#if (DBVER >= 53)
+    {"get_heapsize",    (PyCFunction)DB_get_heapsize,   METH_NOARGS},
+    {"set_heapsize",    (PyCFunction)DB_set_heapsize,   METH_VARARGS},
+    {"get_heap_regionsize", (PyCFunction)DB_get_heap_regionsize, METH_NOARGS},
+    {"set_heap_regionsize", (PyCFunction)DB_set_heap_regionsize, METH_VARARGS},
+#endif
     {"stat",            (PyCFunction)DB_stat,           METH_VARARGS|METH_KEYWORDS},
     {"stat_print",      (PyCFunction)DB_stat_print,
         METH_VARARGS|METH_KEYWORDS},
@@ -9561,6 +9640,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     ADD_INT(d, DB_HASH);
     ADD_INT(d, DB_RECNO);
     ADD_INT(d, DB_QUEUE);
+#if (DBVER >= 53)
+    ADD_INT(d, DB_HEAP);
+#endif
     ADD_INT(d, DB_UNKNOWN);
 
     ADD_INT(d, DB_DUP);
