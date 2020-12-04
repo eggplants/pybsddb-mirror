@@ -1376,7 +1376,7 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
     int       retval = DB_DONOTINDEX;
     DBObject* secondaryDB = (DBObject*)db->app_private;
     PyObject* callback = secondaryDB->associateCallback;
-    DBTYPE    type = secondaryDB->primaryDBType;
+    DBTYPE    dbtype = secondaryDB->primaryDBType;
     PyObject* args;
     PyObject* result = NULL;
 
@@ -1384,7 +1384,7 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
     if (callback != NULL) {
         MYDB_BEGIN_BLOCK_THREADS;
 
-        if (type == DB_RECNO || type == DB_QUEUE)
+        if (dbtype == DB_RECNO || dbtype == DB_QUEUE)
             args = BuildValue_LS(*((db_recno_t*)priKey->data), priData->data, priData->size);
         else
             args = BuildValue_SS(priKey->data, priKey->size, priData->data, priData->size);
@@ -2256,7 +2256,7 @@ DB_key_range(DBObject* self, PyObject* args, PyObject* kwargs)
 static PyObject*
 DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
 {
-    int err, type = DB_UNKNOWN, flags=0, mode=0660;
+    int err, dbtype = DB_UNKNOWN, flags=0, mode=0660;
     PyObject *obj = NULL;
     PyObject *filenameObj = NULL;
     char *filename = NULL;
@@ -2271,15 +2271,15 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
         "filename", "dbtype", "flags", "mode", "txn", NULL};
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OziiiO:open", kwnames,
-                     &filenameObj, &dbname, &type, &flags, &mode, &txnobj))
+                     &filenameObj, &dbname, &dbtype, &flags, &mode, &txnobj))
     {
 	    PyErr_Clear();
-	    type = DB_UNKNOWN; flags = 0; mode = 0660;
+	    dbtype = DB_UNKNOWN; flags = 0; mode = 0660;
 	    filenameObj = NULL; dbname = NULL;
 	    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"|OiiiO:open",
                                              kwnames_basic,
-		                        			 &filenameObj, &type, &flags, &mode,
-                                             &txnobj))
+		                        			 &filenameObj, &dbtype, &flags,
+                                             &mode, &txnobj))
 	        return NULL;
     }
 
@@ -2317,7 +2317,7 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
     }
 
     MYDB_BEGIN_ALLOW_THREADS;
-    err = self->db->open(self->db, txn, filename, dbname, type, flags, mode);
+    err = self->db->open(self->db, txn, filename, dbname, dbtype, flags, mode);
     MYDB_END_ALLOW_THREADS;
 
     Py_XDECREF(obj);
