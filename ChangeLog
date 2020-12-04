@@ -37,6 +37,11 @@ PENDING: Documentation, website, mailing list update.
   * WARNING - BREAKING CHANGE: "DB.type()" method is dropped. It was never
     documented. Use "DB.get_type()".
 
+  * "DB.stats()" returns new keys in the dictionary:
+
+    - Hash access method: Added "metaflags" (always) and "ext_files" (if
+      linked against Oracle Berkeley DB 6.2 or newer).
+
 18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"

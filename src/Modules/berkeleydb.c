@@ -3338,6 +3338,10 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
         MAKE_HASH_ENTRY(ovfl_free);
         MAKE_HASH_ENTRY(dup);
         MAKE_HASH_ENTRY(dup_free);
+        MAKE_HASH_ENTRY(metaflags);
+#if (DBVER >= 62)
+        MAKE_HASH_ENTRY(ext_files);
+#endif
         break;
 
     case DB_BTREE:
