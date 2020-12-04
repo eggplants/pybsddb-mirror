@@ -22,6 +22,8 @@ PENDING: Documentation, website, mailing list update.
 
     - Export exception "DBHeapFull" (from error "DB_HEAP_FULL").
 
+    - "DB.stats()" provides stats for heap databases.
+
   * WARNING - BREAKING CHANGE: Add "dbtype" member in "DBObject" object in the
     C API. Increase C API version. This change has ripple effect in the code.
 
@@ -39,8 +41,10 @@ PENDING: Documentation, website, mailing list update.
 
   * "DB.stats()" returns new keys in the dictionary:
 
-    - Hash access method: Added "metaflags" (always) and "ext_files" (if
-      linked against Oracle Berkeley DB 6.2 or newer).
+    - Hash, Btree and Recno access methods: Added "metaflags" (always) and
+      "ext_files" (if linked against Oracle Berkeley DB 6.2 or newer).
+
+    - Queue access method: Added "metaflags" (always).
 
 18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python

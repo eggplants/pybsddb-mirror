@@ -3319,6 +3319,7 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
 #define MAKE_HASH_ENTRY(name)  _addIntToDict(d, #name, ((DB_HASH_STAT*)sp)->hash_##name)
 #define MAKE_BT_ENTRY(name)    _addIntToDict(d, #name, ((DB_BTREE_STAT*)sp)->bt_##name)
 #define MAKE_QUEUE_ENTRY(name) _addIntToDict(d, #name, ((DB_QUEUE_STAT*)sp)->qs_##name)
+#define MAKE_HEAP_ENTRY(name) _addIntToDict(d, #name, ((DB_HEAP_STAT*)sp)->heap_##name)
 
     switch (dbtype) {
     case DB_HASH:
@@ -3366,6 +3367,10 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
         MAKE_BT_ENTRY(leaf_pgfree);
         MAKE_BT_ENTRY(dup_pgfree);
         MAKE_BT_ENTRY(over_pgfree);
+        MAKE_BT_ENTRY(metaflags);
+#if (DBVER >= 62)
+        MAKE_BT_ENTRY(ext_files);
+#endif
         break;
 
     case DB_QUEUE:
@@ -3381,7 +3386,22 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
         MAKE_QUEUE_ENTRY(pgfree);
         MAKE_QUEUE_ENTRY(first_recno);
         MAKE_QUEUE_ENTRY(cur_recno);
+        MAKE_QUEUE_ENTRY(metaflags);
         break;
+
+#if (DBVER >= 62)
+    case DB_HEAP:
+        MAKE_HEAP_ENTRY(magic);
+        MAKE_HEAP_ENTRY(metaflags);
+        MAKE_HEAP_ENTRY(ext_files);
+        MAKE_HEAP_ENTRY(nrecs);
+        MAKE_HEAP_ENTRY(pagecnt);
+        MAKE_HEAP_ENTRY(pagesize);
+        MAKE_HEAP_ENTRY(nregions);
+        MAKE_HEAP_ENTRY(regionsize);
+        MAKE_HEAP_ENTRY(version);
+        break;
+#endif
 
     default:
         PyErr_SetString(PyExc_TypeError, "Unknown DB type, unable to stat");

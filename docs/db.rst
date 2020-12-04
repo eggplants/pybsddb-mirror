@@ -507,6 +507,10 @@ DB Methods
         +-----------+-------------------------------------------------+
         | dup_free  | Number of bytes free on duplicate pages.        |
         +-----------+-------------------------------------------------+
+        | metaflags | Reports internal flags. For internal use only.  |
+        +-----------+-------------------------------------------------+
+        | ext_files | The number of external files.                   |
+        +-----------+-------------------------------------------------+
 
    For BTree and Recno databases:
 
@@ -566,6 +570,10 @@ DB Methods
         +-------------+-----------------------------------------------+
         | over_pgfree | Num of bytes free in database overflow pages. |
         +-------------+-----------------------------------------------+
+        | metaflags   | Reports internal flags. For internal use only |
+        +-------------+-----------------------------------------------+
+        | ext_files   | The number of external files.                 |
+        +-------------+-----------------------------------------------+
 
    For Queue databases:
 
@@ -594,6 +602,34 @@ DB Methods
         | first_recno | First undeleted record in the database.       |
         +-------------+-----------------------------------------------+
         | cur_recno   | Last allocated record number in the database. |
+        +-------------+-----------------------------------------------+
+        | metaflags   | Reports internal flags. For internal use only |
+        +-------------+-----------------------------------------------+
+
+   For Heap databases:
+
+        +-------------+-----------------------------------------------+
+        | magic       | Magic number that identifies the file as a    |
+        |             | Heap database.                                |
+        +-------------+-----------------------------------------------+
+        | nrecs       | Reports the number of records in the Heap     |
+        |             | database.                                     |
+        +-------------+-----------------------------------------------+
+        | pagecnt     | The number of pages in the database.          |
+        +-------------+-----------------------------------------------+
+        | pagesize    | The underlying database page (and bucket)     |
+        |             | size, in bytes.                               |
+        +-------------+-----------------------------------------------+
+        | nregions    | The number of regions in the Heap database.   |
+        +-------------+-----------------------------------------------+
+        | regionsize  | The number of pages in a region in the Heap   |
+        |             | database.                                     |
+        +-------------+-----------------------------------------------+
+        | version     | The version of the Heap database.             |
+        +-------------+-----------------------------------------------+
+        | metaflags   | Reports internal flags. For internal use only |
+        +-------------+-----------------------------------------------+
+        | ext_files   | The number of external files.                 |
         +-------------+-----------------------------------------------+
 
    :OracleAPIC:`More info... <dbstat.html>`
