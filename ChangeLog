@@ -22,6 +22,10 @@ PENDING: Documentation, website, mailing list update.
 
     - Export exception "DBHeapFull" (from error "DB_HEAP_FULL").
 
+  * WARNING - BREAKING CHANGE: "primaryDBType" member in "DBObject" object in
+    the C API is now type "DBTYPE". Increase C API version. This change has
+    ripple effect in the code.
+
 18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"

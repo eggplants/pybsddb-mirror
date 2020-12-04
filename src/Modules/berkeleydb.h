@@ -163,7 +163,7 @@ typedef struct DBObject {
     PyObject*       associateCallback;
     PyObject*       btCompareCallback;
     PyObject*       dupCompareCallback;
-    int             primaryDBType;
+    DBTYPE          primaryDBType;
     PyObject        *private_obj;
     PyObject        *in_weakreflist; /* List of weak references */
 } DBObject;
@@ -255,7 +255,7 @@ typedef struct DBSequenceObject {
    The structure's members must not be changed.
 */
 
-#define PY_BERKELEYDB_API_VERSION 2
+#define PY_BERKELEYDB_API_VERSION 3
 #define PY_BERKELEYDB_BASE "berkeleydb._berkeleydb."
 
 typedef struct {

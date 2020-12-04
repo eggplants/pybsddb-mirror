@@ -848,7 +848,7 @@ newDBObject(DBEnvObject* arg, int flags)
     self->associateCallback = NULL;
     self->btCompareCallback = NULL;
     self->dupCompareCallback = NULL;
-    self->primaryDBType = 0;
+    self->primaryDBType = DB_UNKNOWN;
     Py_INCREF(Py_None);
     self->private_obj = Py_None;
     self->in_weakreflist = NULL;
@@ -1396,7 +1396,7 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
     int       retval = DB_DONOTINDEX;
     DBObject* secondaryDB = (DBObject*)db->app_private;
     PyObject* callback = secondaryDB->associateCallback;
-    int       type = secondaryDB->primaryDBType;
+    DBTYPE    type = secondaryDB->primaryDBType;
     PyObject* args;
     PyObject* result = NULL;
 
@@ -1555,7 +1555,7 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
     if (err) {
         Py_XDECREF(secondaryDB->associateCallback);
         secondaryDB->associateCallback = NULL;
-        secondaryDB->primaryDBType = 0;
+        secondaryDB->primaryDBType = DB_UNKNOWN;
     }
 
     RETURN_IF_ERR();
