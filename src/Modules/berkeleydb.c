@@ -3875,7 +3875,8 @@ _DB_make_list(DBObject* self, DB_TXN* txn, int type)
                 break;
             case DB_RECNO:
             case DB_QUEUE:
-                item = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+                item = BuildValue_IS(*((db_recno_t*)key.data),
+                                     data.data, data.size);
                 break;
             }
             break;
@@ -4362,7 +4363,8 @@ DBC_get(DBCursorObject* self, PyObject* args, PyObject *kwargs)
             break;
         case DB_RECNO:
         case DB_QUEUE:
-            retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            retval = BuildValue_IS(*((db_recno_t*)key.data),
+                                   data.data, data.size);
             break;
         default:
             retval = NULL;
@@ -4594,7 +4596,8 @@ DBC_set(DBCursorObject* self, PyObject* args, PyObject *kwargs)
             break;
         case DB_RECNO:
         case DB_QUEUE:
-            retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            retval = BuildValue_IS(*((db_recno_t*)key.data),
+                                   data.data, data.size);
             break;
         default:
             retval = NULL;
@@ -4655,7 +4658,8 @@ DBC_set_range(DBCursorObject* self, PyObject* args, PyObject* kwargs)
             break;
         case DB_RECNO:
         case DB_QUEUE:
-            retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            retval = BuildValue_IS(*((db_recno_t*)key.data),
+                                   data.data, data.size);
             break;
         default:
             retval = NULL;
@@ -4706,7 +4710,8 @@ _DBC_get_set_both(DBCursorObject* self, PyObject* keyobj, PyObject* dataobj,
             break;
         case DB_RECNO:
         case DB_QUEUE:
-            retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            retval = BuildValue_IS(*((db_recno_t*)key.data),
+                                   data.data, data.size);
             break;
         default:
             retval = NULL;
