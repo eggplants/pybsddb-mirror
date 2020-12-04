@@ -305,20 +305,6 @@ static PyTypeObject *DBSite_Type = NULL;
 static int makeDBError(int err);
 
 
-/* Return the access method type of the DBObject */
-static int _DB_get_type(DBObject* self)
-{
-    DBTYPE type;
-    int err;
-
-    err = self->db->get_type(self->db, &type);
-    if (makeDBError(err)) {
-        return -1;
-    }
-    return type;
-}
-
-
 /* Create a DBT structure (containing key and data values) from Python
    bytes.  Returns 1 on success, 0 on an error. */
 static int make_dbt(PyObject* obj, DBT* dbt)
@@ -347,14 +333,13 @@ static int
 make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
 {
     db_recno_t recno;
-    int type;
+    DBTYPE dbtype = self->dbtype;
 
     CLEAR_DBT(*key);
     if (keyobj == Py_None) {
-        type = _DB_get_type(self);
-        if (type == -1)
+        if (dbtype == DB_UNKNOWN)
             return 0;
-        if (type == DB_RECNO || type == DB_QUEUE) {
+        if (dbtype == DB_RECNO || dbtype == DB_QUEUE) {
             PyErr_SetString(
                 PyExc_TypeError,
                 "None keys not allowed for Recno and Queue DB's");
@@ -364,11 +349,9 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
     }
 
     else if (PyBytes_Check(keyobj)) {
-        /* verify access method type */
-        type = _DB_get_type(self);
-        if (type == -1)
+        if (dbtype == DB_UNKNOWN)
             return 0;
-        if (type == DB_RECNO || type == DB_QUEUE) {
+        if (dbtype == DB_RECNO || dbtype == DB_QUEUE) {
             PyErr_SetString(
                 PyExc_TypeError,
                 "Bytes keys not allowed for Recno and Queue DB's");
@@ -394,16 +377,14 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
     }
 
     else if (PyLong_Check(keyobj)) {
-        /* verify access method type */
-        type = _DB_get_type(self);
-        if (type == -1)
+        if (dbtype == DB_UNKNOWN)
             return 0;
-        if (type == DB_BTREE && pflags != NULL) {
+        if (dbtype == DB_BTREE && pflags != NULL) {
             /* if BTREE then an Integer key is allowed with the
              * DB_SET_RECNO flag */
             *pflags |= DB_SET_RECNO;
         }
-        else if (type != DB_RECNO && type != DB_QUEUE) {
+        else if (dbtype != DB_RECNO && dbtype != DB_QUEUE) {
             PyErr_SetString(
                 PyExc_TypeError,
                 "Integer keys only allowed for Recno and Queue DB's");
@@ -749,19 +730,17 @@ static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
     else {  /* otherwise, success! */
 
         /* if Recno or Queue, return the key as an Int */
-        switch (_DB_get_type(self->mydb)) {
-        case -1:
-            retval = NULL;
-            break;
-
+        switch (self->mydb->dbtype) {
         case DB_RECNO:
         case DB_QUEUE:
             retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
             break;
         case DB_HASH:
         case DB_BTREE:
-        default:
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
+            break;
+        default:
+            retval = NULL;
             break;
         }
     }
@@ -839,6 +818,7 @@ newDBObject(DBEnvObject* arg, int flags)
     if (self == NULL)
         return NULL;
 
+    self->dbtype = DB_UNKNOWN;
     self->flags = 0;
     self->setflags = 0;
     self->myenvobj = NULL;
@@ -1542,7 +1522,7 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
     Py_XDECREF(secondaryDB->associateCallback);
     Py_XINCREF(callback);
     secondaryDB->associateCallback = callback;
-    secondaryDB->primaryDBType = _DB_get_type(self);
+    secondaryDB->primaryDBType = self->dbtype;
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->associate(self->db,
@@ -1627,7 +1607,8 @@ DB_close(DBObject* self, PyObject* args)
 static PyObject*
 _DB_consume(DBObject* self, PyObject* args, PyObject* kwargs, int consume_flag)
 {
-    int err, flags=0, type;
+    int err, flags=0;
+    DBTYPE dbtype;
     PyObject* txnobj = NULL;
     PyObject* retval = NULL;
     DBT key, data;
@@ -1639,10 +1620,10 @@ _DB_consume(DBObject* self, PyObject* args, PyObject* kwargs, int consume_flag)
         return NULL;
 
     CHECK_DB_NOT_CLOSED(self);
-    type = _DB_get_type(self);
-    if (type == -1)
+    dbtype = self->dbtype;
+    if (dbtype == DB_UNKNOWN)
         return NULL;
-    if (type != DB_QUEUE) {
+    if (dbtype != DB_QUEUE) {
         PyErr_SetString(PyExc_TypeError,
                         "Consume methods only allowed for Queue DB's");
         return NULL;
@@ -2029,8 +2010,8 @@ DB_pget(DBObject* self, PyObject* args, PyObject* kwargs)
         if (flags & DB_SET_RECNO) /* return key , pkey and data */
         {
             PyObject *keyObj;
-            int type = _DB_get_type(self);
-            if (type == DB_RECNO || type == DB_QUEUE)
+            DBTYPE dbtype = self->dbtype;
+            if (dbtype == DB_RECNO || dbtype == DB_QUEUE)
                 keyObj = PyLong_FromLong(*(int *)key.data);
             else
                 keyObj = Build_PyString(key.data, key.size);
@@ -2177,14 +2158,9 @@ DB_get_byteswapped(DBObject* self)
 static PyObject*
 DB_get_type(DBObject* self)
 {
-    int type;
-
     CHECK_DB_NOT_CLOSED(self);
 
-    type = _DB_get_type(self);
-    if (type == -1)
-        return NULL;
-    return PyLong_FromLong(type);
+    return PyLong_FromLong(self->dbtype);
 }
 
 
@@ -2354,6 +2330,12 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
     self->db->get_flags(self->db, &self->setflags);
 
     self->flags = flags;
+
+    err = self->db->get_type(self->db, &(self->dbtype));
+    if(makeDBError(err)) {
+        DB_close_internal(self, 0, 0);
+        return NULL;
+    }
 
     Py_RETURN_NONE;
 }
@@ -3307,7 +3289,8 @@ DB_get_re_source(DBObject* self)
 static PyObject*
 DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
 {
-    int err, flags = 0, type;
+    int err, flags = 0;
+    DBTYPE dbtype;
     void* sp;
     PyObject* d;
     PyObject* txnobj = NULL;
@@ -3327,8 +3310,8 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
     RETURN_IF_ERR();
 
     /* Turn the stat structure into a dictionary */
-    type = _DB_get_type(self);
-    if ((type == -1) || ((d = PyDict_New()) == NULL)) {
+    dbtype = self->dbtype;
+    if ((dbtype == DB_UNKNOWN) || ((d = PyDict_New()) == NULL)) {
         free(sp);
         return NULL;
     }
@@ -3337,7 +3320,7 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
 #define MAKE_BT_ENTRY(name)    _addIntToDict(d, #name, ((DB_BTREE_STAT*)sp)->bt_##name)
 #define MAKE_QUEUE_ENTRY(name) _addIntToDict(d, #name, ((DB_QUEUE_STAT*)sp)->qs_##name)
 
-    switch (type) {
+    switch (dbtype) {
     case DB_HASH:
         MAKE_HASH_ENTRY(magic);
         MAKE_HASH_ENTRY(version);
@@ -3813,8 +3796,8 @@ _DB_make_list(DBObject* self, DB_TXN* txn, int type)
     CLEAR_DBT(key);
     CLEAR_DBT(data);
 
-    dbtype = _DB_get_type(self);
-    if (dbtype == -1)
+    dbtype = self->dbtype;
+    if (dbtype == DB_UNKNOWN)
         return NULL;
 
     list = PyList_New(0);
@@ -4348,18 +4331,17 @@ DBC_get(DBCursorObject* self, PyObject* args, PyObject *kwargs)
         retval = NULL;
     }
     else {
-        switch (_DB_get_type(self->mydb)) {
-        case -1:
-            retval = NULL;
-            break;
+        switch (self->mydb->dbtype) {
         case DB_BTREE:
         case DB_HASH:
-        default:
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
             break;
         case DB_RECNO:
         case DB_QUEUE:
             retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            break;
+        default:
+            retval = NULL;
             break;
         }
     }
@@ -4439,8 +4421,8 @@ DBC_pget(DBCursorObject* self, PyObject* args, PyObject *kwargs)
         if (key.data && key.size) /* return key, pkey and data */
         {
             PyObject *keyObj;
-            int type = _DB_get_type(self->mydb);
-            if (type == DB_RECNO || type == DB_QUEUE)
+            DBTYPE dbtype = self->mydb->dbtype;
+            if (dbtype == DB_RECNO || dbtype == DB_QUEUE)
                 keyObj = PyLong_FromLong(*(int *)key.data);
             else
                 keyObj = Build_PyString(key.data, key.size);
@@ -4581,18 +4563,17 @@ DBC_set(DBCursorObject* self, PyObject* args, PyObject *kwargs)
         retval = NULL;
     }
     else {
-        switch (_DB_get_type(self->mydb)) {
-        case -1:
-            retval = NULL;
-            break;
+        switch (self->mydb->dbtype) {
         case DB_BTREE:
         case DB_HASH:
-        default:
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
             break;
         case DB_RECNO:
         case DB_QUEUE:
             retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            break;
+        default:
+            retval = NULL;
             break;
         }
         FREE_DBT(key);  /* 'make_key_dbt' could do a 'malloc' */
@@ -4643,18 +4624,17 @@ DBC_set_range(DBCursorObject* self, PyObject* args, PyObject* kwargs)
         retval = NULL;
     }
     else {
-        switch (_DB_get_type(self->mydb)) {
-        case -1:
-            retval = NULL;
-            break;
+        switch (self->mydb->dbtype) {
         case DB_BTREE:
         case DB_HASH:
-        default:
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
             break;
         case DB_RECNO:
         case DB_QUEUE:
             retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            break;
+        default:
+            retval = NULL;
             break;
         }
         FREE_DBT(key);  /* 'make_key_dbt' could do a 'malloc' */
@@ -4695,18 +4675,17 @@ _DBC_get_set_both(DBCursorObject* self, PyObject* keyobj, PyObject* dataobj,
         retval = NULL;
     }
     else {
-        switch (_DB_get_type(self->mydb)) {
-        case -1:
-            retval = NULL;
-            break;
+        switch (self->mydb->dbtype) {
         case DB_BTREE:
         case DB_HASH:
-        default:
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
             break;
         case DB_RECNO:
         case DB_QUEUE:
             retval = BuildValue_IS(*((db_recno_t*)key.data), data.data, data.size);
+            break;
+        default:
+            retval = NULL;
             break;
         }
     }

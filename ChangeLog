@@ -22,6 +22,9 @@ PENDING: Documentation, website, mailing list update.
 
     - Export exception "DBHeapFull" (from error "DB_HEAP_FULL").
 
+  * WARNING - BREAKING CHANGE: Add "dbtype" member in "DBObject" object in the
+    C API. Increase C API version. This change has ripple effect in the code.
+
   * WARNING - BREAKING CHANGE: "primaryDBType" member in "DBObject" object in
     the C API is now type "DBTYPE". Increase C API version. This change has
     ripple effect in the code.

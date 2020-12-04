@@ -164,6 +164,7 @@ typedef struct DBObject {
     PyObject*       btCompareCallback;
     PyObject*       dupCompareCallback;
     DBTYPE          primaryDBType;
+    DBTYPE          dbtype;
     PyObject        *private_obj;
     PyObject        *in_weakreflist; /* List of weak references */
 } DBObject;
