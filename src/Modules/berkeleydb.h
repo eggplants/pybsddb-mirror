@@ -244,19 +244,6 @@ typedef struct DBSequenceObject {
 /* To access the structure from an external module, use code like the
    following (error checking missed out for clarity):
 
-     // If you are using Python before 2.7:
-     BERKELEYDB_api* berkeleydb_api;
-     PyObject*  mod;
-     PyObject*  cobj;
-
-     mod  = PyImport_ImportModule("berkeleydb._berkeleydb");
-     cobj = PyObject_GetAttrString(mod, "api");
-     berkeleydb_api  = (BERKELEYDB_api*)PyCObject_AsVoidPtr(cobj);
-     Py_DECREF(cobj);
-     Py_DECREF(mod);
-
-
-     // If you are using Python 2.7 or up: (except Python 3.0, unsupported)
      BERKELEYDB_api* berkeleydb_api;
 
      berkeleydb_api = (void **)PyCapsule_Import("berkeleydb._berkeleydb.api",
