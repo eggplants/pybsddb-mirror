@@ -133,6 +133,9 @@ static PyObject* DBLockDeadlockError;   /* DB_LOCK_DEADLOCK */
 static PyObject* DBLockNotGrantedError; /* DB_LOCK_NOTGRANTED */
 static PyObject* DBNotFoundError;       /* DB_NOTFOUND: also derives from KeyError */
 static PyObject* DBOldVersionError;     /* DB_OLD_VERSION */
+#if (DBVER >= 62)
+static PyObject* DBMetaChksumFail;      /* DB_META_CHKSUM_FAIL */
+#endif
 static PyObject* DBRunRecoveryError;    /* DB_RUNRECOVERY */
 static PyObject* DBVerifyBadError;      /* DB_VERIFY_BAD */
 static PyObject* DBNoServerError;       /* DB_NOSERVER */
@@ -592,6 +595,9 @@ static int makeDBError(int err)
 #if (DBVER < 53)
         case DB_NOSERVER_HOME:      errObj = DBNoServerHomeError;   break;
         case DB_NOSERVER_ID:        errObj = DBNoServerIDError;     break;
+#endif
+#if (DBVER >= 62)
+        case DB_META_CHKSUM_FAIL;   errObj = DBMetaChksumFail;      break;
 #endif
         case DB_PAGE_NOTFOUND:      errObj = DBPageNotFoundError;   break;
         case DB_SECONDARY_BAD:      errObj = DBSecondaryBadError;   break;
@@ -9618,6 +9624,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     ADD_INT(d, DB_NOSERVER_HOME);
     ADD_INT(d, DB_NOSERVER_ID);
 #endif
+#if (DBVER >= 62)
+    ADD_INT(d, DB_META_CHKSUM_FAIL);
+#endif
     ADD_INT(d, DB_NOTFOUND);
     ADD_INT(d, DB_OLD_VERSION);
     ADD_INT(d, DB_RUNRECOVERY);
@@ -9895,6 +9904,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
 #if (DBVER < 53)
     MAKE_EX(DBNoServerHomeError);
     MAKE_EX(DBNoServerIDError);
+#endif
+#if (DBVER >= 62)
+    MAKE_EX(DBMetaChksumFail);
 #endif
     MAKE_EX(DBPageNotFoundError);
     MAKE_EX(DBSecondaryBadError);

@@ -10,6 +10,10 @@ TODO: Oracle has examples and multiple documentation. Link to them.
 PENDING: Documentation, website, mailing list update.
 
 
+18.1.2 - :
+  * Export exception "DBMetaChksumFail" (from error "DB_META_CHKSUM_FAIL") if
+    running Oracle Berkeley DB version 6.2 or newer.
+
 18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"
