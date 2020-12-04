@@ -597,7 +597,7 @@ static int makeDBError(int err)
         case DB_NOSERVER_ID:        errObj = DBNoServerIDError;     break;
 #endif
 #if (DBVER >= 62)
-        case DB_META_CHKSUM_FAIL;   errObj = DBMetaChksumFail;      break;
+        case DB_META_CHKSUM_FAIL:   errObj = DBMetaChksumFail;      break;
 #endif
         case DB_PAGE_NOTFOUND:      errObj = DBPageNotFoundError;   break;
         case DB_SECONDARY_BAD:      errObj = DBSecondaryBadError;   break;
