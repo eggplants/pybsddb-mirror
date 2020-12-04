@@ -136,6 +136,9 @@ static PyObject* DBOldVersionError;     /* DB_OLD_VERSION */
 #if (DBVER >= 62)
 static PyObject* DBMetaChksumFail;      /* DB_META_CHKSUM_FAIL */
 #endif
+#if (DBVER >= 53)
+static PyObject* DBHeapFull;            /* DB_HEAP_FULL */
+#endif
 static PyObject* DBRunRecoveryError;    /* DB_RUNRECOVERY */
 static PyObject* DBVerifyBadError;      /* DB_VERIFY_BAD */
 static PyObject* DBNoServerError;       /* DB_NOSERVER */
@@ -598,6 +601,9 @@ static int makeDBError(int err)
 #endif
 #if (DBVER >= 62)
         case DB_META_CHKSUM_FAIL:   errObj = DBMetaChksumFail;      break;
+#endif
+#if (DBVER >= 53)
+        case DB_HEAP_FULL:          errObj = DBHeapFull;            break;
 #endif
         case DB_PAGE_NOTFOUND:      errObj = DBPageNotFoundError;   break;
         case DB_SECONDARY_BAD:      errObj = DBSecondaryBadError;   break;
@@ -9627,6 +9633,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
 #if (DBVER >= 62)
     ADD_INT(d, DB_META_CHKSUM_FAIL);
 #endif
+#if (DBVER >= 53)
+    ADD_INT(d, DB_HEAP_FULL);
+#endif
     ADD_INT(d, DB_NOTFOUND);
     ADD_INT(d, DB_OLD_VERSION);
     ADD_INT(d, DB_RUNRECOVERY);
@@ -9907,6 +9916,9 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
 #endif
 #if (DBVER >= 62)
     MAKE_EX(DBMetaChksumFail);
+#endif
+#if (DBVER >= 53)
+    MAKE_EX(DBHeapFull);
 #endif
     MAKE_EX(DBPageNotFoundError);
     MAKE_EX(DBSecondaryBadError);
