@@ -285,6 +285,34 @@ DB Methods
    Returns a tuple with the current size and composition of the cache.
    :OracleAPIC:`More info... <dbget_cachesize.html>`
 
+.. function:: set_heapsize(gbytes, bytes)
+
+   Sets the maximum on-disk database file size used by a database
+   configured to use the Heap access method.
+   :OracleAPIC:`More info... <dbset_heapsize.html>`
+
+.. function:: get_heapsize()
+
+   Used when the underlying database is configured to use the Heap
+   access method. This method returns a tuple with the maximum
+   size of the database's heap file.
+   :OracleAPIC:`More info... <dbget_heapsize.html>`
+
+.. function:: set_heap_regionsize(npages)
+
+   Sets the number of pages in a region of a database configured
+   to use the Heap access method. If this method is never called,
+   the default region size for the database's page size will be
+   used.
+   :OracleAPIC:`More info... <dbset_heap_regionsize.html>`
+
+.. function:: get_heap_regionsize()
+
+   Used when the underlying database is configured to use the Heap
+   access method. This method returns the number of pages in a
+   region.
+   :OracleAPIC:`More info... <dbget_heap_regionsize.html>`
+
 .. function:: set_dup_compare(compareFunc)
 
    Set the duplicate data item comparison function. This can only be

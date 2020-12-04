@@ -14,6 +14,14 @@ PENDING: Documentation, website, mailing list update.
   * Export exception "DBMetaChksumFail" (from error "DB_META_CHKSUM_FAIL") if
     running Oracle Berkeley DB version 6.2 or newer.
 
+  * Support HEAP access method if you are linking against Oracle Berkeley DB
+    5.3 or newer.
+
+    - Implement, test and document "DB.get_heapsize()", "DB.set_heapsize()",
+      "DB.get_heap_regionsize()" and "DB.set_heap_regionsize()".
+
+    - Export exception "DBHeapFull" (from error "DB_HEAP_FULL").
+
 18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"

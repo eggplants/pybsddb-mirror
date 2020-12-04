@@ -173,6 +173,7 @@ def suite(module_prefix='', timing_check=None):
         'test_concurrent_data_store',
         'test_fileid',
         'test_get_none',
+        'test_heap',
         'test_join',
         'test_lock',
         'test_misc',
