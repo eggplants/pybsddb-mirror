@@ -460,8 +460,7 @@ Transaction objects, and each of these is exposed as a Python type in the
 berkeleydb.db module. The database objects can use various access methods:
 btree, hash, recno, and queue.  Complete support of Oracle Berkeley DB
 distributed transactions. Complete support for Oracle Berkeley DB Replication
-Manager. Complete support for Oracle Berkeley DB Base Replication. Support for
-RPC.
+Manager. Complete support for Oracle Berkeley DB Base Replication.
 
 Please see the documents in the docs directory of the source distribution or at
 the website for more details on the types and methods provided. The goal is to
