@@ -8781,7 +8781,6 @@ static PyMethodDef DB_methods[] = {
         METH_VARARGS|METH_KEYWORDS},
     {"sync",            (PyCFunction)DB_sync,           METH_VARARGS},
     {"truncate",        (PyCFunction)DB_truncate,       METH_VARARGS|METH_KEYWORDS},
-    {"type",            (PyCFunction)DB_get_type,       METH_NOARGS},
     {"upgrade",         (PyCFunction)DB_upgrade,        METH_VARARGS},
     {"values",          (PyCFunction)DB_values,         METH_VARARGS},
     {"verify",          (PyCFunction)DB_verify,         METH_VARARGS|METH_KEYWORDS},

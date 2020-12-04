@@ -194,7 +194,11 @@ DB Methods
 
 .. function:: get_type()
 
-   Return the database's access method type.
+   Return the database's access method type. It can be called
+   anytime and it doesn't raise an exception if called before the
+   database is open. If the database type is not known,
+   "DB_UNKNOWN" is returned. This is a deviation from the Oracle
+   Berkeley DB C API.
    :OracleAPIC:`More info... <dbget_type.html>`
 
 .. function:: join(cursorList, flags=0)

@@ -94,7 +94,7 @@ class dbobjTestCase(unittest.TestCase):
 
     def test03_dbobj_type_before_open(self):
         # Ensure this doesn't cause a segfault.
-        self.assertRaises(db.DBInvalidArgError, db.DB().type)
+        self.assertEqual(db.DB_UNKNOWN, db.DB().get_type())
 
 #----------------------------------------------------------------------
 

@@ -29,6 +29,14 @@ PENDING: Documentation, website, mailing list update.
     the C API is now type "DBTYPE". Increase C API version. This change has
     ripple effect in the code.
 
+  * Now "DB.get_type()" can be called anytime and it doesn't raise an exception
+    if called before the database is open. If the database type is not known,
+    "DB_UNKNOWN" is returned. This is a deviation from the Oracle Berkeley DB C
+    API.
+
+  * WARNING - BREAKING CHANGE: "DB.type()" method is dropped. It was never
+    documented. Use "DB.get_type()".
+
 18.1.1 - 2020-12-01:
   * If you try to install this library in an unsupported Python
     environment, instruct the user about how to install legacy "bsddb3"
