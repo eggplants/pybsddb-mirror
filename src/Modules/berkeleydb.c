@@ -745,6 +745,9 @@ static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
             break;
         case DB_HASH:
         case DB_BTREE:
+#if (DBVER >= 53)
+        case DB_HEAP:
+#endif
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
             break;
         default:

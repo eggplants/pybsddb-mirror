@@ -22,6 +22,8 @@ PENDING: Documentation, website, mailing list update.
 
     - "DB.append()" was extended to support Heap access method.
 
+    - "DB.cursor()" was extended to support Heap access method.
+
     - Implement, test and document "DB.get_heapsize()", "DB.set_heapsize()",
       "DB.get_heap_regionsize()" and "DB.set_heap_regionsize()".
 
