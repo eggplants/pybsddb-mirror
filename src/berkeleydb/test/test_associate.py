@@ -306,7 +306,7 @@ class AssociateTestCase(unittest.TestCase):
             count = count + 1
             if verbose:
                 print(rec)
-            rec = getattr(self.cur, "next")()
+            rec = self.cur.next()
         self.assertEqual(count, len(musicdata))  # all items accounted for
 
 
@@ -338,7 +338,7 @@ class AssociateTestCase(unittest.TestCase):
             count = count + 1
             if verbose:
                 print(rec)
-            rec = getattr(self.cur, "next")()
+            rec = self.cur.next()
         # all items accounted for EXCEPT for 1 with "Blues" genre
         self.assertEqual(count, len(musicdata)-1)
 
