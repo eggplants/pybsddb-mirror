@@ -109,9 +109,9 @@
 
 /* and these are for calling C --> Python */
 #define MYDB_BEGIN_BLOCK_THREADS \
-		PyGILState_STATE __savestate = PyGILState_Ensure();
+                PyGILState_STATE __savestate = PyGILState_Ensure();
 #define MYDB_END_BLOCK_THREADS \
-		PyGILState_Release(__savestate);
+                PyGILState_Release(__savestate);
 
 #else
 /* Compiled without threads - avoid all this cruft */
@@ -449,7 +449,7 @@ unsigned int our_strlcpy(char* dest, const char* src, unsigned int n)
 
     srclen = strlen(src);
     if (n <= 0)
-	return srclen;
+        return srclen;
     copylen = (srclen > n-1) ? n-1 : srclen;
     /* populate dest[0] thru dest[copylen-1] */
     memcpy(dest, src, copylen);
@@ -463,7 +463,7 @@ unsigned int our_strlcpy(char* dest, const char* src, unsigned int n)
  * library. */
 static char _db_errmsg[1024];
 static void _db_errorCallback(const DB_ENV *db_env,
-	const char* prefix, const char* msg)
+                              const char* prefix, const char* msg)
 {
     our_strlcpy(_db_errmsg, msg, sizeof(_db_errmsg));
 }
@@ -700,7 +700,7 @@ static int _DB_put(DBObject* self, DB_TXN *txn, DBT *key, DBT *data, int flags)
 
 /* Get a key/data pair from a cursor */
 static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
-			       PyObject *args, PyObject *kwargs, char *format)
+                               PyObject *args, PyObject *kwargs, char *format)
 {
     int err;
     PyObject* retval = NULL;
@@ -711,7 +711,7 @@ static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
     static char* kwnames[] = { "flags", "dlen", "doff", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, format, kwnames,
-				     &flags, &dlen, &doff))
+                                     &flags, &dlen, &doff))
       return NULL;
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -727,7 +727,7 @@ static PyObject* _DBCursor_get(DBCursorObject* self, int extra_flags,
     MYDB_END_ALLOW_THREADS;
 
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.getReturnsNone) {
+            && self->mydb->moduleFlags.getReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -783,13 +783,15 @@ static void _addUnsignedIntToDict(PyObject* dict, char *name, unsigned int value
 static void _addTimeTToDict(PyObject* dict, char *name, time_t value)
 {
     PyObject* v;
-	/* if the value fits in regular int, use that. */
+    /* if the value fits in regular int, use that. */
 #ifdef PY_LONG_LONG
-	if (sizeof(time_t) > sizeof(long))
-		v = PyLong_FromLongLong((PY_LONG_LONG) value);
-	else
+    if (sizeof(time_t) > sizeof(long)) {
+        v = PyLong_FromLongLong((PY_LONG_LONG) value);
+    } else
 #endif
-		v = PyLong_FromLong((long) value);
+    {
+        v = PyLong_FromLong((long) value);
+    }
     if (!v || PyDict_SetItemString(dict, name, v))
         PyErr_Clear();
 
@@ -938,10 +940,10 @@ newDBCursorObject(DBC* dbc, DBTxnObject *txn, DBObject* db)
 
     INSERT_IN_DOUBLE_LINKED_LIST(self->mydb->children_cursors,self);
     if (txn && ((PyObject *)txn!=Py_None)) {
-	    INSERT_IN_DOUBLE_LINKED_LIST_TXN(txn->children_cursors,self);
-	    self->txn=txn;
+        INSERT_IN_DOUBLE_LINKED_LIST_TXN(txn->children_cursors,self);
+        self->txn=txn;
     } else {
-	    self->txn=NULL;
+        self->txn=NULL;
     }
 
     self->in_weakreflist = NULL;
@@ -1562,7 +1564,7 @@ DB_associate(DBObject* self, PyObject* args, PyObject* kwargs)
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db->associate(self->db,
-	                      txn,
+                              txn,
                               secondaryDB->db,
                               _db_associateCallback,
                               flags);
@@ -1680,7 +1682,7 @@ _DB_consume(DBObject* self, PyObject* args, PyObject* kwargs, int consume_flag)
     MYDB_END_ALLOW_THREADS;
 
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->moduleFlags.getReturnsNone) {
+            && self->moduleFlags.getReturnsNone) {
         err = 0;
         Py_INCREF(Py_None);
         retval = Py_None;
@@ -1958,7 +1960,7 @@ DB_get(DBObject* self, PyObject* args, PyObject* kwargs)
         retval = dfltobj;
     }
     else if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	     && self->moduleFlags.getReturnsNone) {
+             && self->moduleFlags.getReturnsNone) {
         err = 0;
         Py_INCREF(Py_None);
         retval = Py_None;
@@ -2027,7 +2029,7 @@ DB_pget(DBObject* self, PyObject* args, PyObject* kwargs)
         retval = dfltobj;
     }
     else if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	     && self->moduleFlags.getReturnsNone) {
+            && self->moduleFlags.getReturnsNone) {
         err = 0;
         Py_INCREF(Py_None);
         retval = Py_None;
@@ -2154,7 +2156,7 @@ DB_get_both(DBObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->moduleFlags.getReturnsNone) {
+            && self->moduleFlags.getReturnsNone) {
         err = 0;
         Py_INCREF(Py_None);
         retval = Py_None;
@@ -2309,14 +2311,14 @@ DB_open(DBObject* self, PyObject* args, PyObject* kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|OziiiO:open", kwnames,
                      &filenameObj, &dbname, &dbtype, &flags, &mode, &txnobj))
     {
-	    PyErr_Clear();
-	    dbtype = DB_UNKNOWN; flags = 0; mode = 0660;
-	    filenameObj = NULL; dbname = NULL;
-	    if (!PyArg_ParseTupleAndKeywords(args, kwargs,"|OiiiO:open",
+        PyErr_Clear();
+        dbtype = DB_UNKNOWN; flags = 0; mode = 0660;
+        filenameObj = NULL; dbname = NULL;
+        if (!PyArg_ParseTupleAndKeywords(args, kwargs,"|OiiiO:open",
                                              kwnames_basic,
-		                        			 &filenameObj, &dbtype, &flags,
+                                             &filenameObj, &dbtype, &flags,
                                              &mode, &txnobj))
-	        return NULL;
+            return NULL;
     }
 
     if ((filenameObj != NULL) && (filenameObj != Py_None))
@@ -2644,20 +2646,20 @@ DB_get_bt_minkey(DBObject* self)
 
 static int
 _default_cmp(const DBT *leftKey,
-	     const DBT *rightKey)
+             const DBT *rightKey)
 {
   int res;
   int lsize = leftKey->size, rsize = rightKey->size;
 
   res = memcmp(leftKey->data, rightKey->data,
-	       lsize < rsize ? lsize : rsize);
+               lsize < rsize ? lsize : rsize);
 
   if (res == 0) {
       if (lsize < rsize) {
-	  res = -1;
+        res = -1;
       }
       else if (lsize > rsize) {
-	  res = 1;
+        res = 1;
       }
   }
   return res;
@@ -2729,8 +2731,8 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
     CHECK_DB_NOT_CLOSED(self);
 
     if (!PyCallable_Check(comparator)) {
-	makeTypeError("Callable", comparator);
-	return NULL;
+        makeTypeError("Callable", comparator);
+        return NULL;
     }
 
     /*
@@ -2845,8 +2847,8 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
     CHECK_DB_NOT_CLOSED(self);
 
     if (!PyCallable_Check(comparator)) {
-	makeTypeError("Callable", comparator);
-	return NULL;
+        makeTypeError("Callable", comparator);
+        return NULL;
     }
 
     /*
@@ -3639,8 +3641,8 @@ DB_set_encrypt(DBObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames[] = { "passwd", "flags", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|i:set_encrypt", kwnames,
-		&passwd, &flags)) {
-	return NULL;
+                                     &passwd, &flags)) {
+        return NULL;
     }
 
     MYDB_BEGIN_ALLOW_THREADS;
@@ -4365,12 +4367,12 @@ DBC_get(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     CLEAR_DBT(key);
     CLEAR_DBT(data);
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|ii:get", &kwnames[2],
-				     &flags, &dlen, &doff))
+                                     &flags, &dlen, &doff))
     {
         PyErr_Clear();
         if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Oi|ii:get",
                                          &kwnames[1],
-					 &keyobj, &flags, &dlen, &doff))
+                                         &keyobj, &flags, &dlen, &doff))
         {
             PyErr_Clear();
             if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OOi|ii:get",
@@ -4398,7 +4400,7 @@ DBC_get(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     MYDB_END_ALLOW_THREADS;
 
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.getReturnsNone) {
+            && self->mydb->moduleFlags.getReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -4441,12 +4443,12 @@ DBC_pget(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     CLEAR_DBT(key);
     CLEAR_DBT(data);
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|ii:pget", &kwnames[2],
-				     &flags, &dlen, &doff))
+                                     &flags, &dlen, &doff))
     {
         PyErr_Clear();
         if (!PyArg_ParseTupleAndKeywords(args, kwargs, "Oi|ii:pget",
                                          kwnames_keyOnly,
-					 &keyobj, &flags, &dlen, &doff))
+                                         &keyobj, &flags, &dlen, &doff))
         {
             PyErr_Clear();
             if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OOi|ii:pget",
@@ -4476,7 +4478,7 @@ DBC_pget(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     MYDB_END_ALLOW_THREADS;
 
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.getReturnsNone) {
+            && self->mydb->moduleFlags.getReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -4579,7 +4581,7 @@ DBC_put(DBCursorObject* self, PyObject* args, PyObject* kwargs)
     int doff = -1;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "OO|iii:put", kwnames,
-				     &keyobj, &dataobj, &flags, &dlen, &doff))
+                                     &keyobj, &dataobj, &flags, &dlen, &doff))
         return NULL;
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -4613,7 +4615,7 @@ DBC_set(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     int doff = -1;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|iii:set", kwnames,
-				     &keyobj, &flags, &dlen, &doff))
+                                     &keyobj, &flags, &dlen, &doff))
         return NULL;
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -4631,7 +4633,7 @@ DBC_set(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     err = _DBC_get(self->dbc, &key, &data, flags|DB_SET);
     MYDB_END_ALLOW_THREADS;
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.cursorSetReturnsNone) {
+            && self->mydb->moduleFlags.cursorSetReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -4676,7 +4678,7 @@ DBC_set_range(DBCursorObject* self, PyObject* args, PyObject* kwargs)
     int doff = -1;
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O|iii:set_range", kwnames,
-				     &keyobj, &flags, &dlen, &doff))
+                                     &keyobj, &flags, &dlen, &doff))
         return NULL;
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -4693,7 +4695,7 @@ DBC_set_range(DBCursorObject* self, PyObject* args, PyObject* kwargs)
     err = _DBC_get(self->dbc, &key, &data, flags|DB_SET_RANGE);
     MYDB_END_ALLOW_THREADS;
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.cursorSetReturnsNone) {
+            && self->mydb->moduleFlags.cursorSetReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -4847,7 +4849,7 @@ DBC_set_recno(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     static char* kwnames[] = { "recno","flags", "dlen", "doff", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i|iii:set_recno", kwnames,
-				     &irecno, &flags, &dlen, &doff))
+                                     &irecno, &flags, &dlen, &doff))
       return NULL;
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -4876,7 +4878,7 @@ DBC_set_recno(DBCursorObject* self, PyObject* args, PyObject *kwargs)
     err = _DBC_get(self->dbc, &key, &data, flags|DB_SET_RECNO);
     MYDB_END_ALLOW_THREADS;
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.cursorSetReturnsNone) {
+            && self->mydb->moduleFlags.cursorSetReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -4944,7 +4946,7 @@ DBC_join_item(DBCursorObject* self, PyObject* args)
     err = _DBC_get(self->dbc, &key, &data, flags | DB_JOIN_ITEM);
     MYDB_END_ALLOW_THREADS;
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY)
-	    && self->mydb->moduleFlags.getReturnsNone) {
+            && self->mydb->moduleFlags.getReturnsNone) {
         Py_INCREF(Py_None);
         retval = Py_None;
     }
@@ -4966,7 +4968,7 @@ DBC_set_priority(DBCursorObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames[] = { "priority", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "i:set_priority", kwnames,
-				     &priority))
+                                     &priority))
         return NULL;
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -5316,8 +5318,9 @@ DBEnv_dbremove(DBEnvObject* self, PyObject* args, PyObject* kwargs)
                                      NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|zOi:dbremove", kwnames,
-		    PyUnicode_FSConverter, &fileObj, &database, &txnobj, &flags)) {
-	    return NULL;
+                                     PyUnicode_FSConverter,
+                                     &fileObj, &database, &txnobj, &flags)) {
+        return NULL;
     }
 
     file = PyBytes_AS_STRING(fileObj);
@@ -5349,9 +5352,11 @@ DBEnv_dbrename(DBEnvObject* self, PyObject* args, PyObject* kwargs)
                                      "flags", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&zO&|Oi:dbrename", kwnames,
-		PyUnicode_FSConverter, &fileObj, &database,
-        PyUnicode_FSConverter, &newnameObj, &txnobj, &flags)) {
-	return NULL;
+                                     PyUnicode_FSConverter,
+                                     &fileObj, &database,
+                                     PyUnicode_FSConverter,
+                                     &newnameObj, &txnobj, &flags)) {
+        return NULL;
     }
 
     file = PyBytes_AS_STRING(fileObj);
@@ -5380,8 +5385,8 @@ DBEnv_set_encrypt(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames[] = { "passwd", "flags", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "s|i:set_encrypt", kwnames,
-		&passwd, &flags)) {
-	return NULL;
+                                     &passwd, &flags)) {
+        return NULL;
     }
 
     MYDB_BEGIN_ALLOW_THREADS;
@@ -5440,8 +5445,8 @@ DBEnv_set_timeout(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames[] = { "timeout", "flags", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii:set_timeout", kwnames,
-		&timeout, &flags)) {
-	return NULL;
+                                     &timeout, &flags)) {
+        return NULL;
     }
 
     MYDB_BEGIN_ALLOW_THREADS;
@@ -6537,7 +6542,7 @@ DBEnv_fileid_reset(DBEnvObject* self, PyObject* args, PyObject* kwargs)
         return NULL;
     CHECK_ENV_NOT_CLOSED(self);
 
-	file = PyBytes_AS_STRING(fileObj);
+    file = PyBytes_AS_STRING(fileObj);
 
     MYDB_BEGIN_ALLOW_THREADS;
     err = self->db_env->fileid_reset(self->db_env, file, flags);
@@ -7333,8 +7338,8 @@ DBEnv_set_event_notify(DBEnvObject* self, PyObject* notifyFunc)
     CHECK_ENV_NOT_CLOSED(self);
 
     if (!PyCallable_Check(notifyFunc)) {
-	    makeTypeError("Callable", notifyFunc);
-	    return NULL;
+        makeTypeError("Callable", notifyFunc);
+        return NULL;
     }
 
     Py_XDECREF(self->event_notifyCallback);
@@ -7346,8 +7351,8 @@ DBEnv_set_event_notify(DBEnvObject* self, PyObject* notifyFunc)
     MYDB_END_ALLOW_THREADS;
 
     if (err) {
-	    Py_DECREF(notifyFunc);
-	    self->event_notifyCallback = NULL;
+        Py_DECREF(notifyFunc);
+        self->event_notifyCallback = NULL;
     }
 
     RETURN_IF_ERR();
@@ -7611,7 +7616,7 @@ DBEnv_rep_start(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "i|O:rep_start", kwnames, &flags, &cdata_py))
     {
-	    return NULL;
+        return NULL;
     }
     CHECK_ENV_NOT_CLOSED(self);
 
@@ -7897,7 +7902,7 @@ DBEnv_repmgr_start(DBEnvObject* self, PyObject* args, PyObject*
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "ii:repmgr_start", kwnames, &nthreads, &flags))
     {
-	    return NULL;
+        return NULL;
     }
     CHECK_ENV_NOT_CLOSED(self);
     MYDB_BEGIN_ALLOW_THREADS;
@@ -7921,7 +7926,7 @@ DBEnv_repmgr_set_local_site(DBEnvObject* self, PyObject* args, PyObject*
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "si|i:repmgr_set_local_site", kwnames, &host, &port, &flags))
     {
-	    return NULL;
+        return NULL;
     }
     CHECK_ENV_NOT_CLOSED(self);
     MYDB_BEGIN_ALLOW_THREADS;
@@ -7945,7 +7950,7 @@ DBEnv_repmgr_add_remote_site(DBEnvObject* self, PyObject* args, PyObject*
     if (!PyArg_ParseTupleAndKeywords(args, kwargs,
                 "si|i:repmgr_add_remote_site", kwnames, &host, &port, &flags))
     {
-	    return NULL;
+        return NULL;
     }
     CHECK_ENV_NOT_CLOSED(self);
     MYDB_BEGIN_ALLOW_THREADS;
@@ -7964,7 +7969,7 @@ DBEnv_repmgr_set_ack_policy(DBEnvObject* self, PyObject* args)
 
     if (!PyArg_ParseTuple(args, "i:repmgr_set_ack_policy", &ack_policy))
     {
-	    return NULL;
+        return NULL;
     }
     CHECK_ENV_NOT_CLOSED(self);
     MYDB_BEGIN_ALLOW_THREADS;
@@ -8320,8 +8325,8 @@ DBTxn_set_timeout(DBTxnObject* self, PyObject* args, PyObject* kwargs)
     static char* kwnames[] = { "timeout", "flags", NULL };
 
     if (!PyArg_ParseTupleAndKeywords(args, kwargs, "ii:set_timeout", kwnames,
-		&timeout, &flags)) {
-	return NULL;
+                                     &timeout, &flags)) {
+        return NULL;
     }
 
     MYDB_BEGIN_ALLOW_THREADS;
@@ -9567,7 +9572,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     /* Create the module and add the functions */
     m=PyModule_Create(&berkeleydbmodule);
     if (m == NULL) {
-    	return NULL;
+        return NULL;
     }
 
     /* Add some symbolic constants to the module */
