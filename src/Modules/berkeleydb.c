@@ -337,12 +337,19 @@ make_key_dbt(DBObject* self, PyObject* keyobj, DBT* key, int* pflags)
 
     CLEAR_DBT(*key);
     if (keyobj == Py_None) {
-        if (dbtype == DB_UNKNOWN)
-            return 0;
+#if (DBVER >= 53)
+        if (dbtype == DB_RECNO || dbtype == DB_QUEUE || dbtype == DB_HEAP) {
+#else
         if (dbtype == DB_RECNO || dbtype == DB_QUEUE) {
+#endif
             PyErr_SetString(
                 PyExc_TypeError,
-                "None keys not allowed for Recno and Queue DB's");
+                "None keys not allowed for Recno, Queue and Heap DB's");
+            return 0;
+        } else if ((dbtype != DB_BTREE) && (dbtype != DB_HASH)) {
+            PyErr_SetString(
+                PyExc_TypeError,
+                "Unknown database type");
             return 0;
         }
         /* no need to do anything, the structure has already been zeroed */
@@ -2402,9 +2409,16 @@ DB_put(DBObject* self, PyObject* args, PyObject* kwargs)
         return NULL;
     }
 
-    if (flags & DB_APPEND)
-        retval = PyLong_FromLong(*((db_recno_t*)key.data));
-    else {
+    if (flags & DB_APPEND) {
+#if (DBVER >= 53)
+        if (self->dbtype == DB_HEAP) {
+            retval = PyBytes_FromStringAndSize(key.data, key.size);
+        } else
+#endif
+        {
+            retval = PyLong_FromLong(*((db_recno_t*)key.data));
+        }
+    } else {
         retval = Py_None;
         Py_INCREF(retval);
     }

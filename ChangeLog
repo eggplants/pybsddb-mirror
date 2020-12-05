@@ -17,6 +17,9 @@ PENDING: Documentation, website, mailing list update.
   * Support Heap access method if you are linking against Oracle Berkeley DB
     5.3 or newer.
 
+    - "DB.put()" can add new records or overwrite old ones in Heap access
+      method.
+
     - "DB.append()" was extended to support Heap access method.
 
     - Implement, test and document "DB.get_heapsize()", "DB.set_heapsize()",

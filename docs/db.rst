@@ -227,10 +227,14 @@ DB Methods
 
 .. function:: put(key, data, txn=None, flags=0, dlen=-1, doff=-1)
 
-   Stores the key/data pair in the database. If the DB_APPEND flag is
-   used and the database is using the Recno or Queue access method then
-   the record number allocated to the data is returned. Partial data
-   objects can be written using dlen and doff.
+   Stores the key/data pair in the database. Partial data objects
+   can be written using dlen and doff.
+
+   If the DB_APPEND flag is used and the database is using the
+   Recno, Queue or Heap access method then the record number
+   (Recno or Queue) or Record ID (RID) (Heap) allocated to the
+   data is returned.
+
    :OracleAPIC:`More info... <dbput.html>`
 
 .. function:: remove(filename, dbname=None, flags=0)
