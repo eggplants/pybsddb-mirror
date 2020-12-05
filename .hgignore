@@ -6,6 +6,7 @@ docs/tools/sphinx/
 docs/html/
 build/
 dist/
-bsddb3.egg-info/
+berkeleydb.egg-info/
+*.swp
 *.pyc
 *.pyo
