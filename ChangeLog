@@ -14,15 +14,17 @@ PENDING: Documentation, website, mailing list update.
   * Export exception "DBMetaChksumFail" (from error "DB_META_CHKSUM_FAIL") if
     running Oracle Berkeley DB version 6.2 or newer.
 
-  * Support HEAP access method if you are linking against Oracle Berkeley DB
+  * Support Heap access method if you are linking against Oracle Berkeley DB
     5.3 or newer.
+
+    - "DB.append()" was extended to support Heap access method.
 
     - Implement, test and document "DB.get_heapsize()", "DB.set_heapsize()",
       "DB.get_heap_regionsize()" and "DB.set_heap_regionsize()".
 
     - Export exception "DBHeapFull" (from error "DB_HEAP_FULL").
 
-    - "DB.stats()" provides stats for heap databases.
+    - "DB.stats()" provides stats for Heap access method.
 
   * WARNING - BREAKING CHANGE: Add "dbtype" member in "DBObject" object in the
     C API. Increase C API version. This change has ripple effect in the code.

@@ -17,9 +17,10 @@ DB Methods
 
 .. function:: append(data, txn=None)
 
-   A convenient version of put() that can be used for Recno or Queue
-   databases. The DB_APPEND flag is automatically used, and the record
-   number is returned.
+   A convenient version of put() that can be used for Recno, Queue
+   and Heap databases. The DB_APPEND flag is automatically used,
+   and the record number (Recno or Queue) or Record ID (RID)
+   (Heap) is returned .
    :OracleAPIC:`More info... <dbput.html#dbput_DB_APPEND>`
 
 .. function:: associate(secondaryDB, callback, flags=0, txn=None)

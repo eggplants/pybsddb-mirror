@@ -1341,6 +1341,7 @@ DB_append(DBObject* self, PyObject* args, PyObject* kwargs)
 {
     PyObject* txnobj = NULL;
     PyObject* dataobj;
+    PyObject* heap_key = NULL;
     db_recno_t recno;
     DBT key, data;
     DB_TXN *txn = NULL;
@@ -1352,19 +1353,41 @@ DB_append(DBObject* self, PyObject* args, PyObject* kwargs)
 
     CHECK_DB_NOT_CLOSED(self);
 
-    /* make a dummy key out of a recno */
-    recno = 0;
-    CLEAR_DBT(key);
-    key.data = &recno;
-    key.size = sizeof(recno);
-    key.ulen = key.size;
-    key.flags = DB_DBT_USERMEM;
-
     if (!make_dbt(dataobj, &data)) return NULL;
     if (!checkTxnObj(txnobj, &txn)) return NULL;
 
-    if (-1 == _DB_put(self, txn, &key, &data, DB_APPEND))
+    CLEAR_DBT(key);
+    key.flags = DB_DBT_USERMEM;
+
+#if (DBVER >= 53)
+    if (self->dbtype == DB_HEAP) {
+        /*
+         * We do preallocation here instead of in 'make_key_dbt()' to
+         * avoid a malloc/free.
+         */
+        if (!(heap_key = PyBytes_FromStringAndSize(NULL, DB_HEAP_RID_SZ)))
+                return NULL;
+        key.data = PyBytes_AS_STRING(heap_key);
+        key.size = key.ulen = DB_HEAP_RID_SZ;
+        memset(key.data, 0, key.size);
+    } else
+#endif
+    {
+        /* make a dummy key out of a recno */
+        recno = 0;
+        key.data = &recno;
+        key.size = key.ulen = sizeof(recno);
+    }
+
+    if (-1 == _DB_put(self, txn, &key, &data, DB_APPEND)) {
+        Py_XDECREF(heap_key);
         return NULL;
+    }
+
+#if (DBVER >= 53)
+    if (self->dbtype == DB_HEAP)
+        return heap_key;
+#endif
 
     return PyLong_FromLong(recno);
 }
@@ -2362,8 +2385,10 @@ DB_put(DBObject* self, PyObject* args, PyObject* kwargs)
         return NULL;
 
     CHECK_DB_NOT_CLOSED(self);
+
     if (!make_key_dbt(self, keyobj, &key, NULL))
         return NULL;
+
     if ( !make_dbt(dataobj, &data) ||
          !add_partial_dbt(&data, dlen, doff) ||
          !checkTxnObj(txnobj, &txn) )
@@ -2386,7 +2411,6 @@ DB_put(DBObject* self, PyObject* args, PyObject* kwargs)
     FREE_DBT(key);
     return retval;
 }
-
 
 
 static PyObject*
