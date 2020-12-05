@@ -174,17 +174,29 @@ class AssociateTestCase(unittest.TestCase):
 
     def addDataToDB(self, d, txn=None):
         for key, value in list(musicdata.items()):
-            if type(self.keytype) == type(b''):
-                key = b'%02d' % key
-            d.put(key, b'|'.join(value), txn=txn)
+            if (db.version() >= (5, 3)) and (self.dbtype == db.DB_HEAP):
+                d.append(b'%02d|' % key + b'|'.join(value), txn=txn)
+            else:
+                if type(self.keytype) == type(b''):
+                    key = b'%02d' % key
+                d.put(key, b'|'.join(value), txn=txn)
+
+    def _openDB(self, database, typ, dbtype, flags, txn=None):
+        if (db.version() >= (5, 3)) and (self.dbtype == db.DB_HEAP):
+            # Heap can not share other databases in the same file
+            database.open(f'{self.filename}.{typ}', dbtype,
+                          flags, txn=txn)
+        else:
+            database.open(self.filename, typ, dbtype, flags, txn=txn)
+
 
     def createDB(self, txn=None):
         self.cur = None
         self.secDB = None
         self.primary = db.DB(self.env)
         self.primary.set_get_returns_none(2)
-        self.primary.open(self.filename, "primary", self.dbtype,
-                      db.DB_CREATE | db.DB_THREAD | self.dbFlags, txn=txn)
+        self._openDB(self.primary, 'primary', self.dbtype,
+                     db.DB_CREATE | db.DB_THREAD | self.dbFlags, txn=txn)
 
     def closeDB(self):
         if self.cur:
@@ -206,7 +218,7 @@ class AssociateTestCase(unittest.TestCase):
         self.secDB = db.DB(self.env)
         self.secDB.set_flags(db.DB_DUP)
         self.secDB.set_get_returns_none(2)
-        self.secDB.open(self.filename, "secondary", db.DB_BTREE,
+        self._openDB(self.secDB, 'secondary', db.DB_BTREE,
                    db.DB_CREATE | db.DB_THREAD | self.dbFlags)
         self.getDB().associate(self.secDB, getGenre)
 
@@ -228,7 +240,7 @@ class AssociateTestCase(unittest.TestCase):
 
         self.secDB = db.DB(self.env)
         self.secDB.set_flags(db.DB_DUP)
-        self.secDB.open(self.filename, "secondary", db.DB_BTREE,
+        self._openDB(self.secDB, 'secondary', db.DB_BTREE,
                    db.DB_CREATE | db.DB_THREAD | self.dbFlags)
 
         # adding the DB_CREATE flag will cause it to index existing records
@@ -267,7 +279,10 @@ class AssociateTestCase(unittest.TestCase):
         self.assertEqual(vals, None, vals)
 
         vals = secDB.pget(b'Unknown', txn=txn)
-        k = vals[0]
+        if (db.version() >= (5, 3)) and (self.dbtype == db.DB_HEAP):
+            k = vals[1].split(b'|')[0]
+        else:
+            k = vals[0]
         self.assertTrue((isinstance(k, int) and k == 99) or
                         (isinstance(k, bytes) and k == b'99'), vals)
         vals[1].index(b'Unknown')
@@ -280,10 +295,14 @@ class AssociateTestCase(unittest.TestCase):
         count = 0
         rec = self.cur.first()
         while rec is not None:
-            if type(self.keytype) == type(b''):
-                self.assertTrue(int(rec[0]))  # for primary db, key is a number
+            if (db.version() >= (5, 3)) and (self.dbtype == db.DB_HEAP):
+                key = rec[1].split(b'|')[0]
             else:
-                self.assertTrue(rec[0] and type(rec[0]) == type(0))
+                key = rec[0]
+            if type(self.keytype) == type(b''):
+                self.assertTrue(int(key))  # for primary db, key is a number
+            else:
+                self.assertTrue(key and type(key) == type(0))
             count = count + 1
             if verbose:
                 print(rec)
@@ -298,7 +317,10 @@ class AssociateTestCase(unittest.TestCase):
 
         # test cursor pget
         vals = self.cur.pget(b'Unknown', flags=db.DB_LAST)
-        k = vals[1]
+        if (db.version() >= (5, 3)) and (self.dbtype == db.DB_HEAP):
+            k = vals[2].split(b'|')[0]
+        else:
+            k = vals[1]
         self.assertTrue((isinstance(k, int) and k == 99) or
                         (isinstance(k, bytes) and k == b'99'), vals)
         self.assertEqual(vals[0], b'Unknown')
@@ -324,7 +346,10 @@ class AssociateTestCase(unittest.TestCase):
 
     def getGenre(self, priKey, priData):
         self.assertEqual(type(priData), type(b''))
-        genre = priData.split(b'|')[2]
+        genre = 2
+        if (db.version() >= (5, 3)) and (self.dbtype == db.DB_HEAP):
+            genre = 3
+        genre = priData.split(b'|')[genre]
 
         if verbose:
             print('getGenre key: %r data: %r' % (priKey, priData))
@@ -353,6 +378,11 @@ class AssociateBTreeTestCase(AssociateTestCase):
 class AssociateRecnoTestCase(AssociateTestCase):
     dbtype = db.DB_RECNO
     keytype = 0
+
+@unittest.skipIf(db.version() < (5, 3),
+                 'Oracle Berkeley DB 4.8 has no HEAP access method support')
+class AssociateHeapTestCase(AssociateTestCase):
+    dbtype = db.DB_HEAP
 
 #----------------------------------------------------------------------
 
@@ -433,7 +463,6 @@ class ShelveAssociateRecnoTestCase(ShelveAssociateTestCase):
     dbtype = db.DB_RECNO
     keytype = 0
 
-
 #----------------------------------------------------------------------
 
 class ThreadedAssociateTestCase(AssociateTestCase):
@@ -485,6 +514,7 @@ def test_suite():
     suite.addTest(unittest.makeSuite(AssociateHashTestCase))
     suite.addTest(unittest.makeSuite(AssociateBTreeTestCase))
     suite.addTest(unittest.makeSuite(AssociateRecnoTestCase))
+    suite.addTest(unittest.makeSuite(AssociateHeapTestCase))
 
     suite.addTest(unittest.makeSuite(AssociateBTreeTxnTestCase))
 

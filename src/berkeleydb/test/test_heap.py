@@ -111,6 +111,14 @@ class HeapTestCaseOpen(HeapTestCase):
         value = self.db.get(key)
         self.assertEqual(value, b'value')
 
+    def test_append_delete(self):
+        key = self.db.append(data=b'value')
+        self.db.delete(key)
+        self.assertEqual(0, self.db.stat()['nrecs'])
+
+    def test_not_found(self):
+        self.assertIsNone(self.db.get(key=b'012345'))
+
     def test_cursor(self):
         keys = []
         for i in range(5):
