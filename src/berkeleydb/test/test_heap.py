@@ -57,20 +57,81 @@ class HeapTestCase(unittest.TestCase):
         self.env.close()
         test_support.rmtree(self.homeDir)
 
-    def test_heapsize(self):
+class HeapTestCaseNoOpen(HeapTestCase):
+    def test_heapsize_preOpen(self):
         self.assertEqual((0, 0), self.db.get_heapsize())
         self.db.set_heapsize(12, 3456789)
         self.assertEqual((12, 3456789), self.db.get_heapsize())
 
-    def test_heap_regionsize(self):
+    def test_heap_regionsize_preOpen(self):
         self.assertEqual(0, self.db.get_heap_regionsize())
         self.db.set_heap_regionsize(123456789)
         self.assertEqual(123456789, self.db.get_heap_regionsize())
 
 
+class HeapTestCaseOpen(HeapTestCase):
+    def setUp(self):
+        super().setUp()
+        self.db.open(flags=db.DB_CREATE, dbtype=db.DB_HEAP)
+
+    def test_heapsize_postOpen(self):
+        self.assertEqual((0, 0), self.db.get_heapsize())
+        self.assertRaises(db.DBInvalidArgError,
+                          self.db.set_heapsize, 12, 3456789)
+
+    def test_heap_regionsize_postOpen(self):
+        self.assertLess(0, self.db.get_heap_regionsize())
+        self.assertRaises(db.DBInvalidArgError,
+                          self.db.set_heap_regionsize, 123456789)
+    def test_stats(self):
+        stat = self.db.stat()
+        self.assertEqual(1, stat['nregions'])
+        self.assertLess(0, stat['pagecnt'])
+        self.assertLess(0, stat['pagesize'])
+        self.assertEqual(0, stat['nrecs'])
+
+    def test_append(self):
+        self.assertIsInstance(self.db.append(data=b'value'), bytes)
+        self.assertEqual(1, self.db.stat()['nrecs'])
+
+    def test_put_overwrite(self):
+        key = self.db.append(data=b'value')
+        self.assertIsNone(self.db.put(key=key, data=b'value2'))
+        self.assertEqual(1, self.db.stat()['nrecs'])
+
+    def test_put_append(self):
+        key = self.db.append(data=b'value')
+        # If db.DB_APPEND, the key is ignored and a new record is stored
+        key2 = self.db.put(key=key, data=b'value2', flags = db.DB_APPEND)
+        self.assertNotEqual(key, key2)
+        self.assertEqual(2, self.db.stat()['nrecs'])
+
+    def test_append_get(self):
+        key = self.db.append(data=b'value')
+        value = self.db.get(key)
+        self.assertEqual(value, b'value')
+
+    def test_cursor(self):
+        keys = []
+        for i in range(5):
+            data = f'value{i}'.encode('ascii')
+            keys.append((self.db.append(data=data), data))
+
+        cursor = self.db.cursor()
+        rec = cursor.first()
+        while rec:
+            self.assertIn(rec, keys)
+            keys.remove(rec)
+            rec = cursor.next()
+        self.assertIsNone(rec)
+        self.assertFalse(keys)  # Empty
+
+
+
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(HeapTestCase))
+    suite.addTest(unittest.makeSuite(HeapTestCaseNoOpen))
+    suite.addTest(unittest.makeSuite(HeapTestCaseOpen))
     return suite
 
 if __name__ == '__main__':
