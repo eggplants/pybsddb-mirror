@@ -3437,11 +3437,13 @@ DB_stat(DBObject* self, PyObject* args, PyObject* kwargs)
         MAKE_QUEUE_ENTRY(metaflags);
         break;
 
-#if (DBVER >= 62)
+#if (DBVER >= 53)
     case DB_HEAP:
         MAKE_HEAP_ENTRY(magic);
         MAKE_HEAP_ENTRY(metaflags);
+#if (DBVER >= 62)
         MAKE_HEAP_ENTRY(ext_files);
+#endif
         MAKE_HEAP_ENTRY(nrecs);
         MAKE_HEAP_ENTRY(pagecnt);
         MAKE_HEAP_ENTRY(pagesize);
