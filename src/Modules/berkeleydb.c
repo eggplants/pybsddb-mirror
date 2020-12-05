@@ -1446,16 +1446,16 @@ _db_associateCallback(DB* db, const DBT* priKey, const DBT* priData,
             PyBytes_AsStringAndSize(result, &data, &size);
             secKey->flags = DB_DBT_APPMALLOC;   /* DB will free */
             secKey->data = malloc(size);        /* TODO, check this */
-	    if (secKey->data) {
-		memcpy(secKey->data, data, size);
-		secKey->size = size;
-		retval = 0;
-	    }
-	    else {
-		PyErr_SetString(PyExc_MemoryError,
+            if (secKey->data) {
+                memcpy(secKey->data, data, size);
+                secKey->size = size;
+                retval = 0;
+            }
+            else {
+                PyErr_SetString(PyExc_MemoryError,
                                 "malloc failed in _db_associateCallback");
-		PyErr_Print();
-	    }
+                PyErr_Print();
+            }
         }
         else if (PyList_Check(result))
         {
@@ -2684,40 +2684,41 @@ _db_compareCallback(DB* db,
 #endif
 
     if (self == NULL || self->btCompareCallback == NULL) {
-	MYDB_BEGIN_BLOCK_THREADS;
-	PyErr_SetString(PyExc_TypeError,
-			(self == 0
-			 ? "DB_bt_compare db is NULL."
-			 : "DB_bt_compare callback is NULL."));
-	/* we're in a callback within the DB code, we can't raise */
-	PyErr_Print();
-	res = _default_cmp(leftKey, rightKey);
-	MYDB_END_BLOCK_THREADS;
+    MYDB_BEGIN_BLOCK_THREADS;
+    PyErr_SetString(PyExc_TypeError,
+                    (self == 0
+                     ? "DB_bt_compare db is NULL."
+                     : "DB_bt_compare callback is NULL."));
+    /* we're in a callback within the DB code, we can't raise */
+    PyErr_Print();
+    res = _default_cmp(leftKey, rightKey);
+    MYDB_END_BLOCK_THREADS;
     } else {
-	MYDB_BEGIN_BLOCK_THREADS;
+    MYDB_BEGIN_BLOCK_THREADS;
 
-	args = BuildValue_SS(leftKey->data, leftKey->size, rightKey->data, rightKey->size);
-	if (args != NULL) {
-		result = PyObject_CallObject(self->btCompareCallback, args);
-	}
-	if (args == NULL || result == NULL) {
-	    /* we're in a callback within the DB code, we can't raise */
-	    PyErr_Print();
-	    res = _default_cmp(leftKey, rightKey);
-	} else if (PyLong_Check(result)) {
-	    res = PyLong_AsLong(result);
-	} else {
-	    PyErr_SetString(PyExc_TypeError,
-			    "DB_bt_compare callback MUST return an int.");
-	    /* we're in a callback within the DB code, we can't raise */
-	    PyErr_Print();
-	    res = _default_cmp(leftKey, rightKey);
-	}
+    args = BuildValue_SS(leftKey->data, leftKey->size,
+                         rightKey->data, rightKey->size);
+    if (args != NULL) {
+        result = PyObject_CallObject(self->btCompareCallback, args);
+    }
+    if (args == NULL || result == NULL) {
+        /* we're in a callback within the DB code, we can't raise */
+        PyErr_Print();
+        res = _default_cmp(leftKey, rightKey);
+    } else if (PyLong_Check(result)) {
+        res = PyLong_AsLong(result);
+    } else {
+        PyErr_SetString(PyExc_TypeError,
+                        "DB_bt_compare callback MUST return an int.");
+        /* we're in a callback within the DB code, we can't raise */
+        PyErr_Print();
+        res = _default_cmp(leftKey, rightKey);
+    }
 
-	Py_XDECREF(args);
-	Py_XDECREF(result);
+    Py_XDECREF(args);
+    Py_XDECREF(result);
 
-	MYDB_END_BLOCK_THREADS;
+    MYDB_END_BLOCK_THREADS;
     }
     return res;
 }
@@ -2746,15 +2747,15 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
     if (result == NULL)
         return NULL;
     if (!PyLong_Check(result)) {
-	Py_DECREF(result);
-	PyErr_SetString(PyExc_TypeError,
-		        "callback MUST return an int");
-	return NULL;
+        Py_DECREF(result);
+        PyErr_SetString(PyExc_TypeError,
+                        "callback MUST return an int");
+        return NULL;
     } else if (PyLong_AsLong(result) != 0) {
-	Py_DECREF(result);
-	PyErr_SetString(PyExc_TypeError,
-		        "callback failed to return 0 on two empty strings");
-	return NULL;
+        Py_DECREF(result);
+        PyErr_SetString(PyExc_TypeError,
+                        "callback failed to return 0 on two empty strings");
+        return NULL;
     }
     Py_DECREF(result);
 
@@ -2762,8 +2763,8 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
      * simplify the code. This would have no real use, as one cannot
      * change the function once the db is opened anyway */
     if (self->btCompareCallback != NULL) {
-	PyErr_SetString(PyExc_RuntimeError, "set_bt_compare() cannot be called more than once");
-	return NULL;
+        PyErr_SetString(PyExc_RuntimeError, "set_bt_compare() cannot be called more than once");
+        return NULL;
     }
 
     Py_INCREF(comparator);
@@ -2772,9 +2773,9 @@ DB_set_bt_compare(DBObject* self, PyObject* comparator)
     err = self->db->set_bt_compare(self->db, _db_compareCallback);
 
     if (err) {
-	/* restore the old state in case of error */
-	Py_DECREF(comparator);
-	self->btCompareCallback = NULL;
+        /* restore the old state in case of error */
+        Py_DECREF(comparator);
+        self->btCompareCallback = NULL;
     }
 
     RETURN_IF_ERR();
@@ -2800,40 +2801,41 @@ _db_dupCompareCallback(DB* db,
 #endif
 
     if (self == NULL || self->dupCompareCallback == NULL) {
-	MYDB_BEGIN_BLOCK_THREADS;
-	PyErr_SetString(PyExc_TypeError,
-			(self == 0
-			 ? "DB_dup_compare db is NULL."
-			 : "DB_dup_compare callback is NULL."));
-	/* we're in a callback within the DB code, we can't raise */
-	PyErr_Print();
-	res = _default_cmp(leftKey, rightKey);
-	MYDB_END_BLOCK_THREADS;
+        MYDB_BEGIN_BLOCK_THREADS;
+        PyErr_SetString(PyExc_TypeError,
+                        (self == 0
+                         ? "DB_dup_compare db is NULL."
+                         : "DB_dup_compare callback is NULL."));
+        /* we're in a callback within the DB code, we can't raise */
+        PyErr_Print();
+        res = _default_cmp(leftKey, rightKey);
+        MYDB_END_BLOCK_THREADS;
     } else {
-	MYDB_BEGIN_BLOCK_THREADS;
+        MYDB_BEGIN_BLOCK_THREADS;
 
-	args = BuildValue_SS(leftKey->data, leftKey->size, rightKey->data, rightKey->size);
-	if (args != NULL) {
-		result = PyObject_CallObject(self->dupCompareCallback, args);
-	}
-	if (args == NULL || result == NULL) {
-	    /* we're in a callback within the DB code, we can't raise */
-	    PyErr_Print();
-	    res = _default_cmp(leftKey, rightKey);
-	} else if (PyLong_Check(result)) {
-	    res = PyLong_AsLong(result);
-	} else {
-	    PyErr_SetString(PyExc_TypeError,
-			    "DB_dup_compare callback MUST return an int.");
-	    /* we're in a callback within the DB code, we can't raise */
-	    PyErr_Print();
-	    res = _default_cmp(leftKey, rightKey);
-	}
+        args = BuildValue_SS(leftKey->data, leftKey->size,
+                             rightKey->data, rightKey->size);
+        if (args != NULL) {
+            result = PyObject_CallObject(self->dupCompareCallback, args);
+        }
+        if (args == NULL || result == NULL) {
+            /* we're in a callback within the DB code, we can't raise */
+            PyErr_Print();
+            res = _default_cmp(leftKey, rightKey);
+        } else if (PyLong_Check(result)) {
+            res = PyLong_AsLong(result);
+        } else {
+            PyErr_SetString(PyExc_TypeError,
+                            "DB_dup_compare callback MUST return an int.");
+            /* we're in a callback within the DB code, we can't raise */
+            PyErr_Print();
+            res = _default_cmp(leftKey, rightKey);
+        }
 
-	Py_XDECREF(args);
-	Py_XDECREF(result);
+        Py_XDECREF(args);
+        Py_XDECREF(result);
 
-	MYDB_END_BLOCK_THREADS;
+        MYDB_END_BLOCK_THREADS;
     }
     return res;
 }
@@ -2862,15 +2864,15 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
     if (result == NULL)
         return NULL;
     if (!PyLong_Check(result)) {
-	Py_DECREF(result);
-	PyErr_SetString(PyExc_TypeError,
-		        "callback MUST return an int");
-	return NULL;
+        Py_DECREF(result);
+        PyErr_SetString(PyExc_TypeError,
+                        "callback MUST return an int");
+        return NULL;
     } else if (PyLong_AsLong(result) != 0) {
-	Py_DECREF(result);
-	PyErr_SetString(PyExc_TypeError,
-		        "callback failed to return 0 on two empty strings");
-	return NULL;
+        Py_DECREF(result);
+        PyErr_SetString(PyExc_TypeError,
+                        "callback failed to return 0 on two empty strings");
+        return NULL;
     }
     Py_DECREF(result);
 
@@ -2878,8 +2880,8 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
      * simplify the code. This would have no real use, as one cannot
      * change the function once the db is opened anyway */
     if (self->dupCompareCallback != NULL) {
-	PyErr_SetString(PyExc_RuntimeError, "set_dup_compare() cannot be called more than once");
-	return NULL;
+        PyErr_SetString(PyExc_RuntimeError, "set_dup_compare() cannot be called more than once");
+        return NULL;
     }
 
     Py_INCREF(comparator);
@@ -2888,9 +2890,9 @@ DB_set_dup_compare(DBObject* self, PyObject* comparator)
     err = self->db->set_dup_compare(self->db, _db_dupCompareCallback);
 
     if (err) {
-	/* restore the old state in case of error */
-	Py_DECREF(comparator);
-	self->dupCompareCallback = NULL;
+        /* restore the old state in case of error */
+        Py_DECREF(comparator);
+        self->dupCompareCallback = NULL;
     }
 
     RETURN_IF_ERR();
@@ -3588,8 +3590,8 @@ DB_verify(DBObject* self, PyObject* args, PyObject* kwargs)
 
     if (outFileName)
         outFile = fopen(outFileName, "w");
-	/* XXX(nnorwitz): it should probably be an exception if outFile
-	   can't be opened. */
+        /* XXX(nnorwitz): it should probably be an exception if outFile
+           can't be opened. */
 
     /* DB.verify acts as a DB handle destructor (like close) */
     db = self->db;
@@ -4380,8 +4382,8 @@ DBC_get(DBCursorObject* self, PyObject* args, PyObject *kwargs)
                                              &flags, &dlen, &doff))
             {
                 return NULL;
-	    }
-	}
+            }
+        }
     }
 
     CHECK_CURSOR_NOT_CLOSED(self);
@@ -4456,8 +4458,8 @@ DBC_pget(DBCursorObject* self, PyObject* args, PyObject *kwargs)
                                              &flags, &dlen, &doff))
             {
                 return NULL;
-	    }
-	}
+            }
+        }
     }
 
     CHECK_CURSOR_NOT_CLOSED(self);
