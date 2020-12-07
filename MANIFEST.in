@@ -1,7 +1,7 @@
 include test-full_prerelease.py
 include setup3.py
 include test.py
-recursive-include Lib *.py
+recursive-include src/berkeleydb *.py
 
 include *.txt
 include updatedb.bat
@@ -11,10 +11,10 @@ include setup.cfg
 include ChangeLog
 include test.py
 
-recursive-include bsddb *.py
+recursive-include src *.py
 recursive-include docs *.rst *.html *.css *.gif *.jpg *.png *.js *.json *.txt
 recursive-include patches *.txt *.patch
-recursive-include Modules _bsddb.c bsddb.h
+recursive-include src/Modules berkeleydb.h berkeleydb.c
 recursive-include test *.py
 
 prune docs/build

@@ -11,6 +11,9 @@ PENDING: Documentation, website, mailing list update.
 
 
 18.1.2 - :
+  * Releases 18.1.0 and 18.1.1 were incomplete. Thanks to Mihai.i
+    for reporting.
+
   * Export exception "DBMetaChksumFail" (from error "DB_META_CHKSUM_FAIL") if
     running Oracle Berkeley DB version 6.2 or newer.
 
