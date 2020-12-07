@@ -104,7 +104,7 @@
 #error "eek! DBVER can't handle minor versions > 9"
 #endif
 
-#define PY_BERKELEYDB_VERSION "18.1.1"
+#define PY_BERKELEYDB_VERSION "18.1.2"
 
 /* Python object definitions */
 
