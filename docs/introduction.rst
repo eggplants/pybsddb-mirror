@@ -1,12 +1,12 @@
-===========================================================
-Berkeley DB 4.8, 5.3, 6.2 and 18.1 Python Extension Package
-===========================================================
+==================================================================
+Oracle Berkeley DB 4.8, 5.3, 6.2 and 18.1 Python Extension Package
+==================================================================
 
 Introduction
 ------------
 
 This is a simple bit of documentation for the berkeleydb.db Python extension
-module which wraps the Berkeley DB C library. The extension
+module which wraps the Oracle Berkeley DB C library. The extension
 module is located in a Python package along with a few pure python
 modules.
 
@@ -41,7 +41,7 @@ needed by the complex cases.
    allow this access mode in berkeleydb.
 
 4. **Advanced transactional data store:** This mode of use is where the
-   full capabilities of the Berkeley DB library are called into action.
+   full capabilities of the Oracle Berkeley DB library are called into action.
    The programmer will probably not use the dictionary access methods as
    much as the regular methods of the DB object, so he can pass
    transaction objects to the methods. Again, most of this advanced
@@ -94,7 +94,7 @@ Top level functions
 Exceptions Provided
 -------------------
 
-The Berkeley DB C API uses function return codes to signal various
+The Oracle Berkeley DB C API uses function return codes to signal various
 errors. The berkeleydb.db module checks for these error codes and turns them
 into Python exceptions, allowing you to use familiar try:... except:...
 constructs and not have to bother with checking every method's return
@@ -214,7 +214,7 @@ on Oracle's website for more details of the
 functionality of each of these methods. The names of all the Python
 methods should be the same or similar to the names in the C API.
 
-Berkeley DB is very powerful and versatile, but it is complex to
+Oracle Berkeley DB is very powerful and versatile, but it is complex to
 use correctly. :Oracle:`Oracle documentation <toc.htm>` is very
 complete. Please, review it.
 
