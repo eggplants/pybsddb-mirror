@@ -484,9 +484,8 @@ pybsddb_doc/>`__ --
       url = 'https://www.jcea.es/programacion/pybsddb.htm',
       license = "3-clause BSD License",
 
-      packages = ['berkeleydb', 'berkeleydb/tests'],
-      package_dir = {'berkeleydb': 'src/berkeleydb',
-                     'berkeleydb/tests': 'src/berkeleydb/test'},
+      packages = ['berkeleydb'],
+      package_dir = {'berkeleydb': 'src/berkeleydb'},
       ext_modules = [Extension('berkeleydb._berkeleydb',
                                sources = ['src/Modules/berkeleydb.c'],
                                depends = ['src/Modules/berkeleydb.h'],

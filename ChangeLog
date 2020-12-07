@@ -9,6 +9,16 @@ TODO: Implement promises done in 18.1.0-pre changelog.
 TODO: Oracle has examples and multiple documentation. Link to them.
 PENDING: Documentation, website, mailing list update.
 
+CentOS 8: yum install gcc python3-devel libdb libdb-util libdb-devel
+
+Docs: How to install (with env variables), replication, exception list,
+testsuite.
+
+18.1.3 -:
+  * Do not install tests anymore when doing "pip install", although the tests
+    are included in the package. You can unpack the package to study the tests,
+    maybe in order to learn about how to use advanced Oracle Berkeley DB
+    features.
 
 18.1.2 - 2020-12-07:
   * Releases 18.1.0 and 18.1.1 were incomplete. Thanks to Mihai.i
