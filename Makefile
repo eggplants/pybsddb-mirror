@@ -1,7 +1,18 @@
-dist:
-	( cd docs; make html )
-	YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION=1 ./setup.py sdist
+.PHONY: docs dist
 
-clean:
+full-test:
+	./test-full_prerelease.py
+
+dist: clean docs
+	YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION=1 \
+		DISTUTILS_DEBUG=1 \
+		./setup.py sdist
+
+clean: docs-clean
 	rm -rf build dist
-	@( cd docs; make clean )
+
+docs-clean:
+	cd docs && $(MAKE) clean
+
+docs:
+	cd docs && $(MAKE) html
