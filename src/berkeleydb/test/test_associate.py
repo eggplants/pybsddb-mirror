@@ -382,7 +382,8 @@ class AssociateRecnoTestCase(AssociateTestCase):
 @unittest.skipIf(db.version() < (5, 3),
                  'Oracle Berkeley DB 4.8 has no HEAP access method support')
 class AssociateHeapTestCase(AssociateTestCase):
-    dbtype = db.DB_HEAP
+    # Workaround because db.DB_HEAP is not defined if BDB < 5.3
+    dbtype = None if db.version() < (5, 3) else db.DB_HEAP
 
 #----------------------------------------------------------------------
 
