@@ -30,6 +30,8 @@ testsuite, not in Python 3.
 
   * Python 3.10.0a2 test suite compatibility.
 
+  * Python 3.10 added to the full test matrix.
+
 18.1.2 - 2020-12-07:
   * Releases 18.1.0 and 18.1.1 were incomplete. Thanks to Mihai.i
     for reporting.
