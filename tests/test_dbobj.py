@@ -37,7 +37,7 @@ are met:
 import os, string
 import unittest
 
-from .test_all import db, dbobj, test_support, get_new_environment_path, \
+from .test_all import db, dbobj, rmtree, get_new_environment_path, \
         get_new_database_path
 
 #----------------------------------------------------------------------
@@ -54,7 +54,7 @@ class dbobjTestCase(unittest.TestCase):
             del self.db
         if hasattr(self, 'env'):
             del self.env
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test01_both(self):
         class TestDBEnv(dbobj.DBEnv): pass

@@ -40,7 +40,7 @@ TestCases for testing the locking sub-system.
 import time
 
 import unittest
-from .test_all import db, test_support, verbose, have_threads, \
+from .test_all import db, rmtree, verbose, have_threads, \
         get_new_environment_path, get_new_database_path
 
 if have_threads :
@@ -59,7 +59,7 @@ class LockingTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.env.close()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
 
     def test01_simple(self):

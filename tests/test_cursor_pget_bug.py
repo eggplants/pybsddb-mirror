@@ -36,7 +36,7 @@ are met:
 import unittest
 import os, glob
 
-from .test_all import db, test_support, get_new_environment_path, \
+from .test_all import db, rmtree, get_new_environment_path, \
         get_new_database_path
 
 #----------------------------------------------------------------------
@@ -67,7 +67,7 @@ class pget_bugTestCase(unittest.TestCase):
         del self.secondary_db
         del self.primary_db
         del self.env
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test_pget(self):
         cursor = self.secondary_db.cursor()

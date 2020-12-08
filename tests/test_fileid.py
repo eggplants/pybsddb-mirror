@@ -40,7 +40,7 @@ import os, sys
 import shutil
 import unittest
 
-from .test_all import db, test_support, get_new_environment_path, get_new_database_path
+from .test_all import db, rmtree, unlink, get_new_environment_path, get_new_database_path
 
 class FileidResetTestCase(unittest.TestCase):
     def setUp(self):
@@ -91,9 +91,9 @@ class FileidResetTestCase(unittest.TestCase):
         return self._fileid_reset(db_path_1, db_path_2)
 
     def tearDown(self):
-        test_support.unlink(self.db_path_1)
-        test_support.unlink(self.db_path_2)
-        test_support.rmtree(self.db_env_path)
+        unlink(self.db_path_1)
+        unlink(self.db_path_2)
+        rmtree(self.db_env_path)
 
 def test_suite():
     suite = unittest.TestSuite()

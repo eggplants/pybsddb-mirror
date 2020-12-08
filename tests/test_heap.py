@@ -40,7 +40,7 @@ import os, sys
 import shutil
 import unittest
 
-from .test_all import db, test_support, get_new_environment_path, get_new_database_path
+from .test_all import db, rmtree, get_new_environment_path, get_new_database_path
 
 @unittest.skipIf(db.version() < (5, 3),
                  'Oracle Berkeley DB 4.8 has no HEAP access method support')
@@ -55,7 +55,7 @@ class HeapTestCase(unittest.TestCase):
     def tearDown(self):
         self.db.close()
         self.env.close()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
 class HeapTestCaseNoOpen(HeapTestCase):
     def test_heapsize_preOpen(self):

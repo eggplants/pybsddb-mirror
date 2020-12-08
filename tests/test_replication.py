@@ -41,7 +41,7 @@ import time
 import unittest
 import sys
 
-from .test_all import db, test_support, have_threads, verbose, \
+from .test_all import db, rmtree, find_unused_port, have_threads, verbose, \
         get_new_environment_path, get_new_database_path
 
 
@@ -101,8 +101,8 @@ class DBReplication(unittest.TestCase) :
 
         self.dbenvClient.close()
         self.dbenvMaster.close()
-        test_support.rmtree(self.homeDirClient)
-        test_support.rmtree(self.homeDirMaster)
+        rmtree(self.homeDirClient)
+        rmtree(self.homeDirMaster)
 
 class DBReplicationManager(DBReplication) :
     def setUp(self):
@@ -113,10 +113,6 @@ class DBReplicationManager(DBReplication) :
             self.dbenvClient.rep_set_config(db.DB_REPMGR_CONF_DISABLE_SSL, 1)
 
     def test01_basic_replication(self) :
-        if sys.version_info < (3, 9):
-            find_unused_port = test_support.find_unused_port
-        else:
-            from test.support.socket_helper import find_unused_port
         master_port = find_unused_port()
         client_port = find_unused_port()
 
@@ -376,8 +372,8 @@ class DBBaseReplication(DBReplication) :
 
         self.dbenvClient.close()
         self.dbenvMaster.close()
-        test_support.rmtree(self.homeDirClient)
-        test_support.rmtree(self.homeDirMaster)
+        rmtree(self.homeDirClient)
+        rmtree(self.homeDirMaster)
 
     def basic_rep_threading(self) :
         self.dbenvMaster.rep_start(flags=db.DB_REP_MASTER)

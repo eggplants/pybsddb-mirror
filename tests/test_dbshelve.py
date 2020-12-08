@@ -44,7 +44,7 @@ import unittest
 printable_bytes = string.printable.encode('iso-8859-1')  # Transparent_encoding
 
 
-from .test_all import db, dbshelve, test_support, verbose, \
+from .test_all import db, dbshelve, rmtree, unlink, verbose, \
         get_new_environment_path, get_new_database_path
 
 
@@ -70,7 +70,7 @@ class DBShelveTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.do_close()
-        test_support.unlink(self.filename)
+        unlink(self.filename)
 
     def mk(self, key):
         """Turn key into an appropriate key type for this db"""
@@ -312,7 +312,7 @@ class BasicEnvShelveTestCase(DBShelveTestCase):
 
     def tearDown(self):
         self.do_close()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
 
 class EnvBTreeShelveTestCase(BasicEnvShelveTestCase):

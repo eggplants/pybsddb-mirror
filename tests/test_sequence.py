@@ -36,7 +36,7 @@ are met:
 import unittest
 import os
 
-from .test_all import db, test_support, get_new_environment_path, get_new_database_path
+from .test_all import db, rmtree, get_new_environment_path, get_new_database_path
 
 
 class DBSequenceTest(unittest.TestCase):
@@ -61,7 +61,7 @@ class DBSequenceTest(unittest.TestCase):
             self.dbenv.close()
             del self.dbenv
 
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test_get(self):
         self.seq = db.DBSequence(self.d, flags=0)

@@ -40,7 +40,7 @@ import os
 
 import unittest
 
-from .test_all import db, dbshelve, test_support, verbose, \
+from .test_all import db, dbshelve, rmtree, verbose, \
         get_new_environment_path, get_new_database_path
 
 #----------------------------------------------------------------------
@@ -75,7 +75,7 @@ class JoinTestCase(unittest.TestCase):
 
     def tearDown(self):
         self.env.close()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test01_join(self):
         if verbose:

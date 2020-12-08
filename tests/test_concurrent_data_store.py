@@ -40,7 +40,7 @@ is closed before its DB objects.
 import os, sys
 import unittest
 
-from .test_all import db, test_support, verbose, get_new_environment_path, get_new_database_path
+from .test_all import db, rmtree, verbose, get_new_environment_path, get_new_database_path
 
 #----------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ class DBEnvConcurrent_Data_Store(unittest.TestCase):
 
     def tearDown(self):
         self.dbenv.close()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test01_cdsgroup_begin_commit(self):
         txn = self.dbenv.cdsgroup_begin()

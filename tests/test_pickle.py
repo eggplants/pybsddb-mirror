@@ -38,7 +38,7 @@ import pickle
 import sys
 import unittest
 
-from .test_all import db, test_support, get_new_environment_path, get_new_database_path
+from .test_all import db, rmtree, get_new_environment_path, get_new_database_path
 
 #----------------------------------------------------------------------
 
@@ -54,7 +54,7 @@ class pickleTestCase(unittest.TestCase):
             del self.db
         if hasattr(self, 'env'):
             del self.env
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def _base_test_pickle_DBError(self, pickle):
         self.env = db.DBEnv()

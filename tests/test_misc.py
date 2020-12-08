@@ -39,7 +39,8 @@ are met:
 import os, sys
 import unittest
 
-from .test_all import db, dbshelve, hashopen, test_support, get_new_environment_path, get_new_database_path
+from .test_all import db, dbshelve, hashopen, rmtree, unlink, \
+        get_new_environment_path, get_new_database_path
 
 #----------------------------------------------------------------------
 
@@ -49,8 +50,8 @@ class MiscTestCase(unittest.TestCase):
         self.homeDir = get_new_environment_path()
 
     def tearDown(self):
-        test_support.unlink(self.filename)
-        test_support.rmtree(self.homeDir)
+        unlink(self.filename)
+        rmtree(self.homeDir)
 
     def test01_badpointer(self):
         dbs = dbshelve.open(self.filename)
@@ -101,7 +102,7 @@ class MiscTestCase(unittest.TestCase):
             # double free happened during exit from DBC_get
         finally:
             db1.close()
-            test_support.unlink(self.filename)
+            unlink(self.filename)
 
     def test06_key_with_null_bytes(self):
         try:
@@ -120,7 +121,7 @@ class MiscTestCase(unittest.TestCase):
             self.assertEqual(db1[b'aaa'], b'eh eh eh!')
         finally:
             db1.close()
-            test_support.unlink(self.filename)
+            unlink(self.filename)
 
     def test07_DB_set_flags_persists(self):
         try:
@@ -144,7 +145,7 @@ class MiscTestCase(unittest.TestCase):
             self.assertEqual([(b'a', b'new A')], list(db1.items()))
         finally:
             db1.close()
-            test_support.unlink(self.filename)
+            unlink(self.filename)
 
 
     def test08_ExceptionTypes(self) :

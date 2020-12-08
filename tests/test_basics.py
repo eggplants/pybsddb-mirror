@@ -46,7 +46,7 @@ import unittest
 import time
 import sys
 
-from .test_all import db, test_support, verbose, get_new_environment_path, \
+from .test_all import db, rmtree, verbose, get_new_environment_path, \
         get_new_database_path, printable_bytes
 
 DASH = b'-'
@@ -94,7 +94,7 @@ class BasicTestCase(unittest.TestCase):
                 self.filename = "test"
             # Yes, a bare except is intended, since we're re-raising the exc.
             except Exception:
-                test_support.rmtree(self.homeDir)
+                rmtree(self.homeDir)
                 raise
         else:
             self.env = None
@@ -131,7 +131,7 @@ class BasicTestCase(unittest.TestCase):
         self.d.close()
         if self.env is not None:
             self.env.close()
-            test_support.rmtree(self.homeDir)
+            rmtree(self.homeDir)
         else:
             os.remove(self.filename)
 
@@ -1320,7 +1320,7 @@ class open_path(unittest.TestCase):
             env.open(homeDir, db.DB_CREATE)
         finally:
             env.close()
-            test_support.rmtree(homeDir)
+            rmtree(homeDir)
 
     def test02_open_env_None(self):
         env = db.DBEnv()
@@ -1329,7 +1329,7 @@ class open_path(unittest.TestCase):
             env.open(None, db.DB_CREATE | db.DB_USE_ENVIRON)
         finally:
             env.close()
-            test_support.rmtree(os.environ['DB_HOME'])
+            rmtree(os.environ['DB_HOME'])
 
     def test03_open_env_None_keywords(self):
         env = db.DBEnv()
@@ -1338,7 +1338,7 @@ class open_path(unittest.TestCase):
             env.open(flags=db.DB_CREATE | db.DB_USE_ENVIRON)
         finally:
             env.close()
-            test_support.rmtree(os.environ['DB_HOME'])
+            rmtree(os.environ['DB_HOME'])
 
     def test04_open_db_path(self):
         import pathlib

@@ -39,7 +39,7 @@ are met:
 import os
 import unittest
 
-from .test_all import db, test_support, get_new_environment_path, \
+from .test_all import db, rmtree, get_new_environment_path, \
         get_new_database_path
 
 from .test_all import verbose
@@ -84,7 +84,7 @@ class DBTxn_distributed(unittest.TestCase):
 
     def tearDown(self):
         self._destroy_env()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def _recreate_env(self,must_open_db) :
         self._destroy_env()

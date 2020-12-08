@@ -37,7 +37,7 @@ import unittest
 import os, glob
 import sys
 
-from .test_all import db, test_support, get_new_environment_path, \
+from .test_all import db, rmtree, unlink, get_new_environment_path, \
         get_new_database_path
 
 #----------------------------------------------------------------------
@@ -50,7 +50,7 @@ class DB(unittest.TestCase):
     def tearDown(self):
         self.db.close()
         del self.db
-        test_support.unlink(self.path)
+        unlink(self.path)
 
 class DB_general(DB) :
     def test_get_open_flags(self) :
@@ -134,7 +134,7 @@ class DB_txn(DB) :
         del self.db
         self.env.close()
         del self.env
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test_flags(self) :
         self.db.set_flags(db.DB_CHKSUM)

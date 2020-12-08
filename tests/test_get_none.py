@@ -41,7 +41,7 @@ import os
 import unittest
 
 
-from .test_all import db, verbose, test_support, get_new_environment_path, \
+from .test_all import db, verbose, rmtree, get_new_environment_path, \
         get_new_database_path, printable_bytes
 
 
@@ -65,7 +65,7 @@ class GetReturnsNoneTestCase(unittest.TestCase):
             pass
         if self.Env:
             self.Env.close()
-            test_support.rmtree(self.homeDir)
+            rmtree(self.homeDir)
 
 
     def test01_get_returns_none_default(self):
@@ -159,7 +159,7 @@ class GetEnvReturnsNoneBUG(unittest.TestCase):
             d.close()
 
         dbenv.close()
-        test_support.rmtree(homeDir)
+        rmtree(homeDir)
 
 
 #----------------------------------------------------------------------

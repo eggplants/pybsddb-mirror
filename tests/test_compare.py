@@ -43,7 +43,7 @@ from io import StringIO
 
 import unittest
 
-from .test_all import db, dbshelve, test_support, \
+from .test_all import db, dbshelve, rmtree, \
         get_new_environment_path, get_new_database_path
 
 
@@ -117,7 +117,7 @@ class AbstractBtreeKeyCompareTestCase(unittest.TestCase) :
         if self.env is not None:
             self.env.close()
             self.env = None
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def addDataToDB(self, data) :
         i = 0
@@ -296,7 +296,7 @@ class AbstractDuplicateCompareTestCase(unittest.TestCase) :
         if self.env is not None:
             self.env.close()
             self.env = None
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def addDataToDB(self, data) :
         for item in data:

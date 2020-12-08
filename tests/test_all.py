@@ -44,7 +44,15 @@ import berkeleydb
 from berkeleydb import db, dbutils, dbshelve, \
         hashopen, btopen, rnopen, dbobj
 
-from test import support as test_support
+if sys.version_info >= (3, 9):
+    from test.support.socket_helper import find_unused_port
+else:
+    from test.support import find_unused_port
+
+if sys.version_info >= (3, 10):
+    from test.support.os_helper import rmtree, unlink
+else:
+    from test.support import rmtree, unlink
 
 
 try:
@@ -104,7 +112,7 @@ def get_new_environment_path() :
     try:
         os.makedirs(path,mode=0o700)
     except os.error:
-        test_support.rmtree(path)
+        rmtree(path)
         os.makedirs(path)
     return path
 
@@ -129,7 +137,7 @@ def set_test_path_prefix(path) :
     get_new_path.prefix=path
 
 def remove_test_path_directory() :
-    test_support.rmtree(get_new_path.prefix)
+    rmtree(get_new_path.prefix)
 
 if have_threads :
     import threading

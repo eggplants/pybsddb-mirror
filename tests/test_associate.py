@@ -42,7 +42,7 @@ import time
 from pprint import pprint
 
 import unittest
-from .test_all import db, dbshelve, test_support, verbose, have_threads, \
+from .test_all import db, dbshelve, rmtree, verbose, have_threads, \
         get_new_environment_path
 
 
@@ -120,7 +120,7 @@ class AssociateErrorTestCase(unittest.TestCase):
     def tearDown(self):
         self.env.close()
         self.env = None
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test00_associateDBError(self):
         if verbose:
@@ -170,7 +170,7 @@ class AssociateTestCase(unittest.TestCase):
         self.closeDB()
         self.env.close()
         self.env = None
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def addDataToDB(self, d, txn=None):
         for key, value in list(musicdata.items()):

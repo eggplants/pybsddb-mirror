@@ -38,7 +38,7 @@ import sys
 import weakref
 import unittest
 
-from .test_all import db, dbobj, test_support, get_new_environment_path, \
+from .test_all import db, dbobj, rmtree, get_new_environment_path, \
         get_new_database_path
 
 #----------------------------------------------------------------------
@@ -79,7 +79,7 @@ class db_weakrefDBEnv(unittest.TestCase):
         self.db.close()
 
         self.dbenv.close()
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
 
     def _test(self, obj, *args, **kwargs):

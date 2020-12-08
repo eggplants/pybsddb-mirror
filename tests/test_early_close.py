@@ -40,7 +40,7 @@ is closed before its DB objects.
 import os, sys
 import unittest
 
-from .test_all import db, test_support, verbose, get_new_environment_path, get_new_database_path
+from .test_all import db, rmtree, verbose, get_new_environment_path, get_new_database_path
 
 # We're going to get warnings in this module about trying to close the db when
 # its env is already closed.  Let's just ignore those.
@@ -62,7 +62,7 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         self.filename = "test"
 
     def tearDown(self):
-        test_support.rmtree(self.homeDir)
+        rmtree(self.homeDir)
 
     def test01_close_dbenv_before_db(self):
         dbenv = db.DBEnv()

@@ -41,7 +41,7 @@ import errno
 from pprint import pprint
 import unittest
 
-from .test_all import db, test_support, verbose, printable_bytes, \
+from .test_all import db, rmtree, unlink, verbose, printable_bytes, \
         get_new_environment_path, get_new_database_path
 
 
@@ -53,9 +53,9 @@ class SimpleRecnoTestCase(unittest.TestCase):
         self.homeDir = None
 
     def tearDown(self):
-        test_support.unlink(self.filename)
+        unlink(self.filename)
         if self.homeDir:
-            test_support.rmtree(self.homeDir)
+            rmtree(self.homeDir)
 
     def test01_basic(self):
         d = db.DB()
