@@ -23,6 +23,9 @@ testsuite, not in Python 3.
     maybe in order to learn about how to use advanced Oracle Berkeley DB
     features.
 
+    This change had an unexpected ripple effect in all code. Hopefully for the
+    better.
+
   * Python 3.10 couldn't find build directory.
 
 18.1.2 - 2020-12-07:

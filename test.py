@@ -265,30 +265,11 @@ class ImmediateTestRunner(unittest.TextTestRunner):
 
 # setup list of directories to put on the path
 class PathInit:
-    def __init__(self, build, build_inplace):
-        self.inplace = None
-        # Figure out if we should test in-place or test in-build.  If the -b
-        # or -B option was given, test in the place we were told to build in.
-        # Otherwise, we'll look for a build directory and if we find one,
-        # we'll test there, otherwise we'll test in-place.
-        if build:
-            self.inplace = build_inplace
-        if self.inplace is None:
-            # Need to figure it out
-            if os.path.isdir(os.path.join('build', 'lib.%s' % PLAT_SPEC)):
-                self.inplace = False
-            else:
-                self.inplace = True
-        # Calculate which directories we're going to add to sys.path, and cd
-        # to the appropriate working directory
-        if self.inplace:
-            self.libdir = 'src'
-        else:
-            self.libdir = 'lib.%s' % PLAT_SPEC
-            os.chdir('build')
+    def __init__(self):
+        self.libdir = 'lib.%s' % PLAT_SPEC
+        os.chdir('build')
         # Hack sys.path
         self.cwd = os.getcwd()
-        print('Running tests from', self.cwd)
         sys.path[0] = os.path.join(self.cwd, self.libdir)
 
 
@@ -301,69 +282,10 @@ def match(rx, s):
         return re.search(rx, s) is not None
 
 
-class TestFileFinder:
-    def __init__(self, prefix):
-        self.files = []
-        self._plen = len(prefix)+1
-
-    def visit(self, rx, dir, files):
-        if os.path.split(dir)[-1] != 'tests':
-            return
-        # ignore tests that aren't in packages
-        if not "__init__.py" in files:
-            if not files :
-                return
-            print("not a package", dir)
-            return
-        # ignore tests when the package can't be imported, possibly due to
-        # dependency failures.
-        pkg = dir[self._plen:].replace(os.sep, '.')
-        try:
-            __import__(pkg)
-        # We specifically do not want to catch ImportError since that's useful
-        # information to know when running the tests.
-        except RuntimeError as e:
-            if VERBOSE:
-                print('skipping', pkg, 'because:', e)
-            return
-
-        for file in files:
-            if file.startswith('test') and os.path.splitext(file)[-1] == '.py':
-                path = os.path.join(dir, file)
-                if match(rx, path):
-                    self.files.append(path)
-
-    def module_from_path(self, path):
-        """Return the Python package name indiciated by the filesystem path."""
-        if not path.endswith('.py') :
-            raise AssertionError()
-        path = path[self._plen:-3]
-        mod = path.replace(os.sep, '.')
-        return mod
-
-
-def find_tests(rx):
-    global finder
-    # pathinit is a global created in main()
-    prefix = pathinit.libdir
-    finder = TestFileFinder(prefix)
-    for root, dirs, files in os.walk(prefix) :
-        if len(files) :
-            finder.visit(rx, root, files)
-    return finder.files
-
-
-def package_import(modname):
-    mod = __import__(modname)
-    for part in modname.split(".")[1:]:
-        mod = getattr(mod, part)
-    return mod
-
-
 def get_suite(file):
-    modname = finder.module_from_path(file)
     try:
-        mod = package_import(modname)
+        modname = file[:-3]  # Drop the ".py" suffix
+        mod = __import__(f'tests.{modname}', fromlist=('tests'))
     except RuntimeError:
         # test uses some optional software
         if VERBOSE:
@@ -380,7 +302,7 @@ def get_suite(file):
     try:
         suite_func = mod.test_suite
     except AttributeError:
-        print("No test_suite() in %s" % file)
+        print("No test_suite() in %s" % modname)
         return None
     return suite_func()
 
@@ -433,14 +355,26 @@ def runner(files, test_filter, debug):
     return r
 
 
+def find_tests(module_filter):
+    import tests
+
+    files = []
+    root, _, files_to_filter = next(os.walk(tests.__path__[0]))
+    for file in files_to_filter:
+        if file.startswith('test') and os.path.splitext(file)[-1] == '.py':
+            if match(module_filter, file):
+                files.append(file)
+    return files
+
+
 def main(module_filter, test_filter):
     global pathinit
 
-    # Initialize the path and cwd
-    pathinit = PathInit(build)
-
     files = find_tests(module_filter)
     files.sort()
+
+    # Initialize the path and cwd
+    pathinit = PathInit()
 
     if GUI:
         gui_runner(files, test_filter)
