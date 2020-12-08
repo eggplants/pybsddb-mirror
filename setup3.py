@@ -54,7 +54,7 @@ VERSION = None
 _ver_re = re.compile(r'^#\s*define\s+PY_BERKELEYDB_VERSION\s+'
                      r'"(\d+\.\d+\.\d+.*)"')
 try:
-    _srcFile = open('src/Modules/berkeleydb.h', 'r')
+    _srcFile = open('src/Module/berkeleydb.h', 'r')
 except IOError:
     print("Could not open module source to read the version number.")
     raise
@@ -71,7 +71,7 @@ del _ver_re
 del m
 if not VERSION:
     raise RuntimeError('could not find PY_BERKELEYDB_VERSION '
-                       'in src/Modules/berkeleydb.h')
+                       'in src/Module/berkeleydb.h')
 
 #----------------------------------------------------------------------
 
@@ -487,15 +487,15 @@ pybsddb_doc/>`__ --
       packages = ['berkeleydb'],
       package_dir = {'berkeleydb': 'src/berkeleydb'},
       ext_modules = [Extension('berkeleydb._berkeleydb',
-                               sources = ['src/Modules/berkeleydb.c'],
-                               depends = ['src/Modules/berkeleydb.h'],
+                               sources = ['src/Module/berkeleydb.c'],
+                               depends = ['src/Module/berkeleydb.h'],
                                include_dirs = [ incdir ],
                                library_dirs = [ libdir ],
                                runtime_library_dirs = [ libdir ],
                                libraries = libname,
                                extra_link_args = lflags_arg,
                                )],
-      headers = ['src/Modules/berkeleydb.h'],
+      headers = ['src/Module/berkeleydb.h'],
       data_files = utils,
       classifiers = [
                     'License :: OSI Approved :: BSD License',

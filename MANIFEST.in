@@ -14,7 +14,7 @@ include test.py
 recursive-include src *.py
 recursive-include docs *.rst *.html *.css *.gif *.jpg *.png *.js *.json *.txt
 recursive-include patches *.txt *.patch
-recursive-include src/Modules berkeleydb.h berkeleydb.c
+recursive-include src/Module berkeleydb.h berkeleydb.c
 recursive-include test *.py
 
 prune docs/build
