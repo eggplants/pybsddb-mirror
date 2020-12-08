@@ -1,4 +1,4 @@
-.PHONY: docs dist
+.PHONY: build docs dist
 
 full-test:
 	./test-full_prerelease.py
