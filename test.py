@@ -22,10 +22,6 @@ Options:
 -b
     Run "python setup.py build" before running tests, where "python" is the
     version of python used to run test.py.  Highly recommended.  Tests will be
-    run from the build directory.
-
--B
-    Run "python setup.py build_ext -i" before running tests.  Tests will be
     run from the source directory.
 
 -c
@@ -440,14 +436,8 @@ def runner(files, test_filter, debug):
 def main(module_filter, test_filter):
     global pathinit
 
-    # Get the log.ini file from the current directory instead of possibly
-    # buried in the build directory.  XXX This isn't perfect because if
-    # log.ini specifies a log file, it'll be relative to the build directory.
-    # Hmm...
-    logini = os.path.abspath('log.ini')
-
     # Initialize the path and cwd
-    pathinit = PathInit(build, build_inplace)
+    pathinit = PathInit(build)
 
     files = find_tests(module_filter)
     files.sort()
@@ -484,7 +474,6 @@ def process_args(argv=None):
     global build
     global gcthresh
     global progress
-    global build_inplace
 
     if argv is None:
         argv = sys.argv
@@ -499,7 +488,6 @@ def process_args(argv=None):
     debug = False
     debugger = False
     build = False
-    build_inplace = False
     gcthresh = None
     gcflags = []
     progress = False
@@ -521,8 +509,6 @@ def process_args(argv=None):
     for k, v in opts:
         if k == '-b':
             build = True
-        elif k == '-B':
-            build = build_inplace = True
         elif k == '-c':
             os.environ['PYCHECKER'] = "-q"
             import pychecker.checker
@@ -573,8 +559,6 @@ def process_args(argv=None):
     # Do the builds
     if build:
         cmd = sys.executable + ' setup.py build'
-        if build_inplace:
-            cmd += '_ext -i'
         sts = os.system(cmd)
         if sts:
             print("Build failed", hex(sts))
