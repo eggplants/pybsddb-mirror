@@ -148,7 +148,8 @@ os.environ['YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION'] = ''
 
 
 PROGRAM = sys.argv[0]
-PLAT_SPEC = "%s-%s" % (get_platform(), sys.version[0:3])
+version = sys.version_info
+PLAT_SPEC = f'{get_platform()}-{version.major}.{version.minor}'
 # This hack copied from distutils.command.build.  Too bad distutils
 # doesn't export its build/ directory naming scheme as a library function.
 if hasattr(sys, 'gettotalrefcount'):
