@@ -72,7 +72,6 @@ class ComparatorTests(unittest.TestCase) :
     def comparator_test_helper(self, comparator, expected_data) :
         data = expected_data[:]
 
-        import sys
         # Insertion Sort. Please, improve
         data2 = []
         for i in data :

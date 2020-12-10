@@ -36,8 +36,9 @@ are met:
 """TestCases for distributed transactions.
 """
 
-import os
+import os, os.path
 import time
+import queue
 import unittest
 import sys
 
@@ -208,7 +209,6 @@ class DBReplicationManager(DBReplication) :
         # The timeout is necessary in BDB 4.5, since DB_EVENT_REP_STARTUPDONE
         # is not generated if the master has no new transactions.
         # This is solved in BDB 4.6 (#15542).
-        import time
         timeout = time.time()+10
         while (time.time()<timeout) and not (self.confirmed_master and self.client_startupdone) :
             time.sleep(0.02)
@@ -238,7 +238,6 @@ class DBReplicationManager(DBReplication) :
         self.dbMaster.open("test", db.DB_HASH, db.DB_CREATE, 0o666, txn=txn)
         txn.commit()
 
-        import time,os.path
         timeout=time.time()+10
         while (time.time()<timeout) and \
           not (os.path.exists(os.path.join(self.homeDirClient,"test"))) :
@@ -262,7 +261,6 @@ class DBReplicationManager(DBReplication) :
         txn=self.dbenvMaster.txn_begin()
         self.dbMaster.put(b'ABC', b'123', txn=txn)
         txn.commit()
-        import time
         timeout=time.time()+10
         v=None
         while (time.time()<timeout) and (v is None) :
@@ -302,7 +300,6 @@ class DBBaseReplication(DBReplication) :
         self.dbenvMaster.set_event_notify(confirmed_master)
         self.dbenvClient.set_event_notify(client_startupdone)
 
-        import queue
         self.m2c = queue.Queue()
         self.c2m = queue.Queue()
 
@@ -396,7 +393,6 @@ class DBBaseReplication(DBReplication) :
         # The timeout is necessary in BDB 4.5, since DB_EVENT_REP_STARTUPDONE
         # is not generated if the master has no new transactions.
         # This is solved in BDB 4.6 (#15542).
-        import time
         timeout = time.time()+10
         while (time.time()<timeout) and not (self.confirmed_master and
                 self.client_startupdone) :
@@ -408,7 +404,6 @@ class DBBaseReplication(DBReplication) :
         self.dbMaster.open("test", db.DB_HASH, db.DB_CREATE, 0o666, txn=txn)
         txn.commit()
 
-        import time,os.path
         timeout=time.time()+10
         while (time.time()<timeout) and \
           not (os.path.exists(os.path.join(self.homeDirClient,"test"))) :
@@ -435,7 +430,6 @@ class DBBaseReplication(DBReplication) :
         txn=self.dbenvMaster.txn_begin()
         self.dbMaster.put(b'ABC', b'123', txn=txn)
         txn.commit()
-        import time
         timeout=time.time()+10
         v=None
         while (time.time()<timeout) and (v is None) :

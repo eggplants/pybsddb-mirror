@@ -36,6 +36,7 @@ are met:
 import unittest
 import os, glob
 import sys
+import pathlib
 
 from .test_all import db, rmtree, get_new_environment_path, \
         get_new_database_path
@@ -130,7 +131,6 @@ class DBEnv_general(DBEnv) :
             self.assertEqual(i, self.env.get_tmp_dir())
 
     def test_tmp_dir_path(self) :
-        import pathlib
         for i in ['a', 'bb', 'ccc'] :
             i2 = pathlib.Path(i)
             self.env.set_tmp_dir(i2)
@@ -187,7 +187,6 @@ class DBEnv_general(DBEnv) :
             self.assertEqual(i, self.env.get_lg_dir())
 
     def test_lg_dir_path(self) :
-        import pathlib
         for i in ["a", "bb", "ccc", "dddd"] :
             i2 = pathlib.Path(i)
             self.env.set_lg_dir(i2)
@@ -208,7 +207,6 @@ class DBEnv_general(DBEnv) :
         self.assertEqual(dirs, self.env.get_data_dirs())
 
     def test_setget_data_dirs_path(self) :
-        import pathlib
         dirs = ("a", "b", "c", "d")
         for i in dirs :
             i2 = pathlib.Path(i)
@@ -587,7 +585,6 @@ class DBEnv_lsn(DBEnv):
         self.env.lsn_reset('test')
 
     def test_lsn_reset_path(self):
-        import pathlib
         self.env.lsn_reset(pathlib.Path('test'))
 
 class DBEnv_remove(unittest.TestCase):
@@ -610,7 +607,6 @@ class DBEnv_remove(unittest.TestCase):
         return self._remove(homeDir)
 
     def test_remove_path(self):
-        import pathlib
         homeDir = pathlib.Path(get_new_environment_path())
         return self._remove(homeDir)
 

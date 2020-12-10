@@ -37,21 +37,18 @@ are met:
 is closed before its DB objects.
 """
 
-import os, sys
+import os, os.path, sys
+import gc
 import unittest
 
 from .test_all import db, rmtree, verbose, get_new_environment_path, get_new_database_path
 
 # We're going to get warnings in this module about trying to close the db when
 # its env is already closed.  Let's just ignore those.
-try:
-    import warnings
-except ImportError:
-    pass
-else:
-    warnings.filterwarnings('ignore',
-                            message='DB could not be closed in',
-                            category=RuntimeWarning)
+import warnings
+warnings.filterwarnings('ignore',
+                        message='DB could not be closed in',
+                        category=RuntimeWarning)
 
 
 #----------------------------------------------------------------------
@@ -112,7 +109,6 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         self.assertRaises(db.DBError, c.next)
 
     def test03_close_db_before_dbcursor_without_env(self):
-        import os.path
         path=os.path.join(self.homeDir,self.filename)
         d = db.DB()
         d.open(path, db.DB_BTREE, db.DB_CREATE | db.DB_THREAD, 0o666)
@@ -176,13 +172,8 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         dbenv.close()  # This "close" should close the child db handle also
 
         del d
-        try:
-            import gc
-        except ImportError:
-            gc = None
-        if gc:
-            # force d.__del__ [DB_dealloc] to be called
-            gc.collect()
+        # force d.__del__ [DB_dealloc] to be called
+        gc.collect()
 
     def test06_close_txn_before_dup_cursor(self) :
         dbenv = db.DBEnv()
@@ -200,7 +191,6 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         self.assertEqual((b'XXX', b'yyy'), c1.first())
 
         # Not interested in warnings about implicit close.
-        import warnings
         with warnings.catch_warnings() :
             warnings.filterwarnings("ignore")
             txn.commit()
@@ -208,7 +198,6 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
         self.assertRaises(db.DBCursorClosedError, c2.first)
 
     def test07_close_db_before_sequence(self):
-        import os.path
         path=os.path.join(self.homeDir,self.filename)
         d = db.DB()
         d.open(path, db.DB_BTREE, db.DB_CREATE | db.DB_THREAD, 0o666)

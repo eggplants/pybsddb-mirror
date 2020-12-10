@@ -37,9 +37,10 @@ are met:
 """
 
 import sys
-import os
+import os, os.path
 import unittest
 import threading
+import platform
 import pathlib
 
 import berkeleydb
@@ -82,7 +83,6 @@ def print_versions():
     print('extension module:     %s' % getattr(berkeleydb, "__file"+suffix))
 
     print('Test working dir:     %s' % get_test_path_prefix())
-    import platform
     print('python version:       %s %s' % \
             (sys.version.replace("\r", "").replace("\n", ""), \
             platform.architecture()[0]))
@@ -93,7 +93,6 @@ def print_versions():
 def get_new_path(name) :
     get_new_path.mutex.acquire()
     try :
-        import os
         path=os.path.join(get_new_path.prefix,
                 name+"_"+str(os.getpid())+"_"+str(get_new_path.num))
         get_new_path.num+=1
@@ -107,7 +106,6 @@ get_new_path.mutex=threading.Lock()
 
 def get_new_environment_path() :
     path=get_new_path("environment")
-    import os
     try:
         os.makedirs(path,mode=0o700)
     except os.error:
@@ -117,7 +115,6 @@ def get_new_environment_path() :
 
 def get_new_database_path() :
     path=get_new_path("database")
-    import os
     if os.path.exists(path) :
         os.remove(path)
     return path

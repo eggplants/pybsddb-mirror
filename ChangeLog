@@ -37,6 +37,9 @@ testsuite, not in Python 3.
   * After Python 3.7, threads are always available. Take them for granted,
     even in Python 3.6.
 
+  * In the same direction, now some libraries are always available: pathlib,
+    warnings, queue, gc.
+
 18.1.2 - 2020-12-07:
   * Releases 18.1.0 and 18.1.1 were incomplete. Thanks to Mihai.i
     for reporting.

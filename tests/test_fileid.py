@@ -38,6 +38,7 @@ are met:
 
 import os, sys
 import shutil
+import pathlib
 import unittest
 
 from .test_all import db, rmtree, unlink, get_new_environment_path, get_new_database_path
@@ -85,7 +86,6 @@ class FileidResetTestCase(unittest.TestCase):
         return self._fileid_reset(self.db_path_1, self.db_path_2)
 
     def test_fileid_reset_path(self):
-        import pathlib
         db_path_1 = pathlib.Path(self.db_path_1)
         db_path_2 = pathlib.Path(self.db_path_2)
         return self._fileid_reset(db_path_1, db_path_2)

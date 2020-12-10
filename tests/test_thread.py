@@ -40,7 +40,7 @@ import os
 import sys
 import time
 import errno
-from random import random
+import random
 
 DASH = b'-'
 
@@ -109,7 +109,6 @@ class ConcurrentDataStoreBase(BaseThreadedTestCase):
                   self.__class__.__name__)
 
         keys=list(range(self.records))
-        import random
         random.shuffle(keys)
         records_per_writer=self.records//self.writers
         readers_per_writer=self.readers//self.writers
@@ -223,7 +222,6 @@ class SimpleThreadedBase(BaseThreadedTestCase):
 
 
         keys=list(range(self.records))
-        import random
         random.shuffle(keys)
         records_per_writer=self.records//self.writers
         readers_per_writer=self.readers//self.writers
@@ -337,7 +335,6 @@ class ThreadedTransactionsBase(BaseThreadedTestCase):
                   self.__class__.__name__)
 
         keys=list(range(self.records))
-        import random
         random.shuffle(keys)
         records_per_writer=self.records//self.writers
         readers_per_writer=self.readers//self.writers

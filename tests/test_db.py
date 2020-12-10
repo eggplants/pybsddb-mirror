@@ -36,6 +36,7 @@ are met:
 import unittest
 import os, glob
 import sys
+import pathlib
 
 from .test_all import db, rmtree, unlink, get_new_environment_path, \
         get_new_database_path
@@ -173,7 +174,6 @@ class DB_recno(DB) :
             self.assertEqual(i, self.db.get_re_source())
 
     def test_re_source_path(self) :
-        import pathlib
         for i in ["test", "test2", "test3"] :
             i2 = pathlib.Path(i)
             self.db.set_re_source(i2)

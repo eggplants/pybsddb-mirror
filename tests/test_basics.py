@@ -45,6 +45,7 @@ from pprint import pprint
 import unittest
 import time
 import sys
+import pathlib
 
 from .test_all import db, rmtree, verbose, get_new_environment_path, \
         get_new_database_path, printable_bytes
@@ -643,14 +644,12 @@ class BasicTestCase(unittest.TestCase):
         d.verify(self.filename, outfile=None)
 
     def test07_verify_path(self):
-        import pathlib
         self.d.close()
         d = db.DB(self.env)
         filename = pathlib.Path(self.filename)
         d.verify(filename)
 
     def test07_verify_path_outfile(self):
-        import pathlib
         self.d.close()
         d = db.DB(self.env)
         filename = pathlib.Path(self.filename)
@@ -664,7 +663,6 @@ class BasicTestCase(unittest.TestCase):
         d.upgrade(self.filename)
 
     def test07_upgrade_path(self):
-        import pathlib
         self.d.close()
         d = db.DB(self.env)
         filename = pathlib.Path(self.filename)
@@ -678,7 +676,6 @@ class BasicTestCase(unittest.TestCase):
         d.rename(self.filename + '.NEW', None, self.filename)
 
     def test07_rename_path(self):
-        import pathlib
         self.d.close()
         filename = pathlib.Path(self.filename)
         filename_new = pathlib.Path(self.filename + '.NEW')
@@ -700,7 +697,6 @@ class BasicTestCase(unittest.TestCase):
         open(self.filename, 'w').close()  # Touch
 
     def test07_remove_path(self):
-        import pathlib
         self.d.close()
         filename = pathlib.Path(self.filename)
         d = db.DB(self.env)
@@ -708,7 +704,6 @@ class BasicTestCase(unittest.TestCase):
         filename.touch()
 
     def test07_remove_path_None(self):
-        import pathlib
         self.d.close()
         filename = pathlib.Path(self.filename)
         d = db.DB(self.env)
@@ -815,7 +810,6 @@ class BasicWithEnvTestCase(BasicTestCase):
         self.env.dbremove(newname)
 
     def test09_EnvRemoveAndRename_path(self):
-        import pathlib
         if not self.env:
             return
 
@@ -1313,7 +1307,6 @@ class DBPrivateObject(PrivateObject) :
 
 class open_path(unittest.TestCase):
     def test01_open_env_path(self):
-        import pathlib
         homeDir = pathlib.Path(get_new_environment_path())
         env = db.DBEnv()
         try:
@@ -1341,7 +1334,6 @@ class open_path(unittest.TestCase):
             rmtree(os.environ['DB_HOME'])
 
     def test04_open_db_path(self):
-        import pathlib
         filename = pathlib.Path(get_new_database_path())
         dbname = 'test'
         database = db.DB()
@@ -1354,7 +1346,6 @@ class open_path(unittest.TestCase):
             os.remove(filename)
 
     def test05_open_db_path_keywords(self):
-        import pathlib
         filename = pathlib.Path(get_new_database_path())
         dbname = 'test'
         database = db.DB()
@@ -1368,7 +1359,6 @@ class open_path(unittest.TestCase):
             os.remove(filename)
 
     def test06_open_db_path_no_dbname(self):
-        import pathlib
         filename = pathlib.Path(get_new_database_path())
         database = db.DB()
         try:
@@ -1380,7 +1370,6 @@ class open_path(unittest.TestCase):
             os.remove(filename)
 
     def test07_open_db_path_no_dbname_keywords(self):
-        import pathlib
         filename = pathlib.Path(get_new_database_path())
         database = db.DB()
         try:
