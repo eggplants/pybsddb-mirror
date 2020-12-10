@@ -51,6 +51,8 @@ testsuite, not in Python 3.
   * WARNING - BREAKING CHANGE: The record number in the tuple returned by
     "DB.consume_wait()" is now a number instead of a binary key.
 
+  * "DB.consume()" and "DB.consume_wait()" now can request partial records.
+
   * "DB.get()" and "DB.pget()" could misunderstand flags.
 
 18.1.2 - 2020-12-07:

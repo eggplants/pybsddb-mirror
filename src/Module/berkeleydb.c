@@ -1668,10 +1668,11 @@ _DB_consume(DBObject* self, PyObject* args, PyObject* kwargs, int consume_flag)
     PyObject* retval = NULL;
     DBT key, data;
     DB_TXN *txn = NULL;
-    static char* kwnames[] = { "txn", "flags", NULL };
+    int dlen = -1, doff = -1;
+    static char* kwnames[] = { "txn", "flags", "dlen", "doff", NULL };
 
-    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|Oi:consume", kwnames,
-                                     &txnobj, &flags))
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|Oiii:consume", kwnames,
+                                     &txnobj, &flags, &dlen, &doff))
         return NULL;
 
     CHECK_DB_NOT_CLOSED(self);
@@ -1692,6 +1693,11 @@ _DB_consume(DBObject* self, PyObject* args, PyObject* kwargs, int consume_flag)
         /* Tell Berkeley DB to malloc the return value (thread safe) */
         data.flags = DB_DBT_MALLOC;
         key.flags = DB_DBT_MALLOC;
+    }
+
+    if (!add_partial_dbt(&data, dlen, doff)) {
+        FREE_DBT(key);
+        return NULL;
     }
 
     MYDB_BEGIN_ALLOW_THREADS;

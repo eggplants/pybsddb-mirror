@@ -73,14 +73,14 @@ DB Methods
 
    :OracleAPIC:`More info... <dbcompact.html>`
 
-.. function:: consume(txn=None, flags=0)
+.. function:: consume(txn=None, flags=0, dlen=-1, doff=-1)
 
    For a database with the Queue access method, returns the record
    number and data from the first available record and deletes it from
    the queue.
    :OracleAPIC:`More info... <dbget.html#dbget_DB_CONSUME>`
 
-.. function:: consume_wait(txn=None, flags=0)
+.. function:: consume_wait(txn=None, flags=0, dlen=-1, doff=-1)
 
    For a database with the Queue access method, returns the record
    number and data from the first available record and deletes it from

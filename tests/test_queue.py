@@ -171,6 +171,35 @@ class SimpleQueueTestCase(unittest.TestCase):
 
         d.close()
 
+    def test04_get_consume_partial(self):
+        d = db.DB()
+        d.set_re_len(40)  # Queues must be fixed length
+        d.open(self.filename, db.DB_QUEUE, db.DB_CREATE)
+
+        d.append(b'1234567890')
+        d.append(b'abcdefghij')
+        d.append(b'ABCDEFGHIJ')
+        self.assertEqual(b'CDEF', d.get(3, dlen=4, doff=2))
+        # If "DB_CONSUME", the key is ignored. It is easier to
+        # use "DB.consume()".
+        self.assertEqual((1, b'3456'), d.get(99999, flags=db.DB_CONSUME_WAIT,
+                                             dlen=4, doff=2))
+        self.assertEqual((2, b'cdef'), d.get(99999, flags=db.DB_CONSUME,
+                                             dlen=4, doff=2))
+        d.close()
+
+    def test05_consume_partial(self):
+        d = db.DB()
+        d.set_re_len(40)  # Queues must be fixed length
+        d.open(self.filename, db.DB_QUEUE, db.DB_CREATE)
+
+        d.append(b'1234567890')
+        d.append(b'abcdefghij')
+        d.append(b'ABCDEFGHIJ')
+        self.assertEqual((1, b'3456'), d.consume(dlen=4, doff=2))
+        self.assertEqual((2, b'cdef'), d.consume_wait(dlen=4, doff=2))
+        d.close()
+
 
 #----------------------------------------------------------------------
 
