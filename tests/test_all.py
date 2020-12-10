@@ -39,8 +39,9 @@ are met:
 import sys
 import os
 import unittest
-import berkeleydb
+import pathlib
 
+import berkeleydb
 from berkeleydb import db, dbutils, dbshelve, \
         hashopen, btopen, rnopen, dbobj
 
@@ -125,7 +126,10 @@ def get_new_database_path() :
 
 
 # This path can be overriden via "set_test_path_prefix()".
-import os, os.path
+# If we have a ramdisk, use it
+ramdisk = pathlib.Path('/tmp/ram/')
+if ('TMPDIR' not in os.environ) and ramdisk.is_dir():
+    os.environ['TMPDIR'] = str(ramdisk)
 get_new_path.prefix=os.path.join(os.environ.get("TMPDIR",
     os.path.join(os.sep,"tmp")), "z-Berkeley_DB")
 get_new_path.num=0

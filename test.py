@@ -426,11 +426,6 @@ def process_args(argv=None):
     gcflags = []
     progress = False
 
-    # If we have a ramdisk, use it
-    ramdisk = pathlib.Path('/tmp/ram/')
-    if ('TMPDIR' not in os.environ) and ramdisk.is_dir():
-        os.environ['TMPDIR'] = str(ramdisk)
-
     try:
         opts, args = getopt.getopt(argv[1:],
                                    'bBcdDg:G:hLumpTv',
