@@ -39,6 +39,7 @@ are met:
 import sys
 import os
 import unittest
+import threading
 import pathlib
 
 import berkeleydb
@@ -55,13 +56,6 @@ if sys.version_info >= (3, 10):
 else:
     from test.support import rmtree, unlink
 
-
-try:
-    from threading import Thread, current_thread
-    del Thread, current_thread
-    have_threads = True
-except ImportError:
-    have_threads = False
 
 verbose = 0
 if 'verbose' in sys.argv:
@@ -107,6 +101,10 @@ def get_new_path(name) :
         get_new_path.mutex.release()
     return path
 
+
+get_new_path.mutex=threading.Lock()
+
+
 def get_new_environment_path() :
     path=get_new_path("environment")
     import os
@@ -142,20 +140,6 @@ def set_test_path_prefix(path) :
 
 def remove_test_path_directory() :
     rmtree(get_new_path.prefix)
-
-if have_threads :
-    import threading
-    get_new_path.mutex=threading.Lock()
-    del threading
-else :
-    class Lock(object) :
-        def acquire(self) :
-            pass
-        def release(self) :
-            pass
-    get_new_path.mutex=Lock()
-    del Lock
-
 
 import string
 

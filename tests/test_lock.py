@@ -40,12 +40,10 @@ TestCases for testing the locking sub-system.
 import time
 
 import unittest
-from .test_all import db, rmtree, verbose, have_threads, \
+from .test_all import db, rmtree, verbose, \
         get_new_environment_path, get_new_database_path
 
-if have_threads :
-    from threading import Thread
-    from threading import current_thread as currentThread
+from threading import Thread, current_thread
 
 #----------------------------------------------------------------------
 
@@ -170,7 +168,7 @@ class LockingTestCase(unittest.TestCase):
             self.env.lock_id_free(anID)
 
     def theThread(self, lockType):
-        name = currentThread().name
+        name = current_thread().name
 
         if lockType ==  db.DB_LOCK_WRITE:
             lt = "write"
@@ -198,10 +196,7 @@ class LockingTestCase(unittest.TestCase):
 def test_suite():
     suite = unittest.TestSuite()
 
-    if have_threads:
-        suite.addTest(unittest.makeSuite(LockingTestCase))
-    else:
-        suite.addTest(unittest.makeSuite(LockingTestCase, 'test01'))
+    suite.addTest(unittest.makeSuite(LockingTestCase))
 
     return suite
 

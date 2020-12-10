@@ -42,7 +42,7 @@ import time
 from pprint import pprint
 
 import unittest
-from .test_all import db, dbshelve, rmtree, verbose, have_threads, \
+from .test_all import db, dbshelve, rmtree, verbose, \
         get_new_environment_path
 
 
@@ -523,10 +523,9 @@ def test_suite():
     suite.addTest(unittest.makeSuite(ShelveAssociateBTreeTestCase))
     suite.addTest(unittest.makeSuite(ShelveAssociateRecnoTestCase))
 
-    if have_threads:
-        suite.addTest(unittest.makeSuite(ThreadedAssociateHashTestCase))
-        suite.addTest(unittest.makeSuite(ThreadedAssociateBTreeTestCase))
-        suite.addTest(unittest.makeSuite(ThreadedAssociateRecnoTestCase))
+    suite.addTest(unittest.makeSuite(ThreadedAssociateHashTestCase))
+    suite.addTest(unittest.makeSuite(ThreadedAssociateBTreeTestCase))
+    suite.addTest(unittest.makeSuite(ThreadedAssociateRecnoTestCase))
 
     return suite
 

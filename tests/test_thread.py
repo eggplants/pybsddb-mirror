@@ -51,12 +51,10 @@ except NameError:
         pass
 
 import unittest
-from .test_all import db, dbutils, rmtree, verbose, have_threads, \
+from .test_all import db, dbutils, rmtree, verbose, \
         get_new_environment_path, get_new_database_path
 
-if have_threads :
-    from threading import Thread
-    from threading import current_thread as currentThread
+from threading import Thread, current_thread
 
 
 #----------------------------------------------------------------------
@@ -147,7 +145,7 @@ class ConcurrentDataStoreBase(BaseThreadedTestCase):
             t.join()
 
     def writerThread(self, d, keys, readers):
-        name = currentThread().name
+        name = current_thread().name
 
         if verbose:
             print("%s: creating records %d - %d" % (name, start, stop))
@@ -173,7 +171,7 @@ class ConcurrentDataStoreBase(BaseThreadedTestCase):
             print("%s: thread finished" % name)
 
     def readerThread(self, d, readerNum):
-        name = currentThread().name
+        name = current_thread().name
 
         for i in range(5) :
             c = d.cursor()
@@ -263,7 +261,7 @@ class SimpleThreadedBase(BaseThreadedTestCase):
             t.join()
 
     def writerThread(self, d, keys, readers):
-        name = currentThread().name
+        name = current_thread().name
         if verbose:
             print("%s: creating records %d - %d" % (name, start, stop))
 
@@ -286,7 +284,7 @@ class SimpleThreadedBase(BaseThreadedTestCase):
             print("%s: thread finished" % name)
 
     def readerThread(self, d, readerNum):
-        name = currentThread().name
+        name = current_thread().name
 
         c = d.cursor()
         count = 0
@@ -383,7 +381,7 @@ class ThreadedTransactionsBase(BaseThreadedTestCase):
         dt.join()
 
     def writerThread(self, d, keys, readers):
-        name = currentThread().name
+        name = current_thread().name
 
         count=len(keys)//len(readers)
         while len(keys):
@@ -408,7 +406,7 @@ class ThreadedTransactionsBase(BaseThreadedTestCase):
             print("%s: thread finished" % name)
 
     def readerThread(self, d, readerNum):
-        name = currentThread().name
+        name = current_thread().name
 
         finished = False
         while not finished:
@@ -482,18 +480,14 @@ class HashThreadedNoWaitTransactions(ThreadedTransactionsBase):
 def test_suite():
     suite = unittest.TestSuite()
 
-    if have_threads:
-        suite.addTest(unittest.makeSuite(BTreeConcurrentDataStore))
-        suite.addTest(unittest.makeSuite(HashConcurrentDataStore))
-        suite.addTest(unittest.makeSuite(BTreeSimpleThreaded))
-        suite.addTest(unittest.makeSuite(HashSimpleThreaded))
-        suite.addTest(unittest.makeSuite(BTreeThreadedTransactions))
-        suite.addTest(unittest.makeSuite(HashThreadedTransactions))
-        suite.addTest(unittest.makeSuite(BTreeThreadedNoWaitTransactions))
-        suite.addTest(unittest.makeSuite(HashThreadedNoWaitTransactions))
-
-    else:
-        print("Threads not available, skipping thread tests.")
+    suite.addTest(unittest.makeSuite(BTreeConcurrentDataStore))
+    suite.addTest(unittest.makeSuite(HashConcurrentDataStore))
+    suite.addTest(unittest.makeSuite(BTreeSimpleThreaded))
+    suite.addTest(unittest.makeSuite(HashSimpleThreaded))
+    suite.addTest(unittest.makeSuite(BTreeThreadedTransactions))
+    suite.addTest(unittest.makeSuite(HashThreadedTransactions))
+    suite.addTest(unittest.makeSuite(BTreeThreadedNoWaitTransactions))
+    suite.addTest(unittest.makeSuite(HashThreadedNoWaitTransactions))
 
     return suite
 

@@ -41,7 +41,7 @@ import time
 import unittest
 import sys
 
-from .test_all import db, rmtree, find_unused_port, have_threads, verbose, \
+from .test_all import db, rmtree, find_unused_port, verbose, \
         get_new_environment_path, get_new_database_path
 
 
@@ -545,8 +545,7 @@ def test_suite():
     if ReplicationManager_available :
         suite.addTest(unittest.makeSuite(DBReplicationManager))
 
-    if have_threads :
-        suite.addTest(unittest.makeSuite(DBBaseReplication))
+    suite.addTest(unittest.makeSuite(DBBaseReplication))
 
     return suite
 
