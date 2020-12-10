@@ -55,6 +55,18 @@ testsuite, not in Python 3.
 
   * "DB.get()" and "DB.pget()" could misunderstand flags.
 
+  * If you are using Oracle Berkeley DB 5.3 or newer, you have these new flags:
+    "DB_BACKUP_CLEAN", "DB_BACKUP_FILES", "DB_BACKUP_NO_LOGS",
+    "DB_BACKUP_SINGLE_DIR" and "DB_BACKUP_UPDATE".
+
+  * If you are using Oracle Berkeley DB 18.1 or newer, you have these new
+    flags: "DB_BACKUP_DEEP_COPY".
+
+  * "DBEnv.backup()" and "DBEnv.dbbackup()" available if you are using Oracle
+    Berkeley DB 18.1 or newer. These methods allow you to do hot backups
+    without needing to follow a careful procedure, and they can be incremental.
+
+
 18.1.2 - 2020-12-07:
   * Releases 18.1.0 and 18.1.1 were incomplete. Thanks to Mihai.i
     for reporting.

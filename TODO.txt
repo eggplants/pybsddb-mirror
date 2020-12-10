@@ -1,9 +1,12 @@
+- 20201210: Implement "DB_ENV->set_backup_callbacks()" and
+  "DB_ENV->set_backup_config()".
+
 - 20201126: Move the readme published in PYPI to "markdown", for more power.
 
-* 20161120: Document how to install with alternative Berkeley DB paths
+* 20161120: Document how to install with alternative Oracle Berkeley DB paths
   using PIP.
 
-* 20160422: The "changelog" should merge with the sphynx documentation.
+* 20160422: The "changelog" should merge with the sphinx documentation.
 
 * 20160421: Merge "README.txt" with the sphynx documentation.
 

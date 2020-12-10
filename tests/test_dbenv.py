@@ -610,6 +610,72 @@ class DBEnv_remove(unittest.TestCase):
         homeDir = pathlib.Path(get_new_environment_path())
         return self._remove(homeDir)
 
+class DBEnv_hot_backup(DBEnv) :
+    def setUp(self):
+        super().setUp()
+        self.target_dir = pathlib.Path(get_new_environment_path())
+        self.target_dir.rmdir()
+        self.env.open(self.homeDir, db.DB_CREATE | db.DB_INIT_MPOOL |
+                db.DB_INIT_LOG | db.DB_INIT_TXN)
+        txn = self.env.txn_begin()
+        self.db = db.DB(self.env)
+        self.db.open('test', db.DB_HASH, db.DB_CREATE, 0o660, txn=txn)
+        txn.commit()
+        for i in [b'2', b'8', b'20'] :
+            txn = self.env.txn_begin()
+            self.db.put(key = i, data = i*int(i), txn=txn)
+            txn.commit()
+
+    def tearDown(self):
+        self.db.close()
+        del self.db
+        rmtree(self.target_dir)
+        super().tearDown()
+
+    def test_backup_env(self):
+        self.env.txn_checkpoint()
+        self.env.backup(self.target_dir, db.DB_CREATE)
+        dir1 = {i for i in os.listdir(self.homeDir) if i[:6] != '__db.0'}
+        dir2 = {i for i in os.listdir(self.target_dir)}
+        self.assertEqual(dir1, dir2)
+
+        (self.target_dir / 'file_to_delete').touch()
+
+        # Try keywords
+        self.env.backup(flags=db.DB_BACKUP_CLEAN, target=self.target_dir)
+        dir2 = {i for i in os.listdir(self.target_dir)}
+        self.assertEqual(dir1, dir2)
+
+    def test_backup_env_no_create(self):
+        self.env.txn_checkpoint()
+        self.assertRaises(db.DBPermissionsError,
+                          self.env.backup, self.target_dir)
+
+    def test_backup_env_no_target(self):
+        # This will work when I implement the backup callbacks.
+        self.env.txn_checkpoint()
+        self.assertRaises(db.DBInvalidArgError,
+                          self.env.backup, None, db.DB_CREATE)
+
+    def test_backup_db(self):
+        self.target_dir.mkdir()
+        self.assertFalse((self.target_dir / 'test').exists())
+        self.env.dbbackup('test', self.target_dir)
+        self.assertTrue((self.target_dir / 'test').exists())
+
+    def test_backup_db_target_doesnt_exist(self):
+        self.assertFalse(self.target_dir.exists())
+        self.assertRaises(db.DBNoSuchFileError,
+                          self.env.dbbackup,
+                               target=self.target_dir, dbfile='test')
+
+    @unittest.skipIf(db.version() <= (18, 1, 99999),
+                        'Core dump!')
+    def test_backup_db_no_target(self):
+        # This will work when I implement the backup callbacks.
+        self.assertRaises(db.DBInvalidArgError,
+                          self.env.dbbackup, target=None, dbfile='test')
+
 
 def test_suite():
     suite = unittest.TestSuite()
@@ -621,6 +687,7 @@ def test_suite():
     suite.addTest(unittest.makeSuite(DBEnv_log_txn))
     suite.addTest(unittest.makeSuite(DBEnv_lsn))
     suite.addTest(unittest.makeSuite(DBEnv_remove))
+    suite.addTest(unittest.makeSuite(DBEnv_hot_backup))
 
     return suite
 

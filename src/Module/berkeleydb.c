@@ -6992,6 +6992,79 @@ DBEnv_log_archive(DBEnvObject* self, PyObject* args)
 
 #if (DBVER >= 53)
 static PyObject*
+DBEnv_backup(DBEnvObject* self, PyObject* args, PyObject* kwargs)
+{
+    int err, flags=0;
+    PyObject *obj = NULL;
+    PyObject *targetObj = NULL;
+    char *target = NULL;
+    static char *kwnames[] = {"target", "flags", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "|Oi:backup", kwnames,
+                &targetObj, &flags))
+        return NULL;
+    CHECK_ENV_NOT_CLOSED(self);
+
+    if ((targetObj != NULL) && (targetObj != Py_None))
+    {
+        if(!PyUnicode_FSConverter(targetObj, &obj))
+        {
+            return NULL;
+        }
+        target = PyBytes_AS_STRING(obj);
+    }
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db_env->backup(self->db_env, target, flags);
+    MYDB_END_ALLOW_THREADS;
+
+    Py_XDECREF(obj);
+
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
+
+static PyObject*
+DBEnv_dbbackup(DBEnvObject* self, PyObject* args, PyObject* kwargs)
+{
+    int err, flags=0;
+    PyObject *obj = NULL;
+    PyObject *dbfileObj = NULL;
+    PyObject *targetObj = NULL;
+    char *dbfile = NULL;
+    char *target = NULL;
+    static char *kwnames[] = {"dbfile", "target", "flags", NULL};
+
+    if (!PyArg_ParseTupleAndKeywords(args, kwargs, "O&|Oi:dbbackup", kwnames,
+                PyUnicode_FSConverter, &dbfileObj, &targetObj, &flags))
+        return NULL;
+    CHECK_ENV_NOT_CLOSED(self);
+
+    dbfile = PyBytes_AS_STRING(dbfileObj);
+
+    if ((targetObj != NULL) && (targetObj != Py_None))
+    {
+        if(!PyUnicode_FSConverter(targetObj, &obj))
+        {
+            Py_DECREF(dbfileObj);
+            return NULL;
+        }
+        target = PyBytes_AS_STRING(obj);
+    }
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db_env->dbbackup(self->db_env, dbfile, target, flags);
+    MYDB_END_ALLOW_THREADS;
+
+    Py_XDECREF(obj);
+    Py_DECREF(dbfileObj);
+
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
+
+
+static PyObject*
 DBEnv_repmgr_site(DBEnvObject* self, PyObject* args, PyObject *kwargs)
 {
     int err;
@@ -9165,6 +9238,8 @@ static PyMethodDef DBEnv_methods[] = {
         METH_VARARGS | METH_KEYWORDS},
     {"repmgr_site_by_eid",  (PyCFunction)DBEnv_repmgr_site_by_eid,
         METH_VARARGS | METH_KEYWORDS},
+    {"backup",      (PyCFunction)DBEnv_backup, METH_VARARGS | METH_KEYWORDS},
+    {"dbbackup",    (PyCFunction)DBEnv_dbbackup, METH_VARARGS | METH_KEYWORDS},
 #endif
     {NULL,      NULL}       /* sentinel */
 };
@@ -10083,6 +10158,17 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     ADD_INT(d, DB_SET_TXN_TIMEOUT);
 
     ADD_INT(d, DB_SET_REG_TIMEOUT);
+
+#if (DBVER >= 53)
+    ADD_INT(d, DB_BACKUP_CLEAN);
+    ADD_INT(d, DB_BACKUP_FILES);
+    ADD_INT(d, DB_BACKUP_NO_LOGS);
+    ADD_INT(d, DB_BACKUP_SINGLE_DIR);
+    ADD_INT(d, DB_BACKUP_UPDATE);
+#endif
+#if (DBVER >= 181)
+    ADD_INT(d, DB_BACKUP_DEEP_COPY);
+#endif
 
     /* The exception name must be correct for pickled exception *
      * objects to unpickle properly.                            */
