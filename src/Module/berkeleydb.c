@@ -7046,7 +7046,6 @@ DBEnv_dbbackup(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     {
         if(!PyUnicode_FSConverter(targetObj, &obj))
         {
-            Py_DECREF(dbfileObj);
             return NULL;
         }
         target = PyBytes_AS_STRING(obj);
@@ -7057,7 +7056,6 @@ DBEnv_dbbackup(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     MYDB_END_ALLOW_THREADS;
 
     Py_XDECREF(obj);
-    Py_DECREF(dbfileObj);
 
     RETURN_IF_ERR();
     Py_RETURN_NONE;
