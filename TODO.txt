@@ -1,3 +1,10 @@
+- 20201210: We should do "CLOSED" checks before argument parsing, to avoid
+  memory leaks.
+
+- 20201210: We are possibly leaking memory because the pathlike support.
+
+- 20201210: Python 3.3 argument parsing supports "p" format unit as "bool".
+
 - 20201210: Implement "DB_ENV->set_backup_callbacks()" and
   "DB_ENV->set_backup_config()".
 
@@ -8,7 +15,7 @@
 
 * 20160422: The "changelog" should merge with the sphinx documentation.
 
-* 20160421: Merge "README.txt" with the sphynx documentation.
+* 20160421: Merge "README.txt" with the sphinx documentation.
 
 * 20080402: If a prepared/recovered transaction is garbaged collected,
   we leak transactions. Can we call "discard" in a safe way?.
