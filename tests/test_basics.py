@@ -763,6 +763,20 @@ class BasicTestCase(unittest.TestCase):
         if db.version() >= (5, 3):
             self.assertEqual(0, ret['empty_buckets'])
 
+    @unittest.skipIf(db.version() < (5, 3),
+                     'Oracle Berkeley DB 4.8 has no get/set_lk_exclusive')
+    def test_getset_lk_exclusive(self):
+        self.assertEqual((False, False), self.d.get_lk_exclusive())
+        d2 = db.DB(self.env)
+        try:
+            self.assertEqual((False, False), d2.get_lk_exclusive())
+            d2.set_lk_exclusive(False)
+            self.assertEqual((True, False), d2.get_lk_exclusive())
+            d2.set_lk_exclusive(True)
+            self.assertEqual((True, True), d2.get_lk_exclusive())
+        finally:
+            d2.close()
+
 
     #----------------------------------------
 
@@ -1053,6 +1067,18 @@ class BasicTransactionTestCase(BasicTestCase):
         pos_disk2 = (log_stat['disk_file'], log_stat['disk_offset'])
         self.assertLess(pos_mem, pos_disk2)
         self.assertGreaterEqual(pos_mem2, pos_disk2)
+
+    @unittest.skipIf(db.version() < (5, 3),
+                     'Oracle Berkeley DB 4.8 has no get/set_lk_exclusive')
+    def test_set_lk_exclusive(self):
+        d2 = db.DB(self.env)
+        try:
+            d2.set_lk_exclusive(True)
+            self.assertRaises(db.DBLockNotGrantedError,
+                              d2.open, self.filename)
+        finally:
+            d2.close()
+
 
 
 class BTreeTransactionTestCase(BasicTransactionTestCase):

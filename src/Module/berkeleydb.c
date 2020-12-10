@@ -3007,6 +3007,39 @@ DB_get_heap_regionsize(DBObject* self)
 
     return PyLong_FromUnsignedLong(npages);
 }
+
+static PyObject*
+DB_get_lk_exclusive(DBObject* self)
+{
+    int err;
+    int onoff, nowait;
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db->get_lk_exclusive(self->db, &onoff, &nowait);
+    MYDB_END_ALLOW_THREADS;
+
+    RETURN_IF_ERR();
+
+    /* Create objects but DO NOT increase ref counts when making the tuple */
+    return Py_BuildValue("(NN)",
+                         PyBool_FromLong(onoff), PyBool_FromLong(nowait));
+}
+
+static PyObject*
+DB_set_lk_exclusive(DBObject* self, PyObject* args)
+{
+    int err;
+    int nowait_onoff;
+
+    if (!PyArg_ParseTuple(args,"i:set_lk_exclusive", &nowait_onoff))
+        return NULL;
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db->set_lk_exclusive(self->db, nowait_onoff);
+    MYDB_END_ALLOW_THREADS;
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
 #endif
 
 static PyObject*
@@ -8861,6 +8894,8 @@ static PyMethodDef DB_methods[] = {
     {"set_heapsize",    (PyCFunction)DB_set_heapsize,   METH_VARARGS},
     {"get_heap_regionsize", (PyCFunction)DB_get_heap_regionsize, METH_NOARGS},
     {"set_heap_regionsize", (PyCFunction)DB_set_heap_regionsize, METH_VARARGS},
+    {"get_lk_exclusive", (PyCFunction)DB_get_lk_exclusive, METH_NOARGS},
+    {"set_lk_exclusive", (PyCFunction)DB_set_lk_exclusive, METH_VARARGS},
 #endif
     {"stat",            (PyCFunction)DB_stat,           METH_VARARGS|METH_KEYWORDS},
     {"stat_print",      (PyCFunction)DB_stat_print,

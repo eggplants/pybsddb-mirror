@@ -151,8 +151,38 @@ DB Methods
    specific way.
 
    The value provided must be symbolic. Check the Oracle documentation.
-
    :OracleAPIC:`More info... <dbset_priority.html>`
+
+.. function:: get_lk_exclusive()
+
+   Returns a tuple with two booleans.
+
+   The first boolean indicates whether the handle is configured
+   for exclusive database locking. If False, it is not configured
+   for exclusive locking. If True, then it is configured for
+   exclusive locking.
+
+   The second boolean indicates whether the handle is configured
+   for immediate locking. If False, then the locking operation
+   will block until it can obtain an exclusive database lock. If
+   True, then the locking operation will error out if it cannot
+   immediately obtain an exclusive lock.
+   :OracleAPIC:`More info... <dbget_lk_exclusive.html>`
+
+.. function:: set_lk_exclusive(nowait_onoff)
+
+   Configures the database handle to obtain a write lock on the
+   entire database when it is opened. This gives the handle
+   exclusive access to the database, because the write lock will
+   block all other threads of control for both read and write
+   access.
+
+   The parameter is a boolean. If set to False, database opening
+   will block until it can obtain the exclusive lock on the
+   database. If set to True, a DBLockNotGrantedError exception is
+   raised when the handle is opened if the exclusive database lock
+   cannot be immediately obtained.
+   :OracleAPIC:`More info... <dbset_lk_exclusive.html>`
 
 .. function:: get_dbname()
 
@@ -260,7 +290,7 @@ DB Methods
 
    Returns the encryption flags.
    :OracleAPIC:`More info... <dbget_encrypt_flags.html>`
- 
+
 .. function:: set_bt_compare(compareFunc)
 
    Set the B-Tree database comparison function. This can only be called
@@ -365,7 +395,7 @@ DB Methods
 .. function:: get_h_nelem()
 
    Returns the estimate of the final size of the hash table as set by the
-   DB->set_h_nelem() method. 
+   DB->set_h_nelem() method.
    :OracleAPIC:`More info... <dbget_h_nelem.html>`
 
 .. function:: set_h_nelem(nelem)
