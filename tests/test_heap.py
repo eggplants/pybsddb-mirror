@@ -111,7 +111,7 @@ class HeapTestCaseOpen(HeapTestCase):
         value = self.db.get(key)
         self.assertEqual(value, b'value')
 
-    @unittest.skipIf(db.version() != (5, 3),
+    @unittest.skipIf(db.version()[:2] != (5, 3),
                      'Oracle Berkeley DB 6.2 and 18.1 are faulty. Check '
                      'https://community.oracle.com/tech/developers/discussion/4478383/oracle-berkeley-db-heap-access-method-misscounts-records-in-db-stat/p1?new=1')
     def test_append_delete(self):
