@@ -59,129 +59,117 @@ class SimpleQueueTestCase(unittest.TestCase):
     def test01_basic(self):
         # Basic Queue tests using the deprecated DBCursor.consume method.
 
-        if verbose:
-            print('\n', '-=' * 30)
-            print("Running %s.test01_basic..." % self.__class__.__name__)
-
         d = db.DB()
         d.set_re_len(40)  # Queues must be fixed length
         d.open(self.filename, db.DB_QUEUE, db.DB_CREATE)
 
-        if verbose:
-            print("before appends" + '-' * 30)
-            pprint(d.stat())
-
+        recnos = []
         for x in printable_bytes:
-            d.append(x * 40)
+            recnos.append(d.append(x * 40))
 
         self.assertEqual(len(d), len(printable_bytes))
+        self.assertEqual(len(d), len(recnos))
 
-        d.put(128, b'some more data')
-        d.put(129, b'and some more ')
-        d.put(120,  b'out of order')
-        d.put(1,   b'replacement data')
+        for recno, data in ((128, b'some more data'),
+                            (129, b'and some more'),
+                            (120, b'out of order'),
+                            (1, b'replacement data')):
+            d.put(recno, data)
+            recnos.append(recno)
 
         self.assertEqual(len(d), len(printable_bytes)+3)
-
-        if verbose:
-            print("before close" + '-' * 30)
-            pprint(d.stat())
+        self.assertEqual(len(recnos), len(d) + 1)  # +1 because replacement
 
         d.close()
         del d
+
         d = db.DB()
         d.open(self.filename)
 
-        if verbose:
-            print("after open" + '-' * 30)
-            pprint(d.stat())
-
         # Test "txn" as a positional parameter
-        d.append(b'one more', None)
+        recnos.append(d.append(b'one more', None))
         # Test "txn" as a keyword parameter
-        d.append(b'another one', txn=None)
+        recnos.append(d.append(b'another one', txn=None))
+
+        recnos = set(recnos)
 
         c = d.cursor()
-
-        if verbose:
-            print("after append" + '-' * 30)
-            pprint(d.stat())
-
         rec = c.consume()
         while rec:
-            if verbose:
-                print(rec)
+            self.assertIn(rec[0], recnos)
+            recnos.discard(rec[0])
             rec = c.consume()
         c.close()
 
-        if verbose:
-            print("after consume loop" + '-' * 30)
-            pprint(d.stat())
-
         self.assertEqual(len(d), 0)
         d.close()
+        self.assertFalse(recnos)
 
 
     def test02_basicPost32(self):
         # Basic Queue tests using the new DB.consume method in DB 3.2+
         # (No cursor needed)
 
-        if verbose:
-            print('\n', '-=' * 30)
-            print("Running %s.test02_basicPost32..." % self.__class__.__name__)
-
         d = db.DB()
         d.set_re_len(40)  # Queues must be fixed length
         d.open(self.filename, db.DB_QUEUE, db.DB_CREATE)
 
-        if verbose:
-            print("before appends" + '-' * 30)
-            pprint(d.stat())
-
+        recnos = []
         for x in printable_bytes:
-            d.append(x * 40)
+            recnos.append(d.append(x * 40))
 
         self.assertEqual(len(d), len(printable_bytes))
 
-        d.put(128, b'some more data')
-        d.put(129, b'and some more ')
-        d.put(120,  b'out of order')
-        d.put(1,   b'replacement data')
+        for recno, data in ((128, b'some more data'),
+                            (129, b'and some more'),
+                            (120, b'out of order'),
+                            (1, b'replacement data')):
+            d.put(recno, data)
+            recnos.append(recno)
 
         self.assertEqual(len(d), len(printable_bytes)+3)
-
-        if verbose:
-            print("before close" + '-' * 30)
-            pprint(d.stat())
+        self.assertEqual(len(recnos), len(d) + 1)  # +1 because replacement
 
         d.close()
         del d
+
         d = db.DB()
         d.open(self.filename)
-        #d.set_get_returns_none(true)
 
-        if verbose:
-            print("after open" + '-' * 30)
-            pprint(d.stat())
+        recnos.append(d.append(b'one more'))
+        recnos = set(recnos)
 
-        d.append(b'one more')
-
-        if verbose:
-            print("after append" + '-' * 30)
-            pprint(d.stat())
-
-        rec = d.consume()
+        rec = d.consume_wait()
         while rec:
-            if verbose:
-                print(rec)
+            self.assertIn(rec[0], recnos)
+            recnos.discard(rec[0])
             rec = d.consume()
 
-        if verbose:
-            print("after consume loop" + '-' * 30)
-            pprint(d.stat())
+        self.assertEqual(len(d), 0)
+        d.close()
+        self.assertFalse(recnos)
+
+
+    def test03_get_consume(self):
+        d = db.DB()
+        d.set_re_len(40)  # Queues must be fixed length
+        d.open(self.filename, db.DB_QUEUE, db.DB_CREATE)
+
+        recnos = []
+        for x in printable_bytes:
+            recnos.append(d.append(x * 40))
+
+        self.assertEqual(d.get(20), b'j' * 40)
+        # "get" doesn't consume
+        self.assertEqual(d.get(20), b'j' * 40)
+
+        # If "DB_CONSUME", the key is ignored. It is easier to
+        # use "DB.consume()".
+        self.assertEqual((1, b'0' * 40), d.get(20, flags=db.DB_CONSUME))
+        self.assertEqual((2, b'1' * 40), d.get(20, flags=db.DB_CONSUME_WAIT))
+        self.assertEqual((3, b'2' * 40), d.get(20, flags=db.DB_CONSUME))
 
         d.close()
-
 
 
 #----------------------------------------------------------------------

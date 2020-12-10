@@ -124,8 +124,8 @@ C API.
    number and data from the first available record and deletes it from
    the queue.
 
-   *NOTE:* This method is deprecated in Berkeley DB version 3.2 in favor
-   of the new consume method in the DB class.
+   *NOTE:* This method is deprecated in Oracle Berkeley DB version
+   3.2 in favor of the new consume method in the DB class.
 
 .. function:: get_both(key, data, flags=0)
 

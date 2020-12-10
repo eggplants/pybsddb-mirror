@@ -98,10 +98,18 @@
 #include "berkeleydb.h"
 #undef COMPILING_BERKELEYDB_C
 
+
+/*
+ * If your compiler doesn't support "static_assert()", report it and
+ * check https://www.pixelbeat.org/programming/gcc/static_assert.html
+ * for ideas.
+ */
+static_assert(sizeof(db_recno_t) == sizeof(u_int32_t),
+              "Datatypes assumptions violated!");
+
+
 /* --------------------------------------------------------------------- */
 /* Various macro definitions */
-
-#ifdef WITH_THREAD
 
 /* These are for when calling Python --> C */
 #define MYDB_BEGIN_ALLOW_THREADS Py_BEGIN_ALLOW_THREADS;
@@ -113,14 +121,6 @@
 #define MYDB_END_BLOCK_THREADS \
                 PyGILState_Release(__savestate);
 
-#else
-/* Compiled without threads - avoid all this cruft */
-#define MYDB_BEGIN_ALLOW_THREADS
-#define MYDB_END_ALLOW_THREADS
-#define MYDB_BEGIN_BLOCK_THREADS
-#define MYDB_END_BLOCK_THREADS
-
-#endif
 
 /* --------------------------------------------------------------------- */
 /* Exceptions */
@@ -538,6 +538,23 @@ static PyObject *BuildValue_IS(int i,const void *p,int s)
 
   r = Py_BuildValue("iO", i, a);
   Py_DECREF(a);
+  return r;
+}
+
+static PyObject *BuildValue_US(unsigned int i, const void *p, int s)
+{
+  PyObject *a, *r;
+
+  if (!p) {
+    p=DummyString;
+    assert(s==0);
+  }
+
+  if (!(a = PyBytes_FromStringAndSize(p, s))) {
+      return NULL;
+  }
+
+  r = Py_BuildValue("kN", i, a);  /* Do not increase refcount */
   return r;
 }
 
@@ -1688,7 +1705,7 @@ _DB_consume(DBObject* self, PyObject* args, PyObject* kwargs, int consume_flag)
         retval = Py_None;
     }
     else if (!err) {
-        retval = BuildValue_SS(key.data, key.size, data.data, data.size);
+        retval = BuildValue_US(*((db_recno_t*)key.data), data.data, data.size);
         FREE_DBT(key);
         FREE_DBT(data);
     }
@@ -1954,6 +1971,8 @@ DB_get(DBObject* self, PyObject* args, PyObject* kwargs)
     err = self->db->get(self->db, txn, &key, &data, flags);
     MYDB_END_ALLOW_THREADS;
 
+    flags = flags & DB_OPFLAGS_MASK;
+
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY) && (dfltobj != NULL)) {
         err = 0;
         Py_INCREF(dfltobj);
@@ -1966,8 +1985,11 @@ DB_get(DBObject* self, PyObject* args, PyObject* kwargs)
         retval = Py_None;
     }
     else if (!err) {
-        if (flags & DB_SET_RECNO) /* return both key and data */
+        if (flags == DB_SET_RECNO)
             retval = BuildValue_SS(key.data, key.size, data.data, data.size);
+        else if ((flags == DB_CONSUME) || (flags == DB_CONSUME_WAIT))
+            retval = BuildValue_US(*((db_recno_t*)key.data),
+                                   data.data, data.size);
         else /* return just the data */
             retval = Build_PyString(data.data, data.size);
         FREE_DBT(data);
@@ -2023,6 +2045,8 @@ DB_pget(DBObject* self, PyObject* args, PyObject* kwargs)
     err = self->db->pget(self->db, txn, &key, &pkey, &data, flags);
     MYDB_END_ALLOW_THREADS;
 
+    flags = flags & DB_OPFLAGS_MASK;
+
     if ((err == DB_NOTFOUND || err == DB_KEYEMPTY) && (dfltobj != NULL)) {
         err = 0;
         Py_INCREF(dfltobj);
@@ -2045,7 +2069,7 @@ DB_pget(DBObject* self, PyObject* args, PyObject* kwargs)
         else
             pkeyObj = Build_PyString(pkey.data, pkey.size);
 
-        if (flags & DB_SET_RECNO) /* return key , pkey and data */
+        if (flags == DB_SET_RECNO) /* return key , pkey and data */
         {
             PyObject *keyObj;
             DBTYPE dbtype = self->dbtype;
@@ -9546,9 +9570,7 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
      * threads have already been initialized.
      *  (see pybsddb-users mailing list post on 2002-08-07)
      */
-#ifdef WITH_THREAD
     PyEval_InitThreads();
-#endif
 #endif
 
     /* This data should be ascii, so UTF-8 conversion is fine */
