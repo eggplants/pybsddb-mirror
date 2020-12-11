@@ -1,10 +1,12 @@
-Changelog of "bsddb3" project
-=============================
+Changelog of legacy "bsddb3" project
+====================================
 
 6.2.9 - 2020-11-26:
+-------------------
   * For some reason, 6.2.8 release was incomplete. Let's try again.
 
 6.2.8 - 2020-11-20:
+-------------------
   * In Python 3.9, "find_unused_port" has been moved to
     "test.support.socket_helper". Reported by Michał Górny.
   * If we use "set_get_returns_none()" in the environment,
@@ -16,6 +18,7 @@ Changelog of "bsddb3" project
     migrate to "berkeleydb" library.
 
 6.2.7:
+------
   * Update copyright notices.
   * https links.
   * Fix Python 3 deprecation warning.
@@ -25,30 +28,37 @@ Changelog of "bsddb3" project
   * Python 3.8 and 3.9 are explicitly supported.
 
 6.2.6:
+------
   * Correctly detect Berkeley DB when installed via Homebrew on Mac OS X.
     Patch by Matthew Peveler.
   * Python 3.6 and 3.7 are explicitly supported.
 
 6.2.5:
+------
   * We should be able to install inside a PYPY virtualenv.
     Reported by Zhihao Yuan.
 
 6.2.4:
+------
   * More complete fix for pkgsrc.
 
 6.2.3:
+------
   * Update copyright notices.
   * Solve a conflict between different installations of Berkeley DB
     on some pkgsrc configurations.
 
 6.2.2:
+------
   * Correctly detect Berkeley DB installations in SmartOS native zones.
   * "Probably" (not tested) correctly detect Berkeley DB in pkgsrc systems.
 
 6.2.1:
+------
   * Correctly detect Berkeley DB installations in modern 64 bits Debians.
 
 6.2.0:
+------
   * Support Berkeley DB 6.2.x.
   * Declare Python 3.5 support for PyPI.
   * Drop support for Python 3.2. If you need
@@ -59,6 +69,7 @@ Changelog of "bsddb3" project
     releases of these bindings.
 
 6.1.1:
+------
   * Compatibility with Python 3.5.
   * Code cleanup after dropping Python 2.4/2.5 support.
   * PGP key changed.
@@ -71,6 +82,7 @@ Changelog of "bsddb3" project
     Python 3.5 and Berkeley DB 4.8, 5.0 or 5.1.
 
 6.1.0:
+------
   * Support Berkeley DB 6.1.x.
   * Solve a ResourceWarning when compiling.
   * Drop support for Python 2.4, 2.5 and 3.1. If you need
@@ -84,6 +96,7 @@ Changelog of "bsddb3" project
   * Drop (hidden) $Id$ keyword in the documentation.
 
 6.0.1:
+------
   * Clarification of license. Thanks to
     Jan Staněk <jstanek@redhat.com> for bringing this issue up.
     This work is now explicitly licensed under 3-clause BSD license.
@@ -110,6 +123,7 @@ Changelog of "bsddb3" project
         http://lists.debian.org/debian-legal/2013/07/
 
 6.0.0:
+------
   * Support Berkeley DB 6.0.x.
   * HEADS UP: If you are using "bsddb3._bsddb" in your code,
     for example for exceptions, change it to "bsddb3._db".
@@ -132,15 +146,18 @@ Changelog of "bsddb3" project
   * Improvements to documentation generation.
 
 5.3.0:
+------
   * Support Berkeley DB 5.3.x.
   * Drop support for Berkeley DB 4.2 and Python 2.3. Our reference
     is Red Hat Enterprise Linux 5, until march 2014.
     After that, RHEL6 has Python 2.6 and BDB 4.7.
     * According to http://superuser.com/questions/189931/python-and-berkeley-db-versions-in-redhat-enterprise-linux-3-4-5-and-upcoming-6 :
+
       * RHEL3: Python 2.2.3, BDB 4.1.25
       * RHEL4: Python 2.3.4, BDB 4.2.52
       * RHEL5: Python 2.4.3, BDB 4.3.29
       * RHEL6: Python 2.6.2, BDB 4.7.25
+
   * Support for "DBEnv->set_intermediate_dir()", available in
     Berkeley DB 4.3-4.6.  Patch by Garret Cooper.
   * Support for "DB->set_dup_compare()".  Original patches by
@@ -157,6 +174,7 @@ Changelog of "bsddb3" project
     if any test failed.
 
 5.2.0:
+------
   * Support for Berkeley DB 5.2.
   * Support for the newly available replication manager events:
     DB_EVENT_REP_SITE_ADDED, DB_EVENT_REP_SITE_REMOVED,
@@ -172,6 +190,7 @@ Changelog of "bsddb3" project
   * Add "bytes" to "DBEnv_memp_stat()". Original patch from Garrett Cooper.
 
 5.1.2:
+------
   * 5.1.1 install fails if the bsddb in the standard library is not installed,
     under Python 2.7. Reported by Arfrever Frehtes Taifersar Arahesis.
   * Since 5.0.0, we can't find 4.x libraries unless we specify a
@@ -188,6 +207,7 @@ Changelog of "bsddb3" project
   * Solved 'ResourceWarning' under Python 3.2.
 
 5.1.1:
+------
   * Recent pre-releases of Python 3.2 issue ResourceWarnings about
     fileshandles deallocated without being closed first. Fix testsuite.
   * Current "*.pyc" and "*.pyo" cleaning is not working in a PEP 3147
@@ -213,16 +233,19 @@ Changelog of "bsddb3" project
   * Support for "DB_CURSOR_BULK".
 
 5.1.0:
+------
   * Support for Berkeley DB 5.1.
   * Drop support for Berkeley DB 4.1. Our reference
     is Red Hat Enterprise Linux 4, until February 2012.
     After that, RHEL5 has Python 2.4 and BDB 4.3.
     * According to http://superuser.com/questions/189931/python-and-berkeley-db-versions-in-redhat-enterprise-linux-3-4-5-and-upcoming-6 :
+
       * RHEL3: Python 2.2.3, BDB 4.1.25
       * RHEL4: Python 2.3.4, BDB 4.2.52
       * RHEL5: Python 2.4.3, BDB 4.3.29
       * RHEL6: Python 2.6.2, BDB 4.7.25 (Currently in BETA)
-  * Include documentation source (*.rst) in the EGG.
+
+  * Include documentation source (\*.rst) in the EGG.
   * Include processed HTML documentation in the EGG.
   * Update the external links in documentation, since Oracle changed its web
     structure.
@@ -233,6 +256,7 @@ Changelog of "bsddb3" project
   * Support for "DB_REPMGR_ACKS_ALL_AVAILABLE".
 
 5.0.0:
+------
   * Support for Berkeley DB 5.0.
   * Drop support for Python 3.0.
   * Now you can use TMPDIR env variable to override default
@@ -259,6 +283,7 @@ Changelog of "bsddb3" project
     an error.
 
 4.8.4:
+------
   * When doing the full matrix testing with python >=2.6, we
     activate the deprecation warnings (py3k).
   * Split dependencies in the Replication testsuite.
@@ -270,6 +295,7 @@ Changelog of "bsddb3" project
   * Old regression: dbshelve objects are iterable again. The bug was
     introduced in pybsddb 4.7.2. Added relevant testcases.
   * Patches ported from Python developers:
+
     * Memory leaks: #7808 - http://bugs.python.org/issue7808 - Florent Xicluna
     * Floating point rounding in testcases:
       #5073 - http://bugs.python.org/issue5073 - Mark Dickinson
@@ -279,6 +305,7 @@ Changelog of "bsddb3" project
       #7269 - http://bugs.python.org/issue7269 - Florent Xicluna
     * Shebang: benjamin.peterson
     * Use new Python 2.7 assert()'s: Florent Xicluna
+
   * Solve a spurious stdlib warning in python >=2.6 with -3 flags.
   * Remove "DBIncompleteError", for sure this time. There were traces
     in "dbtables", in some tests and in the docs.
@@ -290,6 +317,7 @@ Changelog of "bsddb3" project
   * Update documentation to describe all exceptions provided by this module.
 
 4.8.3:
+------
   * "bsddb.h" inclusion in PYPI is inconsistent. Solved.
   * Support for "DB_ENV->mutex_stat()", "DB_ENV->mutex_stat_print()",
     "DB->stat_print()", "DB_ENV->lock_stat_print()",
@@ -318,6 +346,7 @@ Changelog of "bsddb3" project
     keep that information manually in a database register.
 
 4.8.2:
+------
   * Support for "DB_OVERWRITE_DUP", "DB_FOREIGN_ABORT",
     "DB_FOREIGN_CASCADE", "DB_FOREIGN_NULLIFY", "DB_PRINTABLE", "DB_INORDER"
     flags.
@@ -346,6 +375,7 @@ Changelog of "bsddb3" project
     called very infrequently and we do the change for consistency.
 
 4.8.1:
+------
   * Support for "DB_ENV->mutex_set_align()" and
     "DB_ENV->mutex_get_align()".
   * Support for "DB_ENV->mutex_set_increment()" and
@@ -370,6 +400,7 @@ Changelog of "bsddb3" project
     you must update the access code (see "bsddb.h").
 
 4.8.0:
+------
   * Support for Berkeley DB 4.8.
   * Compatibility with Python 3.1.
   * The "DB_XIDDATASIZE" constant has been renamed
@@ -397,6 +428,7 @@ Changelog of "bsddb3" project
   * Support for "DB_ENV->mutex_set_max()" and "DB_ENV->mutex_get_max()".
 
 4.7.6:
+------
   * Compatibility with Python 3.0.1.
   * Add support for "DB_ENV->stat()" and "DB_ENV->stat_print()".
   * Add support for "DB_ENV->rep_set_clockskew()" and
@@ -425,6 +457,7 @@ Changelog of "bsddb3" project
     is now complete.
 
 4.7.5:
+------
   * Add support for "DB_EID_INVALID" and "DB_EID_BROADCAST" flags.
   * Add support for "DB_SEQUENCE->stat_print()". The binding
     support for "DB_SEQUENCE" is now complete.
@@ -449,6 +482,7 @@ Changelog of "bsddb3" project
     flags.
 
 4.7.4:
+------
   * Under Python 3.0, "bsddb.db.DB_VERSION_STRING",
     "bsddb.db.__version__" and "bsddb.db.cvsid" must
     return (unicode) strings instead of bytes. Solved.
@@ -476,6 +510,7 @@ Changelog of "bsddb3" project
     and "DB_FREE_SPACE".
 
 4.7.3: (Python 2.6 release. First release with Python 3.0 support)
+------------------------------------------------------------------
   * "private" is a keyword in C++.  (Duncan Grisby)
   * setup.py should install "bsddb.h".  (Duncan Grisby)
   * "DB_remove" memory corruption & crash.  (Duncan Grisby)
@@ -501,6 +536,7 @@ Changelog of "bsddb3" project
   * Crash in "DB.verify()". Noted by solsTiCe d'Hiver.
 
 4.7.2:
+------
   * Solved a race condition in Replication Manager testcode.
   * Changing any python code, automatically regenerates the
     Python3 version. The master version is Python2.
@@ -524,6 +560,7 @@ Changelog of "bsddb3" project
   * Replication testcode behaves better in heavily loaded machines.
 
 4.7.1:
+------
   * Workaround a problem with un-initialized threads with the
     replication callback.
   * Export "DBRepUnavailError" exception.
@@ -546,6 +583,7 @@ Changelog of "bsddb3" project
     Support also related flags.
 
 4.7.0:
+------
   * Support for Berkeley DB 4.7.
   * Support "DB_ENV->log_set_config", and related flags.
   * Complete the Berkeley DB Replication Manager support:
@@ -556,6 +594,7 @@ Changelog of "bsddb3" project
   * Support for RPC client service.
 
 4.6.4:
+------
   * Basic support for Berkeley DB Replication Manager.
   * Support for a few replication calls, for benefice of Berkeley DB
     Replication Manager: "DB_ENV->rep_set_priority",
@@ -574,6 +613,7 @@ Changelog of "bsddb3" project
   * New exported flags: "DB_LOCK_EXPIRE" and "DB_LOCK_MAXWRITE".
 
 4.6.3:
+------
   * Be sure all DBEnv/DB paths in the TestSuite are generated in a
     way compatible with launching the tests in multiple
     threads/processes.
@@ -601,6 +641,7 @@ Changelog of "bsddb3" project
     in other projects. (George Feinberg)
 
 4.6.2:
+------
   * Support for MVCC (MultiVersion Concurrency Control).
   * Support for DB_DSYNC_LOG, DB_DSYNC_DB and DB_OVERWRITE flags.
   * Move old documentation to ReST format. This is important for several
@@ -631,7 +672,8 @@ Changelog of "bsddb3" project
     flavours).
   * Completed documentation of DBCursor methods: "consume", "join_item".
 
-4.6.1: (first release from Jesus Cea Avion)
+4.6.1: (first release from Jesús Cea Avión)
+-------------------------------------------
   * 'egg' (setuptools) support.
   * Environments, database handles and cursors are
     maintained in a logical tree. Closing any element
@@ -653,6 +695,7 @@ Changelog of "bsddb3" project
     it gives None.
 
 4.6.0:
+------
 
   * Adds support for compiling and linking with BerkeleyDB 4.6.21.
   * Fixes a double free bug with DBCursor.get and friends.  Based on
@@ -675,6 +718,7 @@ Changelog of "bsddb3" project
   * Removes any remnants of support for BerkeleyDB 3.2.
 
 4.5.0:
+------
 
   * Adds supports for compiling and linking with BerkeleyDB 4.5
   * Python Bug #1599782: Fix segfault on bsddb.db.DB().type() due to
@@ -684,12 +728,14 @@ Changelog of "bsddb3" project
   * change test cases to use tempfile.gettempdir()
 
 4.4.5:
+------
 
   * pybsddb Bug #1527939: bsddb module DBEnv dbremove and dbrename
     methods now allow their database parameter to be None as the
     sleepycat API allows.
 
 4.4.4:
+------
 
   * fix DBCursor.pget() bug with keyword argument names when no data= is
     supplied [SF pybsddb bug #1477863]
@@ -700,26 +746,31 @@ Changelog of "bsddb3" project
     potentially following an uninitialized pointer.
 
 4.4.3:
+------
 
   * fix DBEnv.set_tx_timestamp to not crash on Win64 platforms (thomas.wouters)
   * tons of memory leak fixes all over the code (thomas.wouters)
   * fixes ability to unpickle DBError (and children) exceptions
 
 4.4.2:
+------
 
   * Wrap the DBEnv.set_tx_timeout method
   * fix problem when DBEnv deleted before Txn sf bug #1413192 (Neal Norwitz)
 
 4.4.1:
+------
 
   * sf.net patch 1407992 - fixes associate tests on BerkeleyDB 3.3 thru 4.1
     (contributed by Neal Norwitz)
 
 4.4.0:
+------
 
   * Added support for compiling and linking with BerkeleyDB 4.4.20.
 
 4.3.3:
+------
 
  * NOTICE: set_bt_compare() callback function arguments CHANGED to only
    require two arguments (left, right) rather than (db, left, right).
@@ -727,6 +778,7 @@ Changelog of "bsddb3" project
    [pybsddb SF bug id 1215432].
 
 4.3.2:
+------
 
  * the has_key() method was not raising a DBError when a database error
    had occurred. [SF patch id 1212590]
@@ -738,12 +790,14 @@ Changelog of "bsddb3" project
    in less unexpected DBKeyEmptyError exceptions being raised.
 
 4.3.1:
+------
 
  * Added support for DB.set_bt_compare() method to use a user
    supplied python comparison function taking (db, left, right)
    args as the database's B-Tree comparison function.
 
 4.3.0:
+------
 
  * Added support for building properly against BerkeleyDB 4.3.21.
  * fixed bug introduced in 4.2.8 that prevent the module from
@@ -752,12 +806,14 @@ Changelog of "bsddb3" project
    version of the correct combo of db.h and libdb.
 
 4.2.9:
+------
 
  * DB keys() values() and items() methods were ignoring their optional
    txn parameter.  This would lead to deadlocks in applications
    needing those to be transaction protected.
 
 4.2.8:
+------
 
  * Adds support for DB and DBCursor pget methods.  Based on a patch
    submitted to the mailing list by Ian Ward <ian@arevco.ca>
@@ -766,6 +822,7 @@ Changelog of "bsddb3" project
    not yet finalized and raise a RuntimeWarning to that effect.
 
 4.2.7:
+------
 
  * fix an error with the legacy interface relying on the DB_TRUNCATE
    flag that changed behaviour to not work in a locking environment
@@ -775,12 +832,14 @@ Changelog of "bsddb3" project
    format databases with integer keys. [SF patch id 967763]
 
 4.2.6:
+------
 
  * the DB.has_key method was not honoring its txn parameter to perform
    its lookup within the specified (optional) transaction.  fixed.
    [SF bug id 914019]
 
 4.2.5:
+------
 
  * Fixed a bug in the compatibility interface set_location() method
    where it would not properly search to the next nearest key when
@@ -790,11 +849,13 @@ Changelog of "bsddb3" project
    format database due to an incorrect free().
 
 4.2.4:
+------
 
  * changed DB and DBEnv set_get_returns_none() default from 1 to 2.
  * cleaned up compatibility iterator interface.
 
 4.2.3:
+------
 
  * the legacy compatibility dict-like interface now support iterators
    and generators and allows multithreaded access to the database.
@@ -805,11 +866,13 @@ Changelog of "bsddb3" project
    subclass of DBError rather than a boring old DBError.
 
 4.2.2:
+------
 
  * added DBCursor.get_current_size() method to return the length in bytes
    of the value pointed to by the cursor without reading the actual data.
 
 4.2.1:
+------
 
  * Standalone pybsddb builds now use a _pybsddb dynamic/shared library
    rather than _bsddb.  This allows for pybsddb to be built, installed
@@ -817,16 +880,19 @@ Changelog of "bsddb3" project
    as its bsddb library.
 
 4.2.0:
+------
 
  * Can now compile and link with BerkeleyDB 4.2.x (when its released).
  * the legacy bsddb module supports the iterator interface on python 2.3.
 
 4.1.x:
+------
 
  * Support the DBEnv.set_shm_key() method.
  * Fixed setup.py include/{db4,db3} header file searching (SF bug #789740).
 
 4.1.6:
+------
 
  * Extended DB & DBEnv set_get_returns_none functionality to take a
    "level" instead of a boolean flag.  The boolean 0 and 1 values still
@@ -842,15 +908,18 @@ Changelog of "bsddb3" project
  * Updated README.txt
 
 4.1.5:
+------
 
  * Added the DBEnv.set_timeout method.
 
 4.1.4:
+------
 
  * rebuilt the windows 4.1.3 package, the original package was corrupt due
    to bad ram on my build host.
 
 4.1.3 - 2003-02-02:
+-------------------
 
  * code cleanup to use python 2.x features in .py files
  * the standalone pybsddb distribution will install a module
@@ -858,6 +927,7 @@ Changelog of "bsddb3" project
    will be known as bsddb.
 
 4.1.2 - 2003-01-17:
+-------------------
 
  * Shared all .py and .c source with the Python project.
  * Fixed DBTxn objects to raise an exception if they are used after
@@ -869,14 +939,16 @@ Changelog of "bsddb3" project
    has already been closed (fixes a segfault).
  * Close DB objects when DB.open fails to prevent an exception about
    databases still being open when calling DBEnv.close.
-	
+
 4.1.1 - 2002-12-20:
+-------------------
 
  * Fixed a memory leak when raising exceptions from the database
    library.  Debugged and fixed by Josh Hoyt <josh@janrain.com>.  Thanks!
    (sourceforge patch 656517)
 
 4.1.0 - 2002-12-13:
+-------------------
 
  * Updated our version number to track the latest BerkeleyDB interface
    version that we support.
@@ -889,6 +961,7 @@ Changelog of "bsddb3" project
    transactions.  See the upgrade docs on http://www.sleepycat.com/.
 
 3.4.3 - 2002-10-18:
+-------------------
 
  * added support for BerkeleyDB 4.1:  DB.open and DB.associate
    will now accept a txn keyword argument when using BerkeleyDB 4.1.
@@ -896,6 +969,7 @@ Changelog of "bsddb3" project
    methods have been exposed for 4.1.
 
 3.4.2 - 2002-08-14:
+-------------------
 
  * dbtables.py: serious bug fix.  The Select, Modify and Delete methods could
    all act upon rows that did not match all of the conditions.  (bug # 590449)
@@ -905,6 +979,7 @@ Changelog of "bsddb3" project
    DBLockDeadlockError exceptions during simple threading tests.
 
 3.4.1:
+------
 
  * fixed typo cut and paste bugs in test_dbsimple.py and test_threads.py
  * fixed bug with cursors where calling DBCursor.close() would cause
@@ -914,6 +989,7 @@ Changelog of "bsddb3" project
    dereference when python threading had not yet been initialized.
 
 3.4.0:
+------
 
  * many bugfixes, its been a long while since a new package was created.
  * ChangeLog started.
