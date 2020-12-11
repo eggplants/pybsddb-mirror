@@ -1,6 +1,19 @@
 Reported
 --------
 
+- 20201211: In "docs/api_reference/C/envset_backup_callbacks.html", "open_func"
+  gets a pointer to pointer. It is suppose to use it to store the handle for
+  the other callbacks, but it is not explained in the documentation. In fact,
+  the lifecycle of "handle" is not explained at all.
+
+- 20201211: In "docs/api_reference/C/envset_backup_callbacks.html" the
+  callbacks are declared as returning "int", but in the documentation nothing
+  is said about what should be returned in the callbacks.
+
+- 20201211: In "docs/api_reference/C/envget_backup_callbacks.html" it is said:
+  "write_func: The close_func parameter is the function used to write data
+  during a backup.". It should be "write_func", not "close_func".
+
 - 20201211: In "docs/api_reference/C/envget_backup_config.html" and
   "docs/api_reference/C/envset_backup_config.html" there is no indication that
   those functions returns an "int".
