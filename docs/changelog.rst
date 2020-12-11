@@ -1,5 +1,6 @@
 Changelog
 =========
+
 18.1.3 -:
 ---------
 
@@ -53,6 +54,8 @@ Changelog
   - "DBEnv.backup()" and "DBEnv.dbbackup()" available if you are using Oracle
     Berkeley DB 18.1 or newer. These methods allow you to do hot backups
     without needing to follow a careful procedure, and they can be incremental.
+
+  - Changelog moved to Sphinx documentation.
 
 18.1.2 - 2020-12-07:
 --------------------
