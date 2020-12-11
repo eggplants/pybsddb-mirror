@@ -1,6 +1,10 @@
 Reported
 --------
 
+- 20201211: In "docs/api_reference/C/envget_backup_config.html" and
+  "docs/api_reference/C/envset_backup_config.html" there is no indication that
+  those functions returns an "int".
+
 - 20201211: In "db.h", "version()" is inside "DB_LOGC PUBLIC HANDLE LIST", but
   it is not documented anywhere.
 
