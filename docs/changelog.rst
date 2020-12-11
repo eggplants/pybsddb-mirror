@@ -57,10 +57,11 @@ Changelog
   - If you are using Oracle Berkeley DB 18.1 or newer, you have these new
     flags: ``DB_BACKUP_DEEP_COPY``.
 
-  - ``DBEnv.backup()`` and ``DBEnv.dbbackup()`` available if you
-    are using Oracle Berkeley DB 18.1 or newer. These methods
-    allow you to do hot backups without needing to follow a
-    careful procedure, and they can be incremental.
+  - ``DBEnv.backup()``, ``DBEnv.dbbackup()``
+    ``DB.get_backup_config()`` and ``DB.set_backup_config()``
+    available if you are using Oracle Berkeley DB 5.3 or newer.
+    These methods allow you to do hot backups without needing to
+    follow a careful procedure, and they can be incremental.
 
   - Changelog moved to Sphinx documentation.
 

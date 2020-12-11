@@ -234,6 +234,16 @@ DBEnv Methods
    within the environment.
    :OracleAPIC:`More info... <envdbbackup.html>`
 
+.. function:: get_backup_config(option)
+
+   Retrieves the value set for hot backup tuning parameters.
+   :OracleAPIC:`More info... <envget_backup_config.html>`
+
+.. function:: set_backup_config(option, value)
+
+   Configures tuning parameters for the hot backup APIs.
+   :OracleAPIC:`More info... <envset_backup_config.html>`
+
 .. function:: fileid_reset(file, flags=0)
 
    All databases contain an ID string used to identify the database in

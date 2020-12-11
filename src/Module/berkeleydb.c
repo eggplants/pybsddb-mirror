@@ -106,6 +106,8 @@
  */
 static_assert(sizeof(db_recno_t) == sizeof(u_int32_t),
               "Datatypes assumptions violated!");
+static_assert(sizeof(uint32_t) == sizeof(int),
+              "Datatypes assumptions violated!");
 
 
 /* --------------------------------------------------------------------- */
@@ -7061,6 +7063,45 @@ DBEnv_dbbackup(DBEnvObject* self, PyObject* args, PyObject* kwargs)
     Py_RETURN_NONE;
 }
 
+static PyObject*
+DBEnv_get_backup_config(DBEnvObject* self, PyObject* args)
+{
+    int err;
+    int option;
+    uint32_t value;
+
+    if (!PyArg_ParseTuple(args, "i:get_backup_config", &option))
+        return NULL;
+    CHECK_ENV_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db_env->get_backup_config(self->db_env, option, &value);
+    MYDB_END_ALLOW_THREADS;
+
+    RETURN_IF_ERR();
+
+    return PyLong_FromUnsignedLong(value);
+}
+
+static PyObject*
+DBEnv_set_backup_config(DBEnvObject* self, PyObject* args)
+{
+    int err;
+    int option;
+    unsigned int value;
+
+    if (!PyArg_ParseTuple(args, "iI:set_backup_config", &option, &value))
+        return NULL;
+    CHECK_ENV_NOT_CLOSED(self);
+
+    MYDB_BEGIN_ALLOW_THREADS;
+    err = self->db_env->set_backup_config(self->db_env, option, value);
+    MYDB_END_ALLOW_THREADS;
+
+    RETURN_IF_ERR();
+    Py_RETURN_NONE;
+}
+
 
 static PyObject*
 DBEnv_repmgr_site(DBEnvObject* self, PyObject* args, PyObject *kwargs)
@@ -9238,6 +9279,10 @@ static PyMethodDef DBEnv_methods[] = {
         METH_VARARGS | METH_KEYWORDS},
     {"backup",      (PyCFunction)DBEnv_backup, METH_VARARGS | METH_KEYWORDS},
     {"dbbackup",    (PyCFunction)DBEnv_dbbackup, METH_VARARGS | METH_KEYWORDS},
+    {"get_backup_config", (PyCFunction)DBEnv_get_backup_config,
+        METH_VARARGS},
+    {"set_backup_config", (PyCFunction)DBEnv_set_backup_config,
+        METH_VARARGS},
 #endif
     {NULL,      NULL}       /* sentinel */
 };

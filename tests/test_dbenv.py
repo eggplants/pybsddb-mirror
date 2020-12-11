@@ -610,6 +610,8 @@ class DBEnv_remove(unittest.TestCase):
         homeDir = pathlib.Path(get_new_environment_path())
         return self._remove(homeDir)
 
+@unittest.skipIf(db.version() < (5, 3),
+                 'Oracle Berkeley DB 4.8 has no hot backup methods')
 class DBEnv_hot_backup(DBEnv) :
     def setUp(self):
         super().setUp()
@@ -675,6 +677,21 @@ class DBEnv_hot_backup(DBEnv) :
         # This will work when I implement the backup callbacks.
         self.assertRaises(db.DBInvalidArgError,
                           self.env.dbbackup, target=None, dbfile='test')
+
+    def test_backup_config(self):
+        self.env.set_backup_config(db.DB_BACKUP_WRITE_DIRECT, 1)
+        self.env.set_backup_config(db.DB_BACKUP_READ_COUNT, 345)
+        self.env.set_backup_config(db.DB_BACKUP_READ_SLEEP, 7654)
+        self.env.set_backup_config(db.DB_BACKUP_SIZE, 9876543)
+
+        self.assertEqual(1,
+                self.env.get_backup_config(db.DB_BACKUP_WRITE_DIRECT))
+        self.assertEqual(345,
+                self.env.get_backup_config(db.DB_BACKUP_READ_COUNT))
+        self.assertEqual(7654,
+                self.env.get_backup_config(db.DB_BACKUP_READ_SLEEP))
+        self.assertEqual(9876543,
+                self.env.get_backup_config(db.DB_BACKUP_SIZE))
 
 
 def test_suite():
