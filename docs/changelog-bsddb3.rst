@@ -87,10 +87,10 @@ Changelog of "bsddb3" project
   * Clarification of license. Thanks to
     Jan Staněk <jstanek@redhat.com> for bringing this issue up.
     This work is now explicitly licensed under 3-clause BSD license.
-  * Fixed a long standing bug (August 2008, rev 9fd52748fa59) 
+  * Fixed a long standing bug (August 2008, rev 9fd52748fa59)
     on "dbtables.py". Notified by Maxime Labelle.
   * If you want to link with Oracle Berkeley DB 6.0, you will
-    need to create the environment variable 
+    need to create the environment variable
     'YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION'
     to signal to the pybsddb that you are legal. To be legal,
     your code MUST be AGPL3 *OR* you have to buy a commercial
@@ -149,7 +149,7 @@ Changelog of "bsddb3" project
   * If we are running Solaris or derivatives, and 64bit python,
     try to find the library under "/usr/local/Berkeley.*.*/64/".
   * Solaris 10 Update 10 exposes a very old race condition in the replication
-    master election tests. Some details in 
+    master election tests. Some details in
     https://forums.oracle.com/forums/thread.jspa?messageID=9902860 .
     Workaround proposed in a private email from Paula Bingham (Oracle),
     in 20110929.
@@ -213,7 +213,7 @@ Changelog of "bsddb3" project
   * Support for "DB_CURSOR_BULK".
 
 5.1.0:
-  * Support for Berkeley DB 5.1. 
+  * Support for Berkeley DB 5.1.
   * Drop support for Berkeley DB 4.1. Our reference
     is Red Hat Enterprise Linux 4, until February 2012.
     After that, RHEL5 has Python 2.4 and BDB 4.3.
@@ -418,7 +418,7 @@ Changelog of "bsddb3" project
     and "DB_IGNORE_LEASE" flags.
   * Export exception "DBRepLeaseExpiredError".
   * Add support for "DB_PRIORITY_VERY_LOW", "DB_PRIORITY_LOW",
-    "DB_PRIORITY_DEFAULT", "DB_PRIORITY_HIGH", 
+    "DB_PRIORITY_DEFAULT", "DB_PRIORITY_HIGH",
     "DB_PRIORITY_VERY_HIGH", and "DB_PRIORITY_UNCHANGED" flags.
   * Add support for "DBCursor->set_priority()" and
     "DBCursor->get_priority()". The binding support for cursors
@@ -492,7 +492,7 @@ Changelog of "bsddb3" project
   * Huge work making the testsuite compatible with Python 3.0.
   * In some cases the C module returned Unicode strings under
     Python 3.0. It should return "bytes", ALWAYS. Solved.
-  * Remove a dict.has_key() use to silence a warning raised under 
+  * Remove a dict.has_key() use to silence a warning raised under
     Python2.6 -3 parameter. Python SVN r65391, Brett Cannon.
   * Solve some memory leaks - Neal Norwitz
   * If DBEnv creation fails, library can crash.  (Victor Stinner)
@@ -542,7 +542,7 @@ Changelog of "bsddb3" project
     "DB_ENV->rep_set_limit", "DB_ENV->rep_get_limit",
     "DB_ENV->rep_set_request", "DB_ENV->rep_get_request".
   * Support more base replication calls:  "DB_ENV->rep_elect",
-    "DB_ENV->rep_set_transport" and "DB_ENV->rep_process_message". 
+    "DB_ENV->rep_set_transport" and "DB_ENV->rep_process_message".
     Support also related flags.
 
 4.7.0:
@@ -762,7 +762,7 @@ Changelog of "bsddb3" project
  * Adds support for DB and DBCursor pget methods.  Based on a patch
    submitted to the mailing list by Ian Ward <ian@arevco.ca>
  * Added weakref support to all bsddb.db objects.
- * Make DBTxn objects automatically call abort() in their destructor if 
+ * Make DBTxn objects automatically call abort() in their destructor if
    not yet finalized and raise a RuntimeWarning to that effect.
 
 4.2.7:
@@ -839,14 +839,14 @@ Changelog of "bsddb3" project
    of returning a value.  Obviously nobody uses it.  Wrote a test case
    for join and join_item.
  * Added the dbobj wrapper for DBEnv set_timeout method.
- * Updated README.txt 
+ * Updated README.txt
 
 4.1.5:
 
  * Added the DBEnv.set_timeout method.
 
 4.1.4:
- 
+
  * rebuilt the windows 4.1.3 package, the original package was corrupt due
    to bad ram on my build host.
 
@@ -914,7 +914,7 @@ Changelog of "bsddb3" project
    dereference when python threading had not yet been initialized.
 
 3.4.0:
- 
+
  * many bugfixes, its been a long while since a new package was created.
  * ChangeLog started.
 
