@@ -22,4 +22,4 @@ is the maintainer of this code since February 2008, and ported it
 to Python 3.x.
 
 In 2020, after Python 2.7 sunset, this library was renamed to
-"berkeleydb" and was made Python 3 only.
+"berkeleydb" and it was made Python 3 only.
