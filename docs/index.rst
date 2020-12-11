@@ -45,6 +45,7 @@ Documentation Index
   dbsequence.rst
   dbsite.rst
   history.rst
+  changelog-bsddb3.rst
   license.rst
   donate.rst
 
