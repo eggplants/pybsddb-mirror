@@ -50,7 +50,9 @@ Changelog
   - If you are using Oracle Berkeley DB 5.3 or newer, you have
     these new flags: ``DB_BACKUP_CLEAN``, ``DB_BACKUP_FILES``,
     ``DB_BACKUP_NO_LOGS``, ``DB_BACKUP_SINGLE_DIR`` and
-    ``DB_BACKUP_UPDATE``.
+    ``DB_BACKUP_UPDATE``, ``DB_BACKUP_WRITE_DIRECT``,
+    ``DB_BACKUP_READ_COUNT``, ``DB_BACKUP_READ_SLEEP``,
+    ``DB_BACKUP_SIZE``.
 
   - If you are using Oracle Berkeley DB 18.1 or newer, you have these new
     flags: ``DB_BACKUP_DEEP_COPY``.

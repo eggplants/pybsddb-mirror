@@ -223,6 +223,17 @@ DBEnv Methods
    contained.
    :OracleAPIC:`More info... <envdbrename.html>`
 
+.. function:: backup(target=None, flags=0)
+
+   Performs a hot backup of the open environment.
+   :OracleAPIC:`More info... <envbackup.html>`
+
+.. function:: dbbackup(dbfile, target=None, flags=0)
+
+   Performs a hot backup of a single database file contained
+   within the environment.
+   :OracleAPIC:`More info... <envdbbackup.html>`
+
 .. function:: fileid_reset(file, flags=0)
 
    All databases contain an ID string used to identify the database in

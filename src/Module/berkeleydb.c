@@ -10163,6 +10163,10 @@ PyMODINIT_FUNC  PyInit__berkeleydb(void)    /* Note the two underscores */
     ADD_INT(d, DB_BACKUP_NO_LOGS);
     ADD_INT(d, DB_BACKUP_SINGLE_DIR);
     ADD_INT(d, DB_BACKUP_UPDATE);
+    ADD_INT(d, DB_BACKUP_WRITE_DIRECT);
+    ADD_INT(d, DB_BACKUP_READ_COUNT);
+    ADD_INT(d, DB_BACKUP_READ_SLEEP);
+    ADD_INT(d, DB_BACKUP_SIZE);
 #endif
 #if (DBVER >= 181)
     ADD_INT(d, DB_BACKUP_DEEP_COPY);
