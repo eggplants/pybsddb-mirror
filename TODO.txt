@@ -1,5 +1,5 @@
 - 20201218: When compiling the C code, enable all warnings and they should
-  be errors.
+  be errors (-Werror).
 
 - 20201210: We should do "CLOSED" checks before argument parsing, to avoid
   memory leaks.
