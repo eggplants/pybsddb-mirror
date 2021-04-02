@@ -1,3 +1,22 @@
+- 20210402: Complete the mapping emulation in "db[key]". Rewrite "has" and
+  "exists()" methods.
+
+- 20210402: Eliminate "DBobj".
+
+- 20210402: CHECK: "FSConverter" leaks if failure, and several other leaks.
+  We could check RefCounts with "py_refcnt(obj)".
+
+- 20210402: In a lot of code, we should check if the handle is closed first.
+
+- 20210402: Better management of unknown DBtypes.
+
+- 20210402: Can we use several secondary databases?
+
+- 20210402: CHECK make_key_dbt with HEAP databases and cursors.
+
+- 20210402: Enable more warnings if compiling with GCC. Also, more verbosity
+  in the tests.
+
 - 20201218: When compiling the C code, enable all warnings and they should
   be errors (-Werror).
 
