@@ -1,3 +1,8 @@
+- 20210408: Check if this is still a thing:
+
+            https://gist.github.com/Snawoot/a9745d2d6df9976fee669e92cf8c4346
+            https://gist.github.com/Snawoot/6149690e92a4e4f54b5fa1750611f1a2
+
 - 20210402: Complete the mapping emulation in "db[key]". Rewrite "has" and
   "exists()" methods.
 
