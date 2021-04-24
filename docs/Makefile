@@ -168,4 +168,4 @@ doctest:
 
 publish: html
 	@rsync -a -v -P --delete --delete-excluded --exclude "_sources/" \
-		build/html/ web:/home/webdocs/berkeleydb/
+		build/html/ web:/home/webdocs/berkeleydb/latest/
