@@ -165,3 +165,7 @@ doctest:
 	$(SPHINXBUILD) -b doctest $(ALLSPHINXOPTS) $(BUILDDIR)/doctest
 	@echo "Testing of doctests in the sources finished, look at the " \
 	      "results in $(BUILDDIR)/doctest/output.txt."
+
+publish: html
+	@rsync -a -v -P --delete --delete-excluded --exclude "_sources/" \
+		build/html/ web:/home/webdocs/berkeleydb/

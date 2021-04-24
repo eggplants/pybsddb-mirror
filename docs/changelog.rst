@@ -4,6 +4,8 @@ Changelog
 18.1.3 -:
 ---------
 
+  - Docs in https://docs.jcea.es/berkeleydb/.
+
   - Python 3.10 support. Tested in 3.10a2.
 
   - ``make dist`` will generate the HTML documentation and will
