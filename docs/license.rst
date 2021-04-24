@@ -14,7 +14,7 @@ under `BSD 3-Clause License
 License Text (BSD 3-Clause License)
 -----------------------------------
 
-Copyright (c) 2008-2020, Jesus Cea Avion <jcea@jcea.es>
+Copyright (c) 2008-2021, Jesus Cea Avion <jcea@jcea.es>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
