@@ -433,7 +433,7 @@ if (db_ver >= (6, 0)) and \
 # Delete pkgsrc stale info
 # This is something that eventually should be not necesary.
 # XXX - jcea@jcea.es - 20170125
-from distutils import sysconfig
+import sysconfig
 
 # The same dictionary is always returned, so we abuse it
 # and modify it in place.

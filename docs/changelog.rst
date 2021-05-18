@@ -6,7 +6,9 @@ Changelog
 
   - Docs in https://docs.jcea.es/berkeleydb/.
 
-  - Python 3.10 support. Tested in 3.10a2.
+  - Python 3.10 support. Tested in 3.10b1.
+
+  - Python 3.10 deprecated "distutils".
 
   - ``make dist`` will generate the HTML documentation and will
     include it in the released package. You can unpack the package
