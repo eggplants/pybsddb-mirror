@@ -468,14 +468,12 @@ Berkeley DB documentation as appropriate.
 If you need to support ancient versions of Python and/or Oracle Berkeley DB ,
 you can use legacy `bsddb3 <https://pypi.org/project/bsddb3/>`__ library.
 
-`Homepage <https://www.jcea.es/programacion/
-pybsddb.htm>`__ --
-`Releases (changelog) <https://www.jcea.es/programacion/
-pybsddb.htm#Releases>`__ --
-`Documentation <https://www.jcea.es/programacion/
-pybsddb_doc/>`__ --
+`Homepage <https://www.jcea.es/programacion/pybsddb.htm>`__ --
+`Releases (changelog)
+<https://docs.jcea.es/berkeleydb/latest/changelog.html>`__ --
+`Documentation <https://docs.jcea.es/berkeleydb/latest/>`__ --
 `Mailing List <https://mailman.jcea.es/listinfo/pybsddb>`__ --
-`Donation <https://www.jcea.es/programacion/pybsddb_doc/donate.html>`__
+`Donation <https://docs.jcea.es/berkeleydb/latest/donate.html>`__
 """,
       author = 'Jesus Cea, Robin Dunn, Gregory P. Smith, Andrew Kuchling, Barry Warsaw',
       author_email = 'pybsddb@jcea.es',
