@@ -1,14 +1,20 @@
 Changelog
 =========
 
-18.1.3 -:
+18.1.4 -:
 ---------
-
-  - Docs in https://docs.jcea.es/berkeleydb/.
 
   - Python 3.10 support. Tested in 3.10b1.
 
-  - Python 3.10 deprecated "distutils".
+18.1.3 - 2021-05-19:
+--------------------
+
+  - Docs in https://docs.jcea.es/berkeleydb/.
+
+  - ``make publish`` build and publish the documentation online.
+
+  - Python 3.10 deprecated ``distutils``. ``setuptools`` is now an
+    installation dependency.
 
   - ``make dist`` will generate the HTML documentation and will
     include it in the released package. You can unpack the package

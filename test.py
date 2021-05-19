@@ -137,7 +137,7 @@ import pathlib
 
 from unittest import _TextTestResult
 
-from distutils.util import get_platform
+from sysconfig import get_platform
 
 # We need to be able to test BDB releases, even if the license is incompatible
 os.environ['YES_I_HAVE_THE_RIGHT_TO_USE_THIS_BERKELEY_DB_VERSION'] = ''

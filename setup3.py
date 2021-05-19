@@ -41,12 +41,10 @@ import sys
 import glob
 
 
-try :
-  from setuptools import setup, Extension
-except Exception:
-  from distutils.core import setup, Extension
-
-from distutils.dep_util import newer
+# See https://setuptools.readthedocs.io/en/latest/deprecated/\
+#                                      distutils-legacy.html
+os.environ['SETUPTOOLS_USE_DISTUTILS'] = 'local'
+from setuptools import setup, Extension
 import distutils.ccompiler
 
 # read the module version number out of the .c file
