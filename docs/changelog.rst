@@ -1,10 +1,18 @@
 Changelog
 =========
 
-18.1.4 -:
+18.1.5 -:
 ---------
 
   - Python 3.10 support. Tested in 3.10b1.
+
+18.1.4 - 2021-05-19:
+--------------------
+
+  - If your "pip" is modern enough, "setuptools" is automatically
+    added as a built-time dependency.
+
+    If not, you **MUST* install "setuptools" package first.
 
 18.1.3 - 2021-05-19:
 --------------------
