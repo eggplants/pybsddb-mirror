@@ -58,16 +58,14 @@ extlinks = {
 
 # General substitutions.
 project = 'BerkeleyDB'
-# I can't use tildes because my ZOPE configuration.
-# Something to fix in the future.
-copyright = '2008-2021 Jesus Cea Avion'
+copyright = '2008-2021 Jesús Cea Avión'
 
 # The default replacements for |version| and |release|.
 #
 # The short X.Y version.
-version = '18.1.4'
+version = '18.1.5'
 # The full version, including alpha/beta/rc tags.
-release = '18.1.4'
+release = '18.1.5'
 
 # There are two options for replacing |today|: either, you set today to some
 # non-false value, then it is used:
