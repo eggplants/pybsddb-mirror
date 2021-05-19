@@ -4,9 +4,8 @@ include test.py
 recursive-include src/berkeleydb *.py
 
 include *.txt
-include updatedb.bat
 include MANIFEST.in
-include requirements.txt
+include pyproject.toml
 include setup.py
 include setup.cfg
 include ChangeLog
