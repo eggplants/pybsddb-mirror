@@ -12,7 +12,7 @@ Changelog
   - If your "pip" is modern enough, "setuptools" is automatically
     added as a built-time dependency.
 
-    If not, you **MUST* install "setuptools" package first.
+    If not, you **MUST** install "setuptools" package first.
 
 18.1.3 - 2021-05-19:
 --------------------
