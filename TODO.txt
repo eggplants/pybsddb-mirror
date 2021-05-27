@@ -1,3 +1,6 @@
+- 20210527: The legacy "bsddb3" library should be upgraded to search for
+  new Berkeley DB libraries and raise an error pointing to this project.
+
 - 20210408: Check if this is still a thing:
 
             https://gist.github.com/Snawoot/a9745d2d6df9976fee669e92cf8c4346
