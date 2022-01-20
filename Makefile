@@ -9,7 +9,7 @@ dist: clean docs
 		./setup.py sdist
 
 clean: docs-clean
-	rm -rf build dist
+	rm -rf build dist __pycache__ tests/__pycache__
 
 docs-clean:
 	cd docs && $(MAKE) clean
