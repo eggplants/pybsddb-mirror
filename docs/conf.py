@@ -8,7 +8,7 @@
 # that aren't pickleable (module imports are okay, they're removed automatically).
 
 """
-Copyright (c) 2008-2021, Jesus Cea Avion <jcea@jcea.es>
+Copyright (c) 2008-2022, Jesus Cea Avion <jcea@jcea.es>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
@@ -58,7 +58,7 @@ extlinks = {
 
 # General substitutions.
 project = 'BerkeleyDB'
-copyright = '2008-2021 Jesús Cea Avión'
+copyright = '2008-2022 Jesús Cea Avión'
 
 # The default replacements for |version| and |release|.
 #

@@ -1,5 +1,5 @@
 """
-Copyright (c) 2008-2021, Jesus Cea Avion <jcea@jcea.es>
+Copyright (c) 2008-2022, Jesus Cea Avion <jcea@jcea.es>
 All rights reserved.
 
 Redistribution and use in source and binary forms, with or without
