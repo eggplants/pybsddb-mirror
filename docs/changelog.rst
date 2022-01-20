@@ -4,7 +4,8 @@ Changelog
 18.1.5 -:
 ---------
 
-  - Python 3.10 support. Tested in 3.10b1.
+  - Python 3.10 support.
+  - Experimental Python 3.11 support. Tested in 3.11.0a3.
 
 18.1.4 - 2021-05-19:
 --------------------

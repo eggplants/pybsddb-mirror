@@ -506,10 +506,11 @@ you can use legacy `bsddb3 <https://pypi.org/project/bsddb3/>`__ library.
                     'Topic :: Software Development',
                     'Topic :: System :: Clustering',
                     'Programming Language :: Python :: 3',
-                    'Programming Language :: Python :: 3.6',
                     'Programming Language :: Python :: 3.7',
                     'Programming Language :: Python :: 3.8',
                     'Programming Language :: Python :: 3.9',
+                    'Programming Language :: Python :: 3.10',
+                    'Programming Language :: Python :: 3.11',
                     ],
       )
 

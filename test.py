@@ -135,7 +135,7 @@ import linecache
 import traceback
 import pathlib
 
-from unittest import _TextTestResult
+from unittest import TextTestResult
 
 from sysconfig import get_platform
 
@@ -151,11 +151,11 @@ PLAT_SPEC = f'{get_platform()}-{version.major}.{version.minor}'
 if hasattr(sys, 'gettotalrefcount'):
     PLAT_SPEC += '-pydebug'
 
-class ImmediateTestResult(_TextTestResult):
+class ImmediateTestResult(TextTestResult):
 
-    __super_init = _TextTestResult.__init__
-    __super_startTest = _TextTestResult.startTest
-    __super_printErrors = _TextTestResult.printErrors
+    __super_init = TextTestResult.__init__
+    __super_startTest = TextTestResult.startTest
+    __super_printErrors = TextTestResult.printErrors
 
     def __init__(self, stream, descriptions, verbosity, debug=False,
                  count=None, progress=False):
