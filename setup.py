@@ -56,4 +56,22 @@ if sys.version_info < (3, 6):
     print()
     sys.exit(1)
 
+if sys.version_info < (3, 7):
+    print()
+    print('******* COMPILATION ABORTED *******')
+    print()
+    print('This release is not compatible with your Python version.')
+    print('If you can not upgrade your Python environment, you can pin')
+    print('last supported releases as:')
+    print()
+    print('For Python 3.6:')
+    print()
+    print('    pip3.6 install berkeleydb==18.1.4')
+    print()
+    print("Of course you won't get new bug fixes, new features, support")
+    print("for new Oracle Berkeley DB releases, and so on.")
+    print()
+    sys.exit(1)
+
+
 import setup3

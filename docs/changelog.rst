@@ -4,7 +4,24 @@ Changelog
 18.1.5 -:
 ---------
 
+  - **WARNING - BREAKING CHANGE:** Drop support for Python 3.6.
+
+    This breaking change should usually require a major and/or minor
+    number update. Since ``berkeleydb`` traditional numbering is
+    related to the higher Oracle Berkeley DB supported, I would
+    usually wait until Oracle releases a new version to upgrade my
+    own version and deprecate old Python support at the same time.
+    Given that Oracle has not released a new Oracle Berkeley DB in
+    almost four years, I must break this practice for now.
+
+    Sorry if this update breaks your Python 3.6 environment. In
+    that case, please pin to version 18.1.4, the last Python 3.6
+    compatible release.
+
+    Send me constructive feedback if appropiate.
+
   - Python 3.10 support.
+
   - Experimental Python 3.11 support. Tested in 3.11.0a3.
 
 18.1.4 - 2021-05-19:
