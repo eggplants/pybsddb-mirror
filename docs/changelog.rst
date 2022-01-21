@@ -1,8 +1,13 @@
 Changelog
 =========
 
-18.1.5 -:
+18.1.6 -:
 ---------
+
+  - x
+
+18.1.5 - 2022-01-21:
+--------------------
 
   - **WARNING - BREAKING CHANGE:** Drop support for Python 3.6.
 
