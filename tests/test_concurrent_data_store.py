@@ -70,7 +70,10 @@ class DBEnvConcurrent_Data_Store(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(DBEnvConcurrent_Data_Store))
+    for test in (DBEnvConcurrent_Data_Store,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
 
 

@@ -187,13 +187,17 @@ def suite(module_prefix='', timing_check=None):
 
         alltests.addTest(module.test_suite())
         if timing_check:
-            alltests.addTest(unittest.makeSuite(timing_check))
+            test = unittest.defaultTestLoader.loadTestsFromTestCase(
+                                                            timing_check)
+            alltests.addTest(test)
     return alltests
 
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(PrintInfoFakeTest))
+    for test in (PrintInfoFakeTest,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
     return suite
 
 

@@ -204,7 +204,12 @@ class SimpleQueueTestCase(unittest.TestCase):
 #----------------------------------------------------------------------
 
 def test_suite():
-    return unittest.makeSuite(SimpleQueueTestCase)
+    suite = unittest.TestSuite()
+    for test in (SimpleQueueTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
+    return suite
 
 
 if __name__ == '__main__':

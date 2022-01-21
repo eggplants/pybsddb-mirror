@@ -85,7 +85,13 @@ class pget_bugTestCase(unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(pget_bugTestCase)
+    suite = unittest.TestSuite()
+    for test in (pget_bugTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
+    return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

@@ -166,9 +166,12 @@ class GetEnvReturnsNoneBUG(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(GetReturnsNoneTestCase))
-    suite.addTest(unittest.makeSuite(GetEnvReturnsNoneTestCase))
-    suite.addTest(unittest.makeSuite(GetEnvReturnsNoneBUG))
+    for test in (GetReturnsNoneTestCase,
+                    GetEnvReturnsNoneTestCase,
+                    GetEnvReturnsNoneBUG,):
+
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 

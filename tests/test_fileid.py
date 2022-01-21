@@ -97,8 +97,12 @@ class FileidResetTestCase(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(FileidResetTestCase))
+    for test in (FileidResetTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

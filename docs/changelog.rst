@@ -26,6 +26,11 @@ Changelog
 
   - Python 3.11 added to the full test matrix.
 
+  - Python 3.11 deprecates the ancient but undocumented method
+    ``unittest.makeSuite()`` and it will be deleted in Python
+    3.13. We migrate the tests to
+    ``unittest.TestLoader.loadTestsFromTestCase()``.
+
   - Experimental Python 3.11 support. Tested in 3.11.0a4.
 
 18.1.4 - 2021-05-19:

@@ -128,7 +128,12 @@ class JoinTestCase(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-
-    suite.addTest(unittest.makeSuite(JoinTestCase))
+    for test in (JoinTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
+
+
+if __name__ == '__main__':
+    unittest.main(defaultTest='test_suite')

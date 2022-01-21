@@ -170,7 +170,10 @@ class DBSequenceTest(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(DBSequenceTest))
+    for test in (DBSequenceTest,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
 
 

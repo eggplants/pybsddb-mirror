@@ -142,9 +142,12 @@ class HeapTestCaseOpen(HeapTestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(HeapTestCaseNoOpen))
-    suite.addTest(unittest.makeSuite(HeapTestCaseOpen))
+    for test in (HeapTestCaseNoOpen, HeapTestCaseOpen,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

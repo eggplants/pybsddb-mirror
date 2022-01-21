@@ -165,7 +165,12 @@ class MiscTestCase(unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(MiscTestCase)
+    suite = unittest.TestSuite()
+    for test in (MiscTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
+    return suite
 
 
 if __name__ == '__main__':

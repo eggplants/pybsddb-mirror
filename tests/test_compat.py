@@ -212,7 +212,12 @@ class CompatibilityTestCase(unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(CompatibilityTestCase)
+    suite = unittest.TestSuite()
+    for test in (CompatibilityTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
+    return suite
 
 
 if __name__ == '__main__':

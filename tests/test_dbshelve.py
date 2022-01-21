@@ -383,17 +383,19 @@ class RecNoShelveTestCase(BasicShelveTestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
+    for test in (DBShelveTestCase,
+                    BTreeShelveTestCase,
+                    HashShelveTestCase,
+                    ThreadBTreeShelveTestCase,
+                    ThreadHashShelveTestCase,
+                    EnvBTreeShelveTestCase,
+                    EnvHashShelveTestCase,
+                    EnvThreadBTreeShelveTestCase,
+                    EnvThreadHashShelveTestCase,
+                    RecNoShelveTestCase,):
 
-    suite.addTest(unittest.makeSuite(DBShelveTestCase))
-    suite.addTest(unittest.makeSuite(BTreeShelveTestCase))
-    suite.addTest(unittest.makeSuite(HashShelveTestCase))
-    suite.addTest(unittest.makeSuite(ThreadBTreeShelveTestCase))
-    suite.addTest(unittest.makeSuite(ThreadHashShelveTestCase))
-    suite.addTest(unittest.makeSuite(EnvBTreeShelveTestCase))
-    suite.addTest(unittest.makeSuite(EnvHashShelveTestCase))
-    suite.addTest(unittest.makeSuite(EnvThreadBTreeShelveTestCase))
-    suite.addTest(unittest.makeSuite(EnvThreadHashShelveTestCase))
-    suite.addTest(unittest.makeSuite(RecNoShelveTestCase))
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 

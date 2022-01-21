@@ -192,14 +192,17 @@ class DB_queue(DB) :
 
 def test_suite():
     suite = unittest.TestSuite()
+    for test in (DB_general,
+                    DB_txn,
+                    DB_hash,
+                    DB_recno,
+                    DB_queue,):
 
-    suite.addTest(unittest.makeSuite(DB_general))
-    suite.addTest(unittest.makeSuite(DB_txn))
-    suite.addTest(unittest.makeSuite(DB_hash))
-    suite.addTest(unittest.makeSuite(DB_recno))
-    suite.addTest(unittest.makeSuite(DB_queue))
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

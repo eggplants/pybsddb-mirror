@@ -334,7 +334,12 @@ class SimpleRecnoTestCase(unittest.TestCase):
 
 
 def test_suite():
-    return unittest.makeSuite(SimpleRecnoTestCase)
+    suite = unittest.TestSuite()
+    for test in (SimpleRecnoTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
+    return suite
 
 
 if __name__ == '__main__':

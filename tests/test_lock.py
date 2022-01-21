@@ -195,8 +195,9 @@ class LockingTestCase(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-
-    suite.addTest(unittest.makeSuite(LockingTestCase))
+    for test in (LockingTestCase,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 

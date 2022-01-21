@@ -455,14 +455,17 @@ class DuplicateExceptionsTestCase(AbstractDuplicateCompareTestCase) :
         self.assertRaises(RuntimeError, self.db.set_dup_compare, my_compare)
 
 def test_suite() :
-    res = unittest.TestSuite()
+    suite = unittest.TestSuite()
+    for test in (ComparatorTests,
+                    BtreeExceptionsTestCase,
+                    BtreeKeyCompareTestCase,
+                    DuplicateExceptionsTestCase,
+                    DuplicateCompareTestCase,):
 
-    res.addTest(unittest.makeSuite(ComparatorTests))
-    res.addTest(unittest.makeSuite(BtreeExceptionsTestCase))
-    res.addTest(unittest.makeSuite(BtreeKeyCompareTestCase))
-    res.addTest(unittest.makeSuite(DuplicateExceptionsTestCase))
-    res.addTest(unittest.makeSuite(DuplicateCompareTestCase))
-    return res
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
+    return suite
 
 if __name__ == '__main__':
     unittest.main(defaultTest = 'suite')

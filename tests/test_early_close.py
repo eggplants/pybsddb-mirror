@@ -209,7 +209,10 @@ class DBEnvClosedEarlyCrash(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(DBEnvClosedEarlyCrash))
+    for test in (DBEnvClosedEarlyCrash,):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
 
 

@@ -169,10 +169,14 @@ class DBTxn_distributedSYNC_must_open_db(DBTxn_distributed):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(DBTxn_distributed))
-    suite.addTest(unittest.makeSuite(DBTxn_distributedSYNC))
-    suite.addTest(unittest.makeSuite(DBTxn_distributed_must_open_db))
-    suite.addTest(unittest.makeSuite(DBTxn_distributedSYNC_must_open_db))
+    for test in (DBTxn_distributed,
+                    DBTxn_distributedSYNC,
+                    DBTxn_distributed_must_open_db,
+                    DBTxn_distributedSYNC_must_open_db,):
+
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
 
 

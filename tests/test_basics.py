@@ -1487,27 +1487,29 @@ class open_path(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
+    for test in (VersionTestCase,
+                    BasicBTreeTestCase,
+                    BasicHashTestCase,
+                    BasicBTreeWithThreadFlagTestCase,
+                    BasicHashWithThreadFlagTestCase,
+                    BasicBTreeWithEnvTestCase,
+                    BasicHashWithEnvTestCase,
+                    BTreeTransactionTestCase,
+                    HashTransactionTestCase,
+                    BTreeRecnoTestCase,
+                    BTreeRecnoWithThreadFlagTestCase,
+                    BTreeDUPTestCase,
+                    HashDUPTestCase,
+                    BTreeDUPWithThreadTestCase,
+                    HashDUPWithThreadTestCase,
+                    BTreeMultiDBTestCase,
+                    HashMultiDBTestCase,
+                    DBEnvPrivateObject,
+                    DBPrivateObject,
+                    open_path,):
 
-    suite.addTest(unittest.makeSuite(VersionTestCase))
-    suite.addTest(unittest.makeSuite(BasicBTreeTestCase))
-    suite.addTest(unittest.makeSuite(BasicHashTestCase))
-    suite.addTest(unittest.makeSuite(BasicBTreeWithThreadFlagTestCase))
-    suite.addTest(unittest.makeSuite(BasicHashWithThreadFlagTestCase))
-    suite.addTest(unittest.makeSuite(BasicBTreeWithEnvTestCase))
-    suite.addTest(unittest.makeSuite(BasicHashWithEnvTestCase))
-    suite.addTest(unittest.makeSuite(BTreeTransactionTestCase))
-    suite.addTest(unittest.makeSuite(HashTransactionTestCase))
-    suite.addTest(unittest.makeSuite(BTreeRecnoTestCase))
-    suite.addTest(unittest.makeSuite(BTreeRecnoWithThreadFlagTestCase))
-    suite.addTest(unittest.makeSuite(BTreeDUPTestCase))
-    suite.addTest(unittest.makeSuite(HashDUPTestCase))
-    suite.addTest(unittest.makeSuite(BTreeDUPWithThreadTestCase))
-    suite.addTest(unittest.makeSuite(HashDUPWithThreadTestCase))
-    suite.addTest(unittest.makeSuite(BTreeMultiDBTestCase))
-    suite.addTest(unittest.makeSuite(HashMultiDBTestCase))
-    suite.addTest(unittest.makeSuite(DBEnvPrivateObject))
-    suite.addTest(unittest.makeSuite(DBPrivateObject))
-    suite.addTest(unittest.makeSuite(open_path))
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 

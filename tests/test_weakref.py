@@ -151,9 +151,12 @@ class db_weakrefDBEnv(unittest.TestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
-    suite.addTest(unittest.makeSuite(db_weakref))
-    suite.addTest(unittest.makeSuite(db_weakrefDBEnv))
+    for test in (db_weakref, db_weakrefDBEnv):
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
+
     return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

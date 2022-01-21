@@ -696,17 +696,20 @@ class DBEnv_hot_backup(DBEnv) :
 
 def test_suite():
     suite = unittest.TestSuite()
+    for test in (DBEnv_general,
+                    DBEnv_memp,
+                    DBEnv_logcursor,
+                    DBEnv_log,
+                    DBEnv_log_txn,
+                    DBEnv_lsn,
+                    DBEnv_remove,
+                    DBEnv_hot_backup,):
 
-    suite.addTest(unittest.makeSuite(DBEnv_general))
-    suite.addTest(unittest.makeSuite(DBEnv_memp))
-    suite.addTest(unittest.makeSuite(DBEnv_logcursor))
-    suite.addTest(unittest.makeSuite(DBEnv_log))
-    suite.addTest(unittest.makeSuite(DBEnv_log_txn))
-    suite.addTest(unittest.makeSuite(DBEnv_lsn))
-    suite.addTest(unittest.makeSuite(DBEnv_remove))
-    suite.addTest(unittest.makeSuite(DBEnv_hot_backup))
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
+
 
 if __name__ == '__main__':
     unittest.main(defaultTest='test_suite')

@@ -528,18 +528,19 @@ class DBBaseReplication(DBReplication) :
 
 def test_suite():
     suite = unittest.TestSuite()
+    tests = [DBBaseReplication]
     dbenv = db.DBEnv()
     try:
         dbenv.repmgr_get_ack_policy()
-        ReplicationManager_available=True
-    except Exception:
-        ReplicationManager_available=False
+        tests.append(DBReplicationManager)  # ReplicationManager available
+    except db.DBError:
+        pass
     dbenv.close()
     del dbenv
-    if ReplicationManager_available :
-        suite.addTest(unittest.makeSuite(DBReplicationManager))
 
-    suite.addTest(unittest.makeSuite(DBBaseReplication))
+    for test in tests:
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 

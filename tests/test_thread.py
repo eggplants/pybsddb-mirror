@@ -476,15 +476,17 @@ class HashThreadedNoWaitTransactions(ThreadedTransactionsBase):
 
 def test_suite():
     suite = unittest.TestSuite()
+    for test in (BTreeConcurrentDataStore,
+                    HashConcurrentDataStore,
+                    BTreeSimpleThreaded,
+                    HashSimpleThreaded,
+                    BTreeThreadedTransactions,
+                    HashThreadedTransactions,
+                    BTreeThreadedNoWaitTransactions,
+                    HashThreadedNoWaitTransactions,):
 
-    suite.addTest(unittest.makeSuite(BTreeConcurrentDataStore))
-    suite.addTest(unittest.makeSuite(HashConcurrentDataStore))
-    suite.addTest(unittest.makeSuite(BTreeSimpleThreaded))
-    suite.addTest(unittest.makeSuite(HashSimpleThreaded))
-    suite.addTest(unittest.makeSuite(BTreeThreadedTransactions))
-    suite.addTest(unittest.makeSuite(HashThreadedTransactions))
-    suite.addTest(unittest.makeSuite(BTreeThreadedNoWaitTransactions))
-    suite.addTest(unittest.makeSuite(HashThreadedNoWaitTransactions))
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 

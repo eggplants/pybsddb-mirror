@@ -509,23 +509,25 @@ class ThreadedAssociateRecnoTestCase(ShelveAssociateTestCase):
 
 def test_suite():
     suite = unittest.TestSuite()
+    for test in (AssociateErrorTestCase,
 
-    suite.addTest(unittest.makeSuite(AssociateErrorTestCase))
+                 AssociateHashTestCase,
+                 AssociateBTreeTestCase,
+                 AssociateRecnoTestCase,
+                 AssociateHeapTestCase,
 
-    suite.addTest(unittest.makeSuite(AssociateHashTestCase))
-    suite.addTest(unittest.makeSuite(AssociateBTreeTestCase))
-    suite.addTest(unittest.makeSuite(AssociateRecnoTestCase))
-    suite.addTest(unittest.makeSuite(AssociateHeapTestCase))
+                 AssociateBTreeTxnTestCase,
 
-    suite.addTest(unittest.makeSuite(AssociateBTreeTxnTestCase))
+                 ShelveAssociateHashTestCase,
+                 ShelveAssociateBTreeTestCase,
+                 ShelveAssociateRecnoTestCase,
 
-    suite.addTest(unittest.makeSuite(ShelveAssociateHashTestCase))
-    suite.addTest(unittest.makeSuite(ShelveAssociateBTreeTestCase))
-    suite.addTest(unittest.makeSuite(ShelveAssociateRecnoTestCase))
+                 ThreadedAssociateHashTestCase,
+                 ThreadedAssociateBTreeTestCase,
+                 ThreadedAssociateRecnoTestCase,):
 
-    suite.addTest(unittest.makeSuite(ThreadedAssociateHashTestCase))
-    suite.addTest(unittest.makeSuite(ThreadedAssociateBTreeTestCase))
-    suite.addTest(unittest.makeSuite(ThreadedAssociateRecnoTestCase))
+        test = unittest.defaultTestLoader.loadTestsFromTestCase(test)
+        suite.addTest(test)
 
     return suite
 
