@@ -514,7 +514,6 @@ you can use legacy `bsddb3 <https://pypi.org/project/bsddb3/>`__ library.
                     ],
       )
 
-if sys.version_info >= (3, 7):
-    kw_params['long_description_content_type'] = 'text/x-rst'
+kw_params['long_description_content_type'] = 'text/x-rst'
 
 setup(**kw_params)
