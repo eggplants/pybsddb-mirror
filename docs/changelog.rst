@@ -14,15 +14,17 @@ Changelog
     Given that Oracle has not released a new Oracle Berkeley DB in
     almost four years, I must break this practice for now.
 
-    Sorry if this update breaks your Python 3.6 environment. In
-    that case, please pin to version 18.1.4, the last Python 3.6
-    compatible release.
+    I am sorry if this update breaks your Python 3.6 environment.
+    In that case, please pin your ``berkeleydb`` installation to
+    version 18.1.4, the last Python 3.6 compatible release.
 
     Send me constructive feedback if appropiate.
 
   - Python 3.10 support.
 
   - Testsuite works now in Python 3.11.0a4.
+
+  - Python 3.11 added to the full test matrix.
 
   - Experimental Python 3.11 support. Tested in 3.11.0a4.
 

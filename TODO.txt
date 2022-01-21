@@ -1,3 +1,5 @@
+- 20220121: Rewrite all the test suite discovery and test driver.
+
 - 20210615: Add annotated types to the API.
 
 - 20210527: The legacy "bsddb3" library should be upgraded to search for
