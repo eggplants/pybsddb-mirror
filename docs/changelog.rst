@@ -22,7 +22,9 @@ Changelog
 
   - Python 3.10 support.
 
-  - Experimental Python 3.11 support. Tested in 3.11.0a3.
+  - Testsuite works now in Python 3.11.0a4.
+
+  - Experimental Python 3.11 support. Tested in 3.11.0a4.
 
 18.1.4 - 2021-05-19:
 --------------------
